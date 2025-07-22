@@ -1,0 +1,178 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+      <div class="row">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Beneficiary Crop Spraying Records      
+              </h4>
+              <hr/>
+              <div class="container">
+              {% if messages %}
+                    {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                        <div class="alert alert-success alert-dismissible">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            <strong>{{ message }}</strong>
+                        </div>
+                        {% else %}
+                            <div class="alert alert-danger alert-dismissible">
+                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                <strong>{{ message }}</strong>
+                            </div>
+                        {% endif %}
+
+                    {% endfor %}
+                {% endif %}
+                </div>
+            
+              <div class="table-responsive">  
+                {% if spraying_records %}             
+                <table id="myTable" class="table table-hover">
+                    <thead class="table-info">
+                        <tr>
+                            <th scope="col">Beneficiary</th>
+                            <th scope="col">Date Sprayed</th>
+                            <th scope="col">Crop</th>
+                            <th scope="col">Tunnel</th>
+                            <th scope="col">Chemical Used</th>
+                            <th scope="col"  data-toggle="tooltip" data-placement="top" title="Measured in litres">Dosage</th>
+                            <th scope="col">StartTime</th>
+                            <th scope="col">FinishTime</th>
+                            <th scope="col">Duration</th>
+                            <th scope="col">Purpose</th>                             
+                            <th scope="col">Notes</th>
+                            <th scope="col">Feedback</th>                          
+                            <th scope="col">Status</th>
+                            <th scope="col" class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in spraying_records %}
+                        <tr>
+                            <td>{{ record.beneficiary.full_name }}</td>
+                            <td>{{ record.date_sprayed|date:"d-m-Y" }}</td>
+                            <td>{{ record.crop.name }}</td>
+                            <td>
+                                {{ record.greenhouse.name }}
+                                <i class="fa fa-info-circle text-warning fa-lg" data-toggle="tooltip" data-placement="top" title=" {{ record.greenhouse_room.room_name}}"></i>
+                            </td>
+                            <td>{{ record.chemical_used }}</td>
+                            <td>{{ record.dosage }}</td>
+                            <td>{{ record.startTime }}</td> 
+                            <td>{{ record.finishTime }}</td> 
+                            <td>{{ record.time_difference }}</td>  
+                            <td>                               
+                                <i class="fa fa-info-circle text-success fa-lg" data-toggle="tooltip" data-placement="top" title=" {{ record.purpose}}"></i>
+                            </td>
+                            <td>                               
+                                <i class="fa fa-info-circle text-primary fa-lg" data-toggle="tooltip" data-placement="top" title=" {{ record.description}}"></i>
+                            </td>
+                            <td>                               
+                                <i class="fa fa-info-circle text-warning fa-lg" data-toggle="tooltip" data-placement="top" title=" {{ record.feedback}}"></i>
+                            </td>
+                            <td>{{ record.status }}</td>
+                            <td class="text-center">
+                                <a href="#" data-toggle="tooltip" data-placement="top" title="View Record" aria-label="View Record">
+                                    <i class="fa fa-wpexplorer text-success fa-lg"></i>
+                                </a>&nbsp;&nbsp;
+                                <a href="#" class="open-feedback-modal" 
+                                    data-id="{{ record.id }}" 
+                                    data-feedback="{{ record.feedback|default_if_none:'' }}"
+                                    data-toggle="modal" 
+                                    data-target="#feedbackModal" 
+                                    title="Give your Feedback">
+                                        <i class="fa fa-pencil-square text-primary fa-lg"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                    {% else %}
+                    <span class="text-muted text-center">No records found</span>
+                    {% endif %}                
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="modal fade" id="feedbackModal" tabindex="-1" role="dialog" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="feedbackModalLabel">Give Feedback</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="feedbackForm">
+                            {% csrf_token %}
+                            <input type="hidden" id="sprayingDataId" name="sprayingDataId">
+                            <div class="form-group">
+                                <label for="feedbackText">Feedback</label>
+                                <textarea class="form-control" id="feedbackText" name="feedback" rows="4" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Open modal and set existing feedback if available
+        $('.open-feedback-modal').click(function() {
+            var recordId = $(this).data('id');
+            var feedback = $(this).data('feedback');
+    
+            console.log("record Id " + recordId);
+            if (!recordId) {
+                alert("Error: Spraying record ID is missing.");
+                return;
+            }
+    
+            $('#sprayingDataId').val(recordId);
+            $('#feedbackText').val(feedback);
+        });
+    
+        // Submit feedback via AJAX
+        $('#feedbackForm').submit(function(event) {
+            event.preventDefault();
+    
+            var sprayingDataId = $('#sprayingDataId').val();
+            if (!sprayingDataId) {
+                alert("Error: No valid record ID.");
+                return;
+            }
+    
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'aic_spraying_submit_feedback' %}",
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.status === 'success') {
+                        alert('Feedback submitted successfully!');
+                        $('#feedbackModal').modal('hide');
+                        location.reload();
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function() {
+                    alert('An error occurred.');
+                }
+            });
+        });
+    });
+    
+</script>
+
+   {% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base_auth_dash.html" %}
+{% block content %}
+{% load static %}
+<h2>Changing Room: {{ changeroom.name }}</h2>
+<p><strong>Location:</strong> {{ changeroom.location }}</p>
+{% comment %} <p><strong>Greenhouse:</strong> {{ changeroom.greenhouse.name if changeroom.greenhouse else "No greenhouse assigned" }}</p> {% endcomment %}
+<p><strong>Description:</strong> {{ changeroom.description|default:"No description available" }}</p>
+
+{% if changeroom.photo %}
+    <img src="{{ changeroom.photo.url }}" alt="{{ changeroom.name }}" style="width:150px;height:150px;">
+{% else %}
+   <img src="{% static 'admin/assets/images/changingroomdefault.png' %}" alt="image" class="img-sm profile-pic">
+{% endif %}
+
+<div class="col-lg-8">
+
+    <div class="card">
+      <h5 class="card-heading" style="padding:1%">Assigned Beneficiaries</h5>
+      <div class="card-body">
+        <table class="table table-bordered">
+          <thead>
+              <tr>
+                  <th>Beneficiary Name</th>
+                  <th>Enterprise Name</th>
+                  <th>Notes</th>
+                  <th>Assigned At</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% if assigned_beneficiaries %}
+                  {% for assignment in assigned_beneficiaries %}
+                      <tr>
+                          <td>{{ assignment.beneficiary.full_name }}</td>
+                          <td>{{ assignment.beneficiary.enterprise_name|default:"No enterprise name" }}</td>
+                          <td>{{ assignment.notes|default:"No notes available" }}</td>
+                          <td>{{ assignment.assigned_at }}</td>
+                      </tr>
+                  {% endfor %}
+              {% else %}
+                  <tr>
+                      <td colspan="4">No beneficiaries assigned to this changing room.</td>
+                  </tr>
+              {% endif %}
+          </tbody>
+      </table><hr/>
+      <a href="{% url 'changingroom_index' %}"><i class="fa fa-mail-reply-all (alias)"></i> Back</a>|
+    </div>
+    </div>
+</div>
+{% endblock content  %}
+
+
+

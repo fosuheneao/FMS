@@ -1,0 +1,45 @@
+{% extends "base_auth.html" %}
+{% load static %}
+
+{% block content %}
+
+{% comment %} <h4>YUGEP Platform</h4> {% endcomment %}
+{% comment %} <h6 class="fw-light">Portal Login</h6> {% endcomment %}
+
+<div class="container">
+<h6 class="fw-light text-danger text-center" style="font-weight:600!important; margin-bottom:5%; color:#043088!important; border-bottom:1px solid #043088!important">Portal Login</h6>
+<form class="pt-3" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="hidden" id="latitude" name="latitude">
+    <input type="hidden" id="longitude" name="longitude">
+    <button type="submit" class="btn btn-outline-primary btn-sm">Login</button>  
+</form>
+{% if messages %}
+    <hr/>
+    <div class="messages alert alert-danger" role="alert">
+        {% for message in messages %}
+        <span {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</span>
+        {% endfor %}
+    </div>
+{% endif %}
+<script>
+    // Automatically fetch the user's location
+    document.addEventListener('DOMContentLoaded', () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    document.getElementById('latitude').value = position.coords.latitude;
+                    document.getElementById('longitude').value = position.coords.longitude;
+                },
+                (error) => {
+                    console.error('Error getting location:', error);
+                    alert('Unable to fetch your location. Please enable GPS.');
+                }
+            );
+        } else {
+            alert('Geolocation is not supported by your browser.');
+        }
+    });
+</script>
+{% endblock %}

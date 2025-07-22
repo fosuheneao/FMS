@@ -1,0 +1,112 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<style>
+    #map {
+        height: 500px; /* Ensure map is visible */
+        width: 100%;
+    }
+</style>
+  
+<div class="row">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title"><i class="fa fa-address-card"></i> Registered Tunnel</h4>
+            <hr/>
+
+            <div class="table-responsive">
+                <table class="table table-hovered">
+                    <thead>
+                        <tr>
+                            <th>Tunnel</th>
+                            <th>Market Centre</th>
+                            {% comment %} <th>Latitude</th>
+                            <th>Longitude</th> {% endcomment %}
+                            <th>Notes</th>
+                            <th>Tunnel</th>
+                            <th>Photo</th>
+                            <th>Map View</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tunnel in all_tunels %}
+                            <tr>
+                                <td>{{ tunnel.greenhouse.name }}</td>
+                                <td>{{ tunnel.greenhouse.marketing_centres }}</td>
+                                {% comment %} <td>{{ tunnel.greenhouse.latitude }}</td>
+                                <td>{{ tunnel.greenhouse.longitude }}</td> {% endcomment %}
+                                <td>{{ tunnel.notes }}</td>
+                                <td>{{ tunnel.room_name }}</td>
+                                <td>
+                                    {% if tunnel.photo %}
+                                        <img src="{{ tunnel.photo.url }}" alt="{{ tunnel.name }}" style="width:50px;height:50px;">
+                                    {% else %}
+                                        No photo
+                                    {% endif %}
+                                </td>
+                                <td> 
+                                    <a href="{% url 'aic_greenhouse_map_view' tunnel.greenhouse.id %}" data-toggle="tooltip" data-placement="top" title="View Harvest Record">
+                                        <i class="fa fa-globe text-primary fa-lg"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <hr/>
+            <div style="background:#0F6CBD!important; color:#fff!important">
+            <h4 style="padding:.5%">Greenhouses on the Map</h4>
+            <div id="map"></div>
+            </div>
+            <hr/>
+
+        </div>
+    </div>
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Default center of Ghana
+        var map = L.map('map').setView([7.9465, -1.0232], 6); // Zoom level 6 to show entire Ghana
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Create a marker cluster group
+        var markers = L.layerGroup().addTo(map);
+
+        {% for greenhouse in greenhouses %}
+            {% if greenhouse.latitude and greenhouse.longitude %}
+                // Prepare popup content with the greenhouse name, description, and photo
+                var popupContent = "<b>{{ greenhouse.name }}</b><br>{{ greenhouse.description }}<br><hr/>{{ greenhouse.marketing_centres }}<hr/>";
+
+                {% if greenhouse.photo %}
+                    popupContent += '<img src="{{ greenhouse.photo.url }}" alt="{{ greenhouse.name }}" style="width:100px;height:100px;border-radius:5px;margin-top:5px;">';
+                {% else %}
+                    popupContent += "<i>No photo available</i>";
+                {% endif %}
+
+                // Add each greenhouse marker
+                var marker = L.marker([{{ greenhouse.latitude }}, {{ greenhouse.longitude }}])
+                    .bindPopup(popupContent)
+                    .addTo(markers);
+            {% endif %}
+        {% endfor %}
+
+        // Adjust map to fit all markers
+        var bounds = markers.getBounds();
+        if (bounds.isValid()) {
+            map.fitBounds(bounds);
+        }
+    });
+</script>
+{% endblock %}

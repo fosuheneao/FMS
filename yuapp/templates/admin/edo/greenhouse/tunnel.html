@@ -1,0 +1,65 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Assigned Greenhouse Tunnels
+               
+              </a>
+      
+              </h4>
+              <hr/>
+              <div class="table-responsive">
+                <!-- Display all tunnes, with a different icon or style for assigned tunnels -->
+                <h4>All Tunnels</h4>
+                <table class="table table-hovered">
+                    <thead>
+                        <tr>
+                            <th>Tunnel</th>
+                            <th>Latitude</th>
+                            <th>Longitude</th>
+                            <th>Notes</th>
+                            <th>Greenhouse</th>
+                            <th>Market Centre</th>
+                            <th>Photo</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tunnel in all_tunels %}
+                            <tr>
+                                <td>{{ tunnel.room_name }}</td>
+                                <td>{{ tunnel.latitude }}</td>
+                                <td>{{ tunnel.longitude }}</td>
+                                <td>{{ tunnel.notes }}</td>
+                                <td>{{ tunnel.greenhouse.name }}</td>
+                                <td>{{ tunnel.greenhouse.marketing_centres }}</td>
+                                <td>
+                                    {% if tunnel.photo %}
+                                        <img src="{{ tunnel.photo.url }}" alt="{{ tunnel.name }}" style="width:50px;height:50px;">
+                                    {% else %}
+                                        No photo
+                                    {% endif %}
+                                </td>
+                                <td> <i class="fa fa-check-square fa-lg text-success"></i> 
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+              </div>
+            </div>
+          </div>
+        
+        </div>
+   
+     
+
+{% endblock %}

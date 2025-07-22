@@ -1,0 +1,21 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h2 class="mb-3">Fulfillment Details</h2>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Order: {{ fulfillment.order.id }}</h5>
+            <p class="card-text"><strong>Delivered Quantity:</strong> {{ fulfillment.delivered_quantity }}</p>
+            <p class="card-text"><strong>Delivery Date:</strong> {{ fulfillment.delivery_date }}</p>
+            <p class="card-text"><strong>Status:</strong> {% if fulfillment.is_fulfilled %}Completed{% else %}Pending{% endif %}</p>
+            <p class="card-text"><strong>Notes:</strong> {{ fulfillment.notes }}</p>
+            <a href="{% url 'sa_fulfillment_list' %}" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+/* static/css/custom-fluent.css */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Roboto, Arial, Verdana, sans-serif;
+}
+
+.card {
+  border-radius: 1rem;
+  border: 1px solid #e5e5e5;
+}
+
+.table th, .table td {
+  vertical-align: middle;
+}
+
+.badge {
+  font-size: 0.85rem;
+  padding: 0.35em 0.65em;
+}
+
+.bg-success-subtle {
+  background-color: #e6f4ea;
+  color: #107c10;
+}
+
+.bg-warning-subtle {
+  background-color: #fff8e1;
+  color: #a37b00;
+}
+
+
+.card {
+  border-radius: 1rem;
+  transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.btn-outline-secondary {
+  border-radius: 50px;
+}
+
+h2, h5, h6 {
+  font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+}

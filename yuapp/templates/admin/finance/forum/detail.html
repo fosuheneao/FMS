@@ -1,0 +1,61 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+{% block content %}
+<!-- Trend Knowledge Bank Details -->
+<div class="card shadow-sm p-4 mb-4">
+    <h2 class="mb-3 text-primary">{{ trend_knowledge_bank.title }}</h2>
+    <p class="text-muted">Createds by <strong>{{ trend_knowledge_bank.created_by.username }}</strong> on <strong>{{ trend_knowledge_bank.created_at }}</strong></p>
+    <p class="text-secondary"><strong>Description:</strong> {{ trend_knowledge_bank.description }}</p>
+    <p class="text-secondary"><strong>Location:</strong> Latitude: {{ trend_knowledge_bank.latitude }}, Longitude: {{ trend_knowledge_bank.longitude }}</p>
+    
+    {% if trend_knowledge_bank.photo %}
+        <div class="text-center mt-3">
+            <img src="{{ trend_knowledge_bank.photo.url }}" alt="{{ trend_knowledge_bank.title }}" class="img-fluid rounded shadow">
+        </div>
+    {% endif %}
+</div>
+
+<!-- Discussions Section -->
+<div class="card shadow-sm p-4 mb-4">
+    <h3 class="text-primary">Discussions</h3>
+    {% if discussions %}
+        <ul class="list-group list-group-flush">
+            {% for discussion in discussions %}
+            <li class="list-group-item p-3">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <p class="fw-bold mb-1">{{ discussion.created_by.username }} <span class="text-muted small">on {{ discussion.created_at }}</span></p>
+                        <p class="text-dark">{{ discussion.discussion }}</p>
+                        {% if discussion.photo %}
+                            <img src="{{ discussion.photo.url }}" alt="Discussion Photo" class="img-fluid rounded shadow-sm mt-2" style="max-width: 250px;">
+                        {% endif %}
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-muted">No discussions yet. Be the first to comment!</p>
+    {% endif %}
+</div>
+
+<!-- Discussion Form -->
+<div class="card shadow-sm p-4">
+    <h4 class="text-primary">Add Your Observation</h4>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="discussion" class="form-label">Your Comment</label>
+            {{ discussion_form.discussion }}
+        </div>
+        <div class="mb-3">
+            <label for="photo" class="form-label">Upload Photo (Optional)</label>
+            {{ discussion_form.photo }}
+        </div>
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-send"></i> Submit to Discussion Board
+        </button>
+    </form>
+</div>
+{% endblock %}

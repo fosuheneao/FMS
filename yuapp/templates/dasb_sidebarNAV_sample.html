@@ -1,0 +1,106 @@
+<nav class="sidebar sidebar-offcanvas" id="sidebar" style="background:#e8e9ea; border-right:1px solid #e8e9ea; margin-top:-2.7%;">
+    <ul class="nav">
+        {% if user.is_authenticated %}
+            {% if user.beneficiary %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'beneficiary_dashboard' %} active {% endif %}" 
+                       href="{% url 'beneficiary_dashboard' %}">
+                        <i class="mdi mdi-grid-large menu-icon"></i>
+                        <span class="menu-title">Dashboard</span>
+                    </a>
+                </li>
+            {% endif %}
+        {% endif %}
+
+        {% if user.is_authenticated %}
+            {% if user.beneficiary %}
+                <li class="nav-item nav-category">Main Menu</li>
+
+                <!-- My Production -->              
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name in 'harvest_index' 'harvest_history' %} active {% endif %}" 
+                       data-bs-toggle="collapse" href="#charts" 
+                       aria-expanded="{% if request.resolver_match.url_name in 'harvest_index' 'harvest_history' %}true{% else %}false{% endif %}" 
+                       aria-controls="charts">
+                        <i class="menu-icon mdi mdi-chart-line"></i>
+                        <span class="menu-title">My Production</span>
+                        <i class="menu-arrow"></i>
+                    </a>
+                    <div class="collapse {% if request.resolver_match.url_name in 'harvest_index' 'harvest_history' %} show {% endif %}" id="charts">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.resolver_match.url_name == 'harvest_index' %} active {% endif %}" 
+                                   href="{% url 'harvest_index' %}">
+                                    Harvest
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.resolver_match.url_name == 'harvest_history' %} active {% endif %}" 
+                                   href="{% url 'harvest_history' %}">
+                                    Harvest History
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <!-- Sales -->
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name in 'sales_dashboard' %} active {% endif %}" 
+                       data-bs-toggle="collapse" href="#buyer" 
+                       aria-expanded="{% if request.resolver_match.url_name in 'sales_dashboard' %}true{% else %}false{% endif %}" 
+                       aria-controls="buyer">
+                        <i class="menu-icon mdi mdi-cart-outline"></i>
+                        <span class="menu-title">Sales</span>
+                        <i class="menu-arrow"></i>
+                    </a>
+                    <div class="collapse {% if request.resolver_match.url_name in 'sales_dashboard' %} show {% endif %}" id="buyer">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.resolver_match.url_name == 'sales_dashboard' %} active {% endif %}" 
+                                   href="{% url 'sales_dashboard' %}">
+                                    Sales Overview
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <!-- My Financials -->
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name in 'farm_input_index' 'finance_index' 'beneficiary_service_request_list' %} active {% endif %}" 
+                       data-bs-toggle="collapse" href="#tables" 
+                       aria-expanded="{% if request.resolver_match.url_name in 'farm_input_index' 'finance_index' 'beneficiary_service_request_list' %}true{% else %}false{% endif %}" 
+                       aria-controls="tables">
+                        <i class="menu-icon mdi mdi-finance"></i>
+                        <span class="menu-title">My Financials</span>
+                        <i class="menu-arrow"></i>
+                    </a>
+                    <div class="collapse {% if request.resolver_match.url_name in 'farm_input_index' 'finance_index' 'beneficiary_service_request_list' %} show {% endif %}" id="tables">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.resolver_match.url_name == 'farm_input_index' %} active {% endif %}" 
+                                   href="{% url 'farm_input_index' %}">
+                                    Farm Input Cost
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.resolver_match.url_name == 'finance_index' %} active {% endif %}" 
+                                   href="{% url 'finance_index' %}">
+                                    Loans
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.resolver_match.url_name == 'beneficiary_service_request_list' %} active {% endif %}" 
+                                   href="{% url 'beneficiary_service_request_list' %}">
+                                    Operational Cost
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+            {% endif %}
+        {% endif %}
+    </ul>
+</nav>

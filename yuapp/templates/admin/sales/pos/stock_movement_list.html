@@ -1,0 +1,58 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h2 class="mb-3">Stock Movement</h2>
+    {% if movements %}
+    <table class="table table-hover table-bordered">
+        <thead class="table-primary">
+            <tr>
+                <th>ID</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Crop</th>
+                <th>Grade</th>
+                <th>Quantity</th>
+                <th>Movement Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for movement in movements %}
+            <tr>
+                <td>{{ movement.id }}</td>
+                <td>{{ movement.from_market_centre }}</td>
+                <td>{{ movement.to_market_centre }}</td>
+                <td>{{ movement.crop }}</td>
+                <td>{{ movement.grade }}</td>
+                <td>{{ movement.quantity }}</td>
+                <td>{{ movement.movement_date }}</td>
+                <td>{% if movement.received %}Received{% else %}Pending{% endif %}</td>
+                <td>
+                    {% if not movement.received %}
+                      {% if request.user != movement.created_by %}
+                        <a href="{% url 'confirm_movement_receipt' movement.id %}" class="btn btn-sm btn-success">
+                          <i class="fa fa-check"></i> Confirm Receipt
+                        </a>
+                      {% else %}
+                        <span class="text-muted">Awaiting Confirmation</span>
+                      {% endif %}
+                    {% else %}
+                      <span class="text-muted">Confirmed</span>
+                    {% endif %}
+                  </td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <span class="text-center">No stock movements found.</span>
+    {% endif %}
+</div>
+{% endblock %}

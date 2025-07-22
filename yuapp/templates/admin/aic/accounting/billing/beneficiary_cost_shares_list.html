@@ -1,0 +1,55 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="row">
+
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title"><i class="fa fa-address-card"></i> <span class="text-danger">Beneficiary Maintenance Cost Distribution</span> 
+        </h4>
+        <hr/>
+          <div class="row flex-grow">
+            <div class="col-12 grid-margin stretch-card">
+              <div class="card card-rounded">
+                <div class="card-body">
+                  <div class="d-sm-flex justify-content-between align-items-start">
+                  </div>
+                  <div class="table-responsive  mt-1">
+                    <table id="myTable" class="table table-hover">
+                      <thead>
+                          <tr>
+                              <th>Beneficiary</th>
+                              <th>Maintenance Cost</th>
+                              <th>Share Amount</th>
+                              <th>Date</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          {% if shares %}
+                              {% for share in shares %}
+                                  <tr>
+                                      <td>{{ share.beneficiary.full_name|default:"-" }}</td>
+                                      <td>{{ share.maintenance_cost.billable_item.name|default:"-" }}</td>
+                                      <td>{{ share.share_amount|floatformat:2 }}</td>
+                                      <td>{{ share.created_at|date:"d-m-Y" }}</td>
+                                  </tr>
+                              {% endfor %}            
+                          {% else %}
+                              No record found
+                          {% endif %}
+                      </tbody>
+                  </table>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+      </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Beneficiary Trellising Records
+                {% comment %} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'create_trellising_data' %}" class="pull-right btn btn-outline-primary btn-sm">
+                 <i class="fa fa-plus-circle"></i> Add Trellising Data {% endcomment %}
+              </a>
+      
+              </h4>
+              <hr/>
+              <div class="container">
+              {% if messages %}
+                    {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                        <div class="alert alert-success alert-dismissible">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            <strong>{{ message }}</strong>
+                        </div>
+                        {% else %}
+                            <div class="alert alert-danger alert-dismissible">
+                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                <strong>{{ message }}</strong>
+                            </div>
+                        {% endif %}
+
+                    {% endfor %}
+                {% endif %}
+                </div>
+            
+              <div class="table-responsive">               
+                <table id="myTable" class="table table-hover">
+                    <thead class="table-info">
+                        <tr>
+                            <th>Beneficiary</th>
+                            <th>Date Trellised</th>
+                            <th>Crop</th>
+                            <th>Greenhouse</th>
+                            <th>Method</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    
+                    {% if trellising_records %}
+                    <tbody>
+                        {% for record in trellising_records %}
+                        <tr>
+                            <td>{{ record.beneficiary.full_name }}</td>
+                            <td>{{ record.date_trellised|date:"d-m-Y" }}</td>
+                            <td>{{ record.crop.name }}</td>
+                            <td>                               
+                                <i class="fa fa-info-circle text-primary fa-lg" data-toggle="tooltip" data-placement="top" title=" {{ record.greenhouse.name }} - {{ record.greenhouse_room.room_name }}"></i>
+                            </td>
+                            <td>{{ record.method }}</td>
+                            <td>                               
+                                <i class="fa fa-info-circle text-danger fa-lg" data-toggle="tooltip" data-placement="top" title=" {{ record.description }}"></i>
+                            </td>
+                            <td>{{ record.status }}</td>
+                            <td class="text-center">
+                                <a href="#" data-toggle="tooltip" data-placement="top" title="View Record">
+                                    <i class="fa fa-wpexplorer text-success fa-lg"></i>
+                                </a>&nbsp;&nbsp;
+                                <a href="{% url 'edo_update_trellising_data' record.id %}" data-toggle="tooltip" data-placement="top" title="Update Record">
+                                  <i class="fa  fa-pencil-square text-primary fa-lg"></i>
+                                </a> &nbsp;&nbsp;
+                                <a href="{% url 'edo_create_trellising_data' record.beneficiary_id %}" data-toggle="tooltip" data-placement="top" title="Create New Trellising Record for {{ record.beneficiary.full_name }}">
+                                    <i class="fa  fa-plus-circle text-warning fa-lg"></i>
+                                  </a> &nbsp;&nbsp;
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    {% else %}
+                    <tbody>
+                        <tr>
+                            <td colspan="7" class="text-center">No record Found</td>
+                        </tr>
+                    </tbody>
+                    {% endif %}
+                </table>
+                
+
+              </div>
+            </div>
+          </div>
+          
+          {% comment %} <div class="card col-md-3" style="border: 2px solid blue"></div> {% endcomment %}
+
+        </div>
+   {% endblock %}

@@ -1,0 +1,87 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Cash Bank: <span class="text-danger">Cash Loaned</span>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'edo_request_cash' %}" class="pull-right btn btn-primary btn-lg text-white mb-0 me-0">
+                  <i class="fa fa-money"></i> Cash Request
+              </a> 
+              </h4>
+              <hr/>
+                <div class="row flex-grow">
+                  <div class="col-12 grid-margin stretch-card">
+                    <div class="card card-rounded">
+                      <div class="card-body">
+                        <div class="d-sm-flex justify-content-between align-items-start">
+                        </div>
+                        <div class="table-responsive  mt-1">
+                          <table class="table select-table table-striped table-hover">
+                            <thead>
+                              <tr>
+                                <th>Assigned Date</th>
+                                <th>Amount (GHS)</th>
+                                <th>Repayment Period</th>
+                                <th>Progress</th>
+                                <th>Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for cash in cash_assigned_list %}
+                              <tr>                                
+                                <td>
+                                  <div class="d-flex ">
+                                    {% comment %} <img src="{% static 'admin/images/faces/face1.jpg' %}" alt=""> {% endcomment %}
+                                    <div>
+                                      <h6>{{ cash.created_at }}</h6>
+                                      <p>Effected on</p>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td>
+                                  <h6>{{ cash.amount }}</h6>
+                                  <p>{{ cash.created_by_id }}</p>
+                                </td>
+                                <td>
+                                  <div> 
+                                    <div class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap">
+                                      <p>{{ cash.repayment_period_from }}</p> - 
+                                      <p class="text-success">{{ cash.repayment_period_to }}</p>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="badge badge-opacity-warning">{{ cash.status }}</div>
+                                </td>
+                                <td>
+                                  <a href="{% url 'edo_submit_repayment' cash.id %}">
+                                    <i class="fa fa-money"></i> Repay
+                                </a>
+
+                                  <a href="{% url 'edo_cash_assigned_detail' cash.id %}">
+                                    <i class="fa fa-eye"></i> View
+                                </a>
+                                </td>
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+            </div>
+          </div>
+        </div>
+   
+     
+
+{% endblock %}

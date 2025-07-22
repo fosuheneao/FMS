@@ -1,0 +1,106 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="row">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white d-flex align-items-center justify-content-between">
+            <h4 class="mb-0">
+                <i class="fa fa-address-card me-2"></i> Financial Summary for {{ beneficiary.full_name }}
+            </h4>
+            <a href="{% url 'edo_beneficiary_index' %}" class="btn btn-light btn-sm">
+                <i class="fa fa-arrow-left"></i> Go Back
+            </a>
+        </div>
+    
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Liabilities</th>
+                            <th class="text-end"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% comment %} <tr class="table-danger">
+                            <td colspan="2" class="fw-bold">Liabilities</td>
+                        </tr> {% endcomment %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'beneficiary_accounting_detail' 'farm_input_costs' beneficiary.id %}">
+                                    <i class="fa fa-seedling"></i> Total Farm Input Costs
+                                </a>
+                            </td>
+                            <td class="text-end">{{ farm_input_costs|currency }}</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="{% url 'beneficiary_accounting_detail' 'cash_loans' beneficiary.id %}">
+                                    <i class="fa fa-money-bill-wave"></i> Total Cash Loans Received
+                                </a>
+                            </td>
+                            <td class="text-end">{{ cash_loans|currency }}</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="{% url 'beneficiary_accounting_detail' 'maintenance_costs' beneficiary.id %}">
+                                    <i class="fa fa-tools"></i> Total Maintenance Costs
+                                </a>
+                            </td>
+                            <td class="text-end">{{ maintenance_costs|currency }}</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <i class="fa fa-university"></i> Exim Bank Loan
+                            </td>
+                            <td class="text-end">{{ eximbankLoan|currency }}</td>
+                        </tr>
+                        <tr class="table-danger fw-bold">
+                            <td>Total Liabilities</td>
+                            <td class="text-end text-danger">{{ total_deductions|currency }}</td>
+                        </tr>
+    
+                        <tr class="table-success">
+                            <td colspan="2" class="fw-bold">Assets</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="{% url 'beneficiary_accounting_detail' 'total_harvest_sales' beneficiary.id %}">
+                                    <i class="fa fa-leaf"></i> Total Harvest Sales (Revenue)
+                                </a>
+                            </td>
+                            <td class="text-end">{{ total_harvest_sales|currency }}</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="{% url 'beneficiary_accounting_detail' 'total_repayments' beneficiary.id %}">
+                                    <i class="fa fa-hand-holding-usd"></i> Total Loan Repayments Made
+                                </a>
+                            </td>
+                            <td class="text-end">{{ total_repayments|currency }}</td>
+                        </tr>
+                        <tr class="table-success fw-bold">
+                            <td>Total Assets</td>
+                            <td class="text-end text-success">{{ total_assets|currency }}</td>
+                        </tr>
+    
+                        <tr class="table-warning">
+                            <td><strong>Total Deductions</strong></td>
+                            <td class="text-end fw-bold">{{ total_deductions|currency }}</td>
+                        </tr>
+                        <tr class="table-primary">
+                            <td><strong>Final Balance</strong></td>
+                            <td class="text-end fw-bold fs-5">{{ final_balance|currency }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    
+</div>
+{% endblock %}

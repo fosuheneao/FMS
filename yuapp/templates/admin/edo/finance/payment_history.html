@@ -1,0 +1,109 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Cash Bank: <span class="text-danger">My Payment History</span>
+              <span style="font-size:0.75em!important; margin-left:2%"><a href="{% url 'edo_finance_index' %}"><i class="fa fa-mail-reply-all"></i> Go Back</a> </span>
+              </h4>
+              <hr/>
+                <div class="row flex-grow">
+                  <div class="col-12 grid-margin stretch-card">
+                    <div class="card card-rounded">
+                      <div class="card-body">                       
+                        <div class="table-responsive  mt-1">
+                          <h5 class="text-primary">Cash Assigned Details</h5><hr/>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Amount</th>
+                                        <th>Repayment Period From</th>
+                                        <th>Repayment Period To</th>
+                                        <th>Created By</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{ cash_assigned.amount }}</td>
+                                        <td>{{ cash_assigned.repayment_period_from }}</td>
+                                        <td>{{ cash_assigned.repayment_period_to }}</td>
+                                        <td>{{ cash_assigned.created_by }}</td>
+                                        <td>{{ cash_assigned.status }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <br/>
+                            <hr/>
+                            <h5 class="text-primary">Repayment History</h5><hr/>
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date Paid</th>
+                                        <th>Amount Paid</th>
+                                        <th>Balance</th>
+                                        <th>Notes</th>
+                                        <th>Evidence</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if repayment_history %}
+                                        {% for repayment in repayment_history %}
+                                        <tr>
+                                            <td>{{ repayment.date_paid }}</td>
+                                            <td>{{ repayment.amount_paid }}</td>
+                                            <td>{{ repayment.bal_amount }}</td>
+                                            <td>{{ repayment.notes }}</td>
+                                            <td>
+                                              {% if repayment.photo %}
+                                              <!-- Trigger the Modal -->
+                                              <a href="#" data-bs-toggle="modal" data-bs-target="#evidenceModal{{ repayment.id }}">View Evidence</a>                      
+                                              <!-- The Modal -->
+                                              <div class="modal fade" id="evidenceModal{{ repayment.id }}" tabindex="-1" aria-labelledby="evidenceModalLabel{{ repayment.id }}" aria-hidden="true">
+                                                  <div class="modal-dialog">
+                                                      <div class="modal-content">
+                                                          <div class="modal-header">
+                                                              <h5 class="modal-title" id="evidenceModalLabel{{ repayment.id }}">Evidence for Repayment on {{ repayment.date_paid }}</h5>
+                                                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                          </div>
+                                                          <div class="modal-body">
+                                                              <img src="{{ repayment.photo.url }}" class="img-thumbnail img-responsive" alt="Repayment Evidence" style="width:300px; height:300px; align:center" />
+                                                          </div>
+                                                          <div class="modal-footer">
+                                                              <button type="button" class="btn btn-primary text-white" data-bs-dismiss="modal">Close</button>
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          {% else %}
+                                              No Evidence
+                                          {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="5">No repayments made yet.</td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+            </div>
+          </div>
+        </div>
+   
+     
+
+{% endblock %}

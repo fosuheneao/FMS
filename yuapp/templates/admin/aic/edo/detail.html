@@ -1,0 +1,86 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+<div class="container-fluid py-4">
+  <div class="row">
+    <!-- Left Section -->
+    <div class="col-lg-8 d-flex flex-column">
+      <div class="card shadow-sm border-0 rounded-lg p-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <a href="{% url 'aic_edo_index' %}" class="text-primary" style="font-size: 0.9em;">
+            <i class="fa fa-arrow-left"></i> Back to Orders
+          </a>
+        </div>
+        <h3 class="fw-bold text-primary mt-3">{{ edo.fullname }}</h3>
+        <h5 class="text-muted">{{ edo.email }}</h5>
+        <p class="badge bg-light text-dark p-2">{{ edo.gender }}</p>
+        <hr />
+        <p class="text-muted">{{ edo.description }}</p>
+
+        <!-- Assigned Cities -->
+        <h4 class="mt-4 text-primary">Assigned Cities</h4>
+        <ul class="list-group list-group-flush">
+          {% for city in supervisor_cities %}
+          <li class="list-group-item">{{ city.name }}</li>
+          {% empty %}
+          <li class="list-group-item text-muted">No cities assigned.</li>
+          {% endfor %}
+        </ul>
+
+        <!-- Assigned Greenhouses -->
+        <h4 class="mt-4 text-primary">Assigned Greenhouses</h4>
+        <ul class="list-group list-group-flush">
+          {% for greenhouse in supervisor_greenhouses %}
+          <li class="list-group-item">{{ greenhouse.name }}</li>
+          {% empty %}
+          <li class="list-group-item text-muted">No greenhouses assigned.</li>
+          {% endfor %}
+        </ul>
+
+        <!-- Shared Greenhouses with Beneficiary -->
+        {% if beneficiary_greenhouses %}
+        <h4 class="mt-4 text-primary">Greenhouses also assigned to {{ beneficiary.full_name }}</h4>
+        <ul class="list-group list-group-flush">
+          {% for greenhouse in beneficiary_greenhouses %}
+          {% if greenhouse in supervisor_greenhouses %}
+          <li class="list-group-item">{{ greenhouse.name }}</li>
+          {% endif %}
+          {% empty %}
+          <li class="list-group-item text-muted">No shared greenhouses.</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Right Section -->
+    <div class="col-lg-4">
+      <div class="card bg-primary text-white text-center rounded-lg p-4">
+        <h4 class="fw-bold">Photograph</h4>
+        {% if edo.photo.url %}
+        <img class="img-fluid rounded-circle mt-3 border border-light" src="{{ edo.photo.url }}" alt="{{ edo.fullname }}" style="width: 150px; height: 150px;">
+        {% else %}
+        <img class="img-fluid rounded-circle mt-3 border border-light" src="{% static 'admin/assets/images/faces/user-no-image.png' %}" alt="No Image" style="width: 100px; height: 100px;">
+        {% endif %}
+      </div>
+
+      <div class="card shadow-sm border-0 rounded-lg p-4 mt-4">
+        <h5 class="fw-bold text-primary">{{ edo.fullname }} - {{ edo.nationalId }}</h5>
+        <hr />
+        <div class="row text-center">
+          <div class="col-6">
+            <h6 class="text-muted">Male(s) Engaged</h6>
+            <h4 class="fw-bold text-primary">{{ edo.gender }}</h4>
+          </div>
+          <div class="col-6">
+            <h6 class="text-muted">Female(s) Engaged</h6>
+            <h4 class="fw-bold text-primary">{{ edo.gre }}</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

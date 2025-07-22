@@ -1,0 +1,229 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+{% block content %}
+<div class="col-lg-12">
+<style>
+  .backIcon:hover{
+      color:white!important;
+  }
+</style>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">
+          {% if form.instance.pk %} Edit {% else %} Create {% endif %} Farm Input Distribution  
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <span class="btn btn-outline-primary">
+                 <a href="{% url 'edo_distribution_list' %}" class="backIcon"><i class="fa fa-mail-reply-all"></i> Go Back</a> 
+          </span>
+        </h5>
+
+    {% if form.errors %}
+    <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <strong>Errors:</strong>
+        <ul>
+            {% for field in form %}
+                {% if field.errors %}
+                    <li><strong>{{ field.label }}:</strong>
+                        <ul>
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-6">
+            {{ form.as_p }}
+        </div>
+        <div class="col-md-6">
+            <div class="card card-primary">
+                <label><strong class="text-primary">Available Quantity:</strong> <span id="farm-input-quantity"></span></label>
+                <label><strong class="text-primary">Unit Price:</strong> <span id="farm-input-price"></span></label>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <button type="submit" class="btn btn-primary text-white">
+        <i class="fa fa-check-square-o"></i> Confirm
+    </button>
+</form>
+
+    {% comment %} <form method="post" action="{% if form.instance.pk %}{% url 'aic_update_beneficiary' beneficiary_id=form.instance.pk %}{% else %}{% url 'aic_create_beneficiary' %}{% endif %}" enctype="multipart/form-data">
+       
+    {% csrf_token %}
+        
+        <div class="mb-3">
+            {{ form.full_name.label_tag }}
+            {{ form.full_name }}
+        </div>
+        <div class="row">
+        <div class="col-md-6 mb-3">
+            {{ form.enterprise_name.label_tag }}
+            {{ form.enterprise_name }}
+        </div>
+        <div class="col-md-6 mb-3">
+            {{ form.email.label_tag }}
+            {{ form.email }}
+        </div>
+    </div>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label>Gender</label><br>
+                {% for radio in form.gender %}
+                    <div class="form-check form-check-inline">
+                        {{ radio.tag }} {{ radio.choice_label }}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="col-md-4 mb-3">
+                {{ form.age.label_tag }}
+                {{ form.age }}
+            </div>
+            <div class="col-md-4 mb-3">
+                {{ form.phone_number.label_tag }}
+                {{ form.phone_number }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                {{ form.assigned_edo.label_tag }}
+                {{ form.assigned_edo }}
+            </div>
+            <div class="col-md-4 mb-3">
+                {{ form.assigned_tunnel.label_tag }}
+                {{ form.assigned_tunnel }}
+            </div>
+            <div class="col-md-4 mb-3">
+                {{ form.crops.label_tag }}
+                {{ form.crops }}
+            </div>            
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                {% if beneficiary.photo %}
+                <img src="{{ beneficiary.photo.url }}" alt="Photo Preview" style="max-width: 150px; max-height: 150px; margin-top: 10px;">
+                {% endif %}
+                {{ form.photo.label_tag }}
+                {{ form.photo }}
+
+            </div>
+        
+            <div class="col-md-4 mb-3">
+                {{ form.cardphoto.label_tag }}
+                {{ form.cardphoto }} 
+                {% if beneficiary.cardphoto %}
+                     <img src="{{ beneficiary.cardphoto.url }}" alt="Card Photo Preview" style="max-width: 150px; max-height: 150px; margin-top: 10px;">
+                {% endif %}
+            </div>
+            <div class="col-md-4 mb-3">
+                {{ form.nationalId.label_tag }}
+                {{ form.nationalId }}
+            </div>
+         </div>    
+        <div class="mb-3">
+            {{ form.description.label_tag }}
+            {{ form.description }}
+        </div>
+    
+        <button type="submit" class="btn btn-warning"> <i class="fa fa-check-square-o"></i> Create</button>
+    </form>  {% endcomment %}
+
+    
+</div>
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+    $(document).on('change', '#id_farm_input', function () {
+        let farmInputId = $(this).val();
+        if (farmInputId) {
+            $.ajax({
+                url: '/edo_get_farm_input_details/',
+                data: { 'farm_input_id': farmInputId },
+                success: function (data) {
+                    $('#farm-input-price').text(data.unit_cost);
+                    $('#farm-input-quantity').text(data.quantity);
+                },
+                error: function () {
+                    alert('Failed to fetch farm input details.');
+                }
+            });
+        }
+    });
+
+    {% comment %} $(document).on('change', '#id_farm_input', function () {
+        let farmInputId = $(this).val();
+        if (farmInputId) {
+            $.ajax({
+                url: '/edo_get_farm_input_details/',
+                data: { 'farm_input_id': farmInputId },
+                success: function (data) {
+                    $('#farm-input-price').text(data.unit_cost);
+                    $('#farm-input-quantity').text(data.quantity);
+                },
+                error: function () {
+                    alert('Failed to fetch farm input details.');
+                }
+            });
+        }
+    }); {% endcomment %}
+
+    {% comment %} $(document).on('change', '#id_farm_input', function () {
+        let farmInputId = $(this).val();
+        if (farmInputId) {
+            $.ajax({
+                url: '/edo_get_farm_input_details/',
+                data: {
+                    'farm_input_id': farmInputId
+                },
+                success: function (data) {
+                    $('#farm-input-price').text(data.unit_cost);
+                    $('#farm-input-quantity').text(data.quantity);
+                }
+            });
+        }
+    }); {% endcomment %}
+
+    /*
+    document.getElementById('id_farm_input').addEventListener('change', function () {
+        const farmInputId = this.value;
+
+        // Fetch the data (replace with your actual API endpoint)
+        fetch(`/api/get_farm_input_details/${farmInputId}/`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('farm-input-quantity').textContent = data.available_quantity || 'N/A';
+                document.getElementById('farm-input-price').textContent = data.unit_price || 'N/A';
+            });
+    });
+    */
+
+
+    {% comment %} $(document).on('change', '#id_farm_input', function () {
+        let farmInputId = $(this).val();
+        $.getJSON("{% url 'edo_get_farm_input_details' %}", { farm_input_id: farmInputId }, function (data) {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                $('#farm-input-price').text(data.price);
+                $('#farm-input-quantity').text(data.available_quantity);
+            }
+        });
+    }); {% endcomment %}
+</script>        
+
+{% endblock content  %}

@@ -1,0 +1,85 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+{% block content %}
+<div class="col-lg-12">
+    <style>
+        .backIcon:hover {
+            color: white !important;
+        }
+    </style>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">
+                {% if form.instance.pk %}
+                    Edit Contract for:
+                    <span class="badge bg-primary">
+                        {{ contract.worker.full_name }}
+                    </span>
+                {% else %}
+                    Create Contract for:
+                    <span class="badge bg-primary">
+                        {{ worker.full_name }}
+                    </span>
+                {% endif %}
+                <span class="float-end">
+                    <a href="{% url 'contracts' %}" class="btn btn-outline-primary backIcon">
+                        <i class="fa fa-mail-reply-all"></i> Go Back
+                    </a>
+                </span>
+            </h5>
+
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Hidden Fields -->
+                <input type="hidden" name="worker" value="{{ form.worker.value }}">
+                <input type="hidden" name="beneficiary" value="{{ form.beneficiary.value }}">
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        {{ form.contract_type.label_tag }}
+                        {{ form.contract_type }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        {{ form.payment_mode_type.label_tag }}
+                        {{ form.payment_mode_type }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        {{ form.charge_per_day.label_tag }}
+                        {{ form.charge_per_day }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        {{ form.from_date.label_tag }}
+                        {{ form.from_date }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        {{ form.to_date.label_tag }}
+                        {{ form.to_date }}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    {{ form.description.label_tag }}
+                    {{ form.description }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.status.label_tag }}
+                    {{ form.status }}
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa fa-check-square-o"></i> 
+                    {% if form.instance.pk %} Update Contract {% else %} Create Contract {% endif %}
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content  %}

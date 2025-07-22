@@ -1,0 +1,19 @@
+{% extends "base_auth.html" %}
+{% load static %}
+
+{% block content %}
+
+<h4>Welcome Beneficiary</h4>
+<h6 class="fw-light">Login</h6>
+
+
+<form class="pt-3" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-outline-primary btn-sm"> Login</button>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="{% url 'edo_login' %}"> Login as Supervisor</a>
+  
+</form>
+
+{% endblock %}

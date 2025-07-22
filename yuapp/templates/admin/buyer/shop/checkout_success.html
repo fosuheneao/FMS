@@ -1,0 +1,21 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load currency_filters %}
+{% block content %}
+
+<h2>Order Placed Successfully!</h2>
+<p>Thank you for your order. Expect your product delivery in the next 24 hrs. 
+    Do not hestitate to reach out to us should you experience further delays than expected.:</p>
+<h3>Order Items:</h3>
+<p>Order ID: {{ order.id }}</p>
+<p>Total Amount: GHS {{ order.total_amount|currency }}</p>
+<p>Total Items: {{ order.total_items }}</p>
+<h3>Order Details</h3>
+<ul>
+    {% for item in order.orderitem_set.all %}
+        <li>{{ item.harvest.crop.name }} - {{ item.quantity }} units at GHS {{ item.price }} each</li>
+    {% endfor %}
+</ul>
+<a href="{% url 'buyer_shop' %}">Return to Shop</a>
+
+{% endblock content  %}

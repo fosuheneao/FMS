@@ -1,0 +1,46 @@
+{# templates/admin/buyer/order/spoilage_form.html #}
+{% extends "base_auth_dash.html" %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow rounded">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    {% comment %} <i class="fa fa-plus text-white"> {% endcomment %}
+                    {{ instance|yesno:"Edit Spoilage Report,New Spoilage Report" }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_orderitem" class="form-label">Order Item</label>
+                        {{ form.orderitem|add_class:"form-select" }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_quantity_spoiled" class="form-label">Quantity Spoiled</label>
+                        {{ form.quantity_spoiled|add_class:"form-control" }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_photo_evidence" class="form-label">Photo Evidence</label>
+                        {{ form.photo_evidence|add_class:"form-control" }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_notes" class="form-label">Notes</label>
+                        {{ form.notes }}
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'buyer_spoilage' %}" class="btn btn-danger text-white"><i class="fa fa-arrow-left me-1 text-white"></i>  Back</a>
+                        <button type="submit" class="btn btn-primary text-white"><i class="fa fa-plus-circle me-1 text-white"></i> 
+                            {% if instance %}Update{% else %}Submit{% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

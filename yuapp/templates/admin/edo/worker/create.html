@@ -1,0 +1,84 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+{% block content %}
+<div class="col-lg-12">
+<style>
+  .backIcon:hover{
+      color:white!important;
+  }
+</style>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">
+          {% if form.instance.pk %} Edit Contract for:
+             <span style="background:#0F6CBD;padding:0.2%; color:#fff"> 
+                {{ contract.worker.full_name }}
+            </span>
+          {% else %} Create Contract for: 
+            <span style="background:#0F6CBD;padding:0.2%; color:#fff">
+                {{ worker.full_name }}
+            </span>
+        {% endif %} 
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <span class="btn btn-outline-primary">
+            <a href="{% url 'edo_contracts' %}" class="backIcon"><i class="fa fa-mail-reply-all"></i> Go Back</a> 
+        </span>
+        </h5>
+        <form method="post" action="">
+             
+            {% csrf_token %}
+            
+            {{ form.worker }}  <!-- This should be hidden -->
+            {{ form.beneficiary.full_name }}  <!-- This should also be hidden -->
+
+            <div class="mb-3">
+                {{ form.worker.label_tag }}
+                {{ form.worker.full_name }}
+            </div>
+        
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    {{ form.contract_type.label_tag }}
+                    {{ form.contract_type }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {{ form.payment_mode_type.label_tag }}
+                    {{ form.payment_mode_type }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {{ form.charge_per_day.label_tag }}
+                    {{ form.charge_per_day }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    {{ form.from_date.label_tag }}
+                    {{ form.from_date }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {{ form.to_date.label_tag }}
+                    {{ form.to_date }}
+                </div>
+                <div class="col-md-4 mb-3"></div>
+            </div>
+        
+            <div class="mb-3">
+                {{ form.description.label_tag }}
+                {{ form.description }}
+            </div>
+            <div class="mb-3">
+                {{ form.status.label_tag }}
+                {{ form.status }}
+            </div>
+            <button type="submit" class="btn btn-primary text-white">
+                <i class="fa fa-check-square-o"></i>
+                    Create Contract
+            </button>
+        </form>
+        
+    
+</div>
+</div>
+</div>
+{% endblock content  %}

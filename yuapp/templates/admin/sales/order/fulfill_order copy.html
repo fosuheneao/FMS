@@ -1,0 +1,31 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% comment %} {% load currency_filters %} {% endcomment %}
+
+{% block content %}
+<div class="col-lg-6">
+  <div class="card shadow-lg border-0">
+      <div class="card-body">
+          <h4 class="card-title d-flex align-items-center">
+              <i class="fa fa-truck me-2 text-primary"></i> Order Fulfillment
+              <a href="{% url 'aic_all_orders' %}" class="btn btn-outline-secondary btn-sm ms-auto">
+                  <i class="fa fa-mail-reply-all"></i> Back to Orders
+              </a>
+          </h4>
+          <hr/>
+          <!-- fulfill_order.html -->
+          <form method="post" class="mt-3">
+              {% csrf_token %}
+              <div class="mb-3">
+                  <label for="delivery_date" class="form-label">Delivery Date:</label>
+                  <input type="date" id="delivery_date" name="delivery_date" class="form-control" required value="{{ now|date:'Y-m-d' }}">
+              </div>
+              <button type="submit" class="btn btn-primary">
+                  <i class="fa fa-check-circle"></i> Fulfill Order
+              </button>
+          </form>
+      </div>
+  </div>
+</div>
+{% endblock %}

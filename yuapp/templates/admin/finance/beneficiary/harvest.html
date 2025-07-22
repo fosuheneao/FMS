@@ -1,0 +1,99 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title" style="font-size:0.90em!important"><i class="fa fa-address-card"></i> Harvest Record For: <span class="text-danger"></span>
+              
+                <span class="text-danger">{{ beneficiary.full_name }}</span>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <span class="btn btn-outline-primary" style="font-size:0.90em!important">
+                       <a href="{% url 'aic_beneficiary_index' %}" class="backIcon"><i class="fa fa-mail-reply-all"></i> Go Back</a> 
+                </span>
+              </h4>
+              <hr/>
+                <div class="row flex-grow">
+                  <div class="col-12 grid-margin stretch-card">
+                    <div class="card card-rounded">
+                      <div class="card-body">
+                        <div class="d-sm-flex justify-content-between align-items-start">
+                        </div>
+                        <div class="table-responsive  mt-1">
+                            <table id="myTable" class="table table-hover">
+                                <thead class="table-info">
+                                    <tr>                                        
+                                        <th>Date</th>
+                                        <th>Crop</th>
+                                        <th>Grade</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                        <th>Total</th>
+                                        <th>Unit</th>
+                                        <th>Confirmation</th>
+                                        <th>Cluster</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                  {% if assigned_harvest_records %}
+                                    {% for harvest in assigned_harvest_records %}
+                                    <tr>
+                                        <td>{{ harvest.date|date:"d-m-Y" }}</td>
+                                        <td>{{ harvest.crop.name }}</td>
+                                        <td>{{ harvest.grade.name }}</td>
+                                        <td>{{ harvest.quantity|floatformat:0  }}</td>
+                                        <td>{{ harvest.price_record.price }}</td>
+                                        <td>{{ harvest.total_price }}</td>
+                                        <td>{{ harvest.unit.expression }}</td>                                         
+                                        <td>{{ harvest.confirmation }}</td>
+                                        <td>
+                                          {{ harvest.beneficiary.assigned_tunnel.room_name }} &nbsp;
+                                          <i class="fa fa-info-circle text-primary fa-lg" 
+                                            data-toggle="tooltip"                                             
+                                            data-placement="top" 
+                                            title="{{ harvest.beneficiary.assigned_tunnel.greenhouse.name }}">
+                                          </i>
+                                      </td>
+                                        <td>
+                                          {% comment %} <a href="{% url 'update_harvest' harvest.id %}" data-toggle="tooltip" data-placement="top" title="Update Harvest Record">
+                                            <i class="fa  fa-pencil-square-o text-danger fa-lg"></i>
+                                        </a> {% endcomment %}
+                                        <a href="{% url 'aic_view_harvest' harvest.id %}" data-toggle="tooltip" data-placement="top" title="View Harvest Record">
+                                          <i class="fa  fa-binoculars text-primary fa-lg"></i>
+                                       </a>
+                                        
+                                       </td>
+                                    </tr>
+                                    {% endfor %}            
+                                    {% else %}
+                                      No record Found
+                                    {% endif %}
+                                </tbody>
+                                <tfoot>
+                                  <tr>
+                                      <td colspan="3"><strong>Total</strong></td>
+                                      <td class="text-danger">{{ total_quantity|floatformat:0 }}</td>
+                                      <td></td>
+                                      <td class="text-danger">GHS {{ total_price }}</td>
+                                      <td colspan="4"></td>
+                                  </tr>
+                              </tfoot>
+                            </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>                
+            </div>
+          </div>
+        </div>
+   
+     
+
+{% endblock %}

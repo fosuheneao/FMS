@@ -1,0 +1,85 @@
+{% extends "base_auth_dash.html" %}
+{% load math_extras %}
+{% block content %}
+<div class="col-lg-8">
+
+    <div class="card">
+      <div class="card-body">
+                
+        <h1 style="font-size:1.2em!important; font-weight:600">Create Order for {{ buyer.client_name }}
+          <a href="{% url 'aic_beneficiary_index' %}" class="backIcon" style="font-size:0.85em!important"><i class="fa fa-mail-reply-all"></i> Back to Orders</a>
+        </h1>
+     
+        <h2>Create Order for {{ buyer.client_name }}</h2>
+  
+        <form method="post">
+          {% csrf_token %}
+          {{ form.notes.label_tag }}<br>
+          {{ form.notes }}<br><br>
+          
+          <h3>Order Items</h3>
+          {% for item_form in form.order_items %}
+            <div class="order-item">
+              <h4>Item {{ forloop.counter }}</h4>
+              {{ item_form.harvest.label_tag }}<br>
+              {{ item_form.harvest }}<br>
+              {{ item_form.quantity.label_tag }}<br>
+              {{ item_form.quantity }}<br>
+              {{ item_form.price.label_tag }}<br>
+              {{ item_form.price }}<br><br>
+            </div>
+          {% endfor %}
+          
+          <button type="submit" class="btn btn-primary">Create Order</button>
+        </form>
+
+
+
+
+        <div class="container bootstrap snippets bootdey">
+                            <div class="row">
+                                {% if form.order_items %}
+                                {% for item_form in form.order_items %}
+                                        <div class="col-sm-4">
+                                            <div class="widget single-news">
+                                                <div class="image">
+                                                    <img src="{{ item_form.crop.photo.url }}" alt="{{ item_form.crop.name }}" class="img-responsive img-thumbnail" style="width:300px;height:250px;">
+                                                    <span class="gradient"></span>
+                                                </div><hr/>
+                                                <div class="details">
+                                                    <span style="font-size:1.2em">
+                                                        <strong class="text-success">{{ item_form.crop.name }}</strong>:  
+                                                        <span class="text-primary">{{ item_form.grade.name }}</span> 
+                                                    </span><hr/>
+                                                    <span><strong class="text-primary">Price:</strong> {{ item_form.price_record.selling_price }} per kilogram</span><br/>
+                                                    <span><strong class="text-primary">Harvested on:</strong> {{ item_form.date|date:"D, M j, Y" }}</span><br/>
+                                                    <span><strong class="text-primary">Available stock:</strong> {{ item_form.quantity|floatformat:0 }}</span><br/>
+                                                    <span><strong class="text-primary">Location:</strong> {{ item_form.greenhouse.city.name }}</span>
+                                                    <hr/>
+                                                    
+                                                    <!-- Add to Cart Form -->
+                                                    <form action="{% url 'aic_buyer_shop' %}" method="post">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="harvest_id" value="{{ harvest.id }}">
+                                                        <label for="quantity_{{ harvest.id }}">Quantity:</label>
+                                                        <input type="number" name="quantity" id="quantity_{{ harvest.id }}" min="1" max="{{ harvest.quantity|floatformat:0 }}" value="1">
+                                                        <button type="submit" class="btn btn-danger btn-sm text-white">
+                                                           <i class="fa fa-cart-plus text-white"></i> Add to Cart
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <p>No production for today, please check later.</p>
+                                {% endif %}
+
+                        </div>
+    </div>
+    </div>
+</div>
+{% endblock content  %}
+
+
+

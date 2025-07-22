@@ -1,0 +1,87 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% block content %}
+<div class="row">
+  <div class="col-lg-12">
+    <div class="card shadow-sm border-0">
+      
+      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h4 class="mb-0">
+              <i class="fa fa-address-card"></i> Coworkers List
+        </h4>
+        <a href="{% url 'coworker_create' %}" class="btn btn-light btn-sm shadow-sm">
+            <i class="fa fa-plus-circle"></i>  Add Coworker
+        </a>
+        </div>
+
+        <div class="card-body">
+          {% if messages %}
+              {% for message in messages %}
+                  <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                      <strong>{{ message }}</strong>
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+              {% endfor %}
+          {% endif %}
+
+        <div class="table-responsive mt-3">
+          <table id="myTable" class="table table-hover table-bordered align-middle">
+            <thead class="table-primary text-dark fw-bold">
+              <tr>
+                <th>Coworker</th>
+                <th>Gender</th>
+                <th>Ghana Card</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Age</th>
+                <th>Role</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if coworkers %}
+                {% for act in coworkers %}
+                <tr>
+                  <td>{{ act.full_name }}</td>
+                  <td>{{ act.gender }}</td>
+                  <td>{{ act.nationalId }}</td>
+                  <td>{{ act.from_date |date:"d-m-Y" }}</td>
+                  <td>{{ act.to_date |date:"d-m-Y" }}</td>
+                  <td class="text-danger fw-semibold"> {{ act.age }} <i class="ti-arrow-down"></i></td>
+                  <td>
+                    <span class="badge {% if act.role.name == 'Manager' %} bg-success {% else %} bg-danger {% endif %}">
+                      {{ act.role.name }}
+                    </span>
+                  </td>
+                  <td>
+                    <a href="{% url 'coworker_detail' pk=act.pk %}" class="text-success" data-bs-toggle="tooltip" title="View Record">
+                      <i class="fa fa-wpexplorer fa-lg"></i>
+                    </a> &nbsp;&nbsp;
+                    <a href="{% url 'coworker_update' pk=act.pk %}" class="text-primary" data-bs-toggle="tooltip" title="Update Co-Worker Record">
+                      <i class="fa fa-cubes fa-lg"></i>
+                    </a> &nbsp;&nbsp;
+                    <a href="{% url 'create_contract' act.id %}" class="text-danger" data-bs-toggle="tooltip" title="Create Contract">
+                      <i class="fa fa-plus-square fa-lg"></i>
+                    </a> &nbsp;&nbsp;
+                  </td>
+                </tr>
+                {% endfor %}
+              {% else %}
+                <tr>
+                  <td colspan="8" class="text-center text-muted py-3">
+                    <i class="fa fa-exclamation-circle"></i> No coworker records found.
+                  </td>
+                </tr>
+              {% endif %}
+            </tbody>
+          </table>
+      </div>
+  </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+{% endblock %}

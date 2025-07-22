@@ -1,0 +1,82 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card shadow-sm rounded-4 border-0">
+        <div class="card-body">
+            <h4 class="card-title d-flex align-items-center">
+                <i class="fa fa-address-card text-primary me-2"></i>
+                <span class="text-danger fw-bold">{{ title }} Details</span>
+                <a href="{% url 'aic_accounting_summary' %}" class="ms-auto btn btn-light border rounded-pill px-3">
+                    <i class="fa fa-arrow-left me-1"></i> Go Back
+                </a>
+            </h4>
+            <hr />
+
+            <div class="table-responsive mt-3">
+                <table class="table table-hover table-striped align-middle">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>ID</th>
+                            <th>Description</th>
+                            <th class="text-end">Amount</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in queryset %}
+                        <tr>
+                            <td><strong>#{{ item.id }}</strong></td>
+                            <td>
+                                {% if item.description %}
+                                    {{ item.description }} , {{ item.beneficiary.full_name }}
+                                {% elif item.notes %}
+                                    {{ item.notes }}
+                                {% elif item.crop %}
+                                    {{ item.crop.name }} Harvest
+                                {% else %}
+                                    <span class="text-muted">No description</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end text-primary fw-bold">
+                                {% if item.total_cost %}
+                                    {{ item.total_cost|currency }}
+                                {% elif item.total_amount %}
+                                    {{ item.total_amount|currency }}
+                                {% elif item.amount %}
+                                    {{ item.amount|currency }}
+                                {% elif item.amount_paid %}
+                                    {{ item.amount_paid|currency }}
+                                {% elif item.total_price %}
+                                    {{ item.total_price|currency }}
+                                {% else %}
+                                    <span class="text-muted">Not available</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ item.created_at | date:"d-m-Y" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">
+                                <i class="fa fa-info-circle"></i> No records found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr class="fw-bold bg-light">
+                            <td colspan="2" class="text-end">Total Amount:</td>
+                            <td class="text-end text-success">{{ total_amount|currency }}</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

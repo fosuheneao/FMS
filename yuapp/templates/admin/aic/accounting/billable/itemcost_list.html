@@ -1,0 +1,68 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+      <div class="col-lg-12">
+          <div class="card shadow-sm border-0 rounded-4">
+              <div class="card-body">
+                  <h4 class="card-title d-flex align-items-center">
+                      <i class="fa fa-address-card text-primary me-2"></i>
+                      <span class="text-primary fw-bold">Billable Item Costing</span>
+                  </h4>
+                  <hr class="border-primary"/>
+                  <div class="table-responsive mt-3">
+                      <table id="myTable" class="table table-striped table-hover align-middle">
+                          <thead class="table-primary">
+                              <tr>
+                                  <th>Bill Item</th>
+                                  <th>Greenhouse</th>
+                                  <th>Item Cost</th>
+                                  <th>Note</th>
+                                  <th>Actions</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              {% if itemcosts %}
+                                  {% for item in itemcosts %}
+                                  <tr>
+                                      <td>{{ item.billable_item.name }}</td>
+                                      <td>{{ item.greenhouse.name }}</td>
+                                      <td class="fw-bold text-success">${{ item.cost }}</td>
+                                      <td>
+                                          <i class="fa fa-info-circle text-info" data-bs-toggle="tooltip" title="{{ item.description }}"></i>
+                                      </td>
+                                      <td>
+                                          <a href="{% url 'aic_update_item_cost' item.id %}" class="btn btn-primary border btn-sm">
+                                              <i class="fa fa-pencil text-white"></i> Edit
+                                          </a>
+                                      </td>
+                                  </tr>
+                                  {% endfor %}            
+                              {% else %}
+                                  <tr>
+                                      <td colspan="5" class="text-muted">No bill item found.</td>
+                                  </tr>
+                              {% endif %}
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+{% comment %} <script>
+  document.addEventListener("DOMContentLoaded", function() {
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl)
+      })
+  });
+</script> {% endcomment %}
+
+{% endblock %}

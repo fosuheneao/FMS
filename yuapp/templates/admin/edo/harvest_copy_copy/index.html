@@ -1,0 +1,95 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Harvest Records <span class="text-danger"></span>
+                {% comment %} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'request_cash' %}" class="pull-right btn btn-primary btn-lg text-white mb-0 me-0">
+                  <i class="fa fa-money"></i> Cash Request
+              </a>  {% endcomment %}
+              </h4>
+              <hr/>
+                <div class="row flex-grow">
+                  <div class="col-12 grid-margin stretch-card">
+                    <div class="card card-rounded">
+                      <div class="card-body">
+                        <div class="d-sm-flex justify-content-between align-items-start">
+                        </div>
+                        <div class="table-responsive  mt-1">
+                          <table class="table table-hover table-striped">
+                            <thead class="thead-dark">
+                              <tr>
+                                <th>Crop</th>
+                                <th>Grade</th>
+                                <th>Quantity</th>                                
+                                <th>Unit</th>
+                                <th>Date</th>
+                                <th>Beneficiary</th>
+                                <th>Confirmation</th>
+                                <th>Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+
+                             {% for harvest in harvests %}
+                              <tr>                                
+                                <td>{{ harvest.crop.name }}</td>
+                                <td>{{ harvest.grade.name }}</td>
+                                <td>{{ harvest.quantity|floatformat:0 }}</td>
+                                <td>{{ harvest.unit.expression }}</td>                                
+                                <td>{{ harvest.date| date:"l, d, F, Y" }}</td>
+                                <td>{{ harvest.beneficiary.full_name }}</td>
+                                <td>
+                                  <div class="badge badge-opacity-warning">{{ harvest.confirmation }}</div>
+                                </td>
+                                <td>
+                                  <a href="{% url 'beneficiary_harvest' harvest.beneficiary_id %}" class="badge badge-outline-primary" data-toggle="tooltip" data-placement="top" title="View Record Record">
+                                    <i class="fa  fa-eye text-primary fa-lg"></i> View Record
+                                </a> 
+                               </td>
+                              </tr>
+                              {% empty %}
+                               <tr><td>No assigned harvest records found.</td></tr>
+                              {% endfor %}
+                            </tbody>
+
+                          </table>
+
+
+
+                          {% comment %} <h2>All Harvest Records</h2>
+                            <ul>
+                                {% for record in all_harvest_records %}
+                                    <li>{{ record.crop.name }} - {{ record.harvest_date }} - {{ record.quantity }}</li>
+                                {% empty %}
+                                    <li>No harvest records found.</li>
+                                {% endfor %}
+                            </ul> {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </div>
+        </div>
+   
+     
+
+{% endblock %}

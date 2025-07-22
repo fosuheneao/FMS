@@ -1,0 +1,118 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+<div class="row">
+ <div class="row">
+    <div class="col-lg-8 d-flex flex-column">
+      <div class="row flex-grow">
+        <div class="col-12 col-lg-4 col-lg-12 grid-margin stretch-card">
+          <div class="card card-rounded">
+            <div class="card-body">
+              <div class="d-sm-flex justify-content-between align-items-start">
+                <div>
+                  <h4 class="card-title card-title-dash">{{ edo.fullname }}</h4>
+                  <h5 class="card-subtitle card-subtitle-dash"><p>{{ edo.email }}</p></h5>
+                </div>
+                <p>{{ edo.gender }}</p>
+              </div>
+              <div class="chartjs-wrapper mt-4">
+                <p>{{ edo.description }}</p><hr/>
+                <!-- Display Supervisor's Cities -->
+                  <h3 style="font-size:0.95em!important">Assigned Cities</h3>
+                  <ul>
+                      {% for city in supervisor_cities %}
+                      <li>{{ city.name }}</li>
+                      {% empty %}
+                      <li>No cities assigned.</li>
+                      {% endfor %}
+                  </ul>
+                  <hr/>
+                  <!-- Display Supervisor's Greenhouses -->
+                  <h3 style="font-size:0.95em!important">Assigned Greenhouses</h3>
+                  <ul>
+                      {% for greenhouse in supervisor_greenhouses %}
+                      <li>{{ greenhouse.name }}</li>
+                      {% empty %}
+                      <li>No greenhouses assigned.</li>
+                      {% endfor %}
+                  </ul>
+
+                  <hr/>
+                  <!-- Display Greenhouses Also Assigned to the Beneficiary -->
+                  {% if beneficiary_greenhouses %}
+                    <h3 style="font-size:0.95em!important">Greenhouse also assigned to you 
+                      (<span style="font-weight:300; color:#0F6CBD;">
+                      {{beneficiary.full_name}} 
+                      </span>)
+                    </h3>
+                  <ul>
+                      {% for greenhouse in beneficiary_greenhouses %}
+                          {% if greenhouse in supervisor_greenhouses %}
+                          <li>{{ greenhouse.name }}</li>
+                          {% endif %}
+                      {% empty %}
+                      <li>No greenhouses assigned to both you and the supervisor.</li>
+                      {% endfor %}
+                  </ul>
+                  {% else %}
+                  <p>No greenhouses are assigned to the beneficiary.</p>
+                  {% endif %}
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 d-flex flex-column">
+      <div class="row flex-grow">
+        <div class="col-md-6 col-lg-12 grid-margin stretch-card">
+          <div class="card bg-primary card-rounded">
+            <div class="card-body pb-0 text-center"> <!-- Added 'text-center' class to center the image -->
+              <h4 class="card-title card-title-dash text-white mb-4">Photograph</h4>
+              {% if edo.photo.url %}
+              <img class="img-md rounded-circle" src="{{ edo.photo.url }}" alt="{{ edo.fullname }}" style="width:250px!important; height:250px!important; border:2px solid #fff">
+              {% else %}
+              <img class="img-md rounded-circle" src="{% static 'admin/assets/images/faces/user-no-image.png' %}" alt="{{ edo.fullname }}" style="width:35px!important; height:35px!important; border:2px solid #fff">
+              {% endif %}
+            </div>
+          </div>
+        </div>
+       <div class="col-md-6 col-lg-12 grid-margin stretch-card">
+          <div class="card card-rounded">
+            <div class="card-body">
+              <div class="row"> 
+                <span>  {{ edo.fullname }} : {{ edo.nationalId }}</span><hr/>
+                <div class="col-lg-6">
+                  <div class="d-flex justify-content-between align-items-center mb-2 mb-sm-0">
+                    <div class="circle-progress-width">                    
+                      <div id="totalVisitors" class="progressbar-js-circle pr-2"></div>
+                    </div>
+                    <div>
+                      <p class="text-small mb-2">Male(s) Engaged</p>
+                      <h4 class="mb-0 fw-bold">{{ edo.gender }}</h4>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="circle-progress-width">
+                      <div id="visitperday" class="progressbar-js-circle pr-2"></div>
+                    </div>
+                    <div>
+                      <p class="text-small mb-2">Female(s) Engaged</p>
+                      <h4 class="mb-0 fw-bold">{{ edo.gre }}</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> 
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

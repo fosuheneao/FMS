@@ -1,0 +1,60 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load static humanize currency_filters %}
+
+{% block content %}
+<h2>Order Summary</h2>
+
+<h4>Status</h4>
+<ul>
+    <li>Status: <strong>{{ order.status }}</strong></li>
+    <li>Is Paid: <strong>{{ order.is_paid }}</strong></li>
+    <li>Confirmed By: <strong>{{ order.confirmed_by }}</strong></li>
+</ul>
+
+<h4>Payments</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Amount</th><th>Date</th><th>Method</th><th>Reference</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pay in payments %}
+        <tr>
+            <td>{{ pay.amount }}</td>
+            <td>{{ pay.paid_at }}</td>
+            <td>{{ pay.payment_method }}</td>
+            <td>{{ pay.reference }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<p><strong>Total Paid:</strong> {{ total_paid }}</p>
+
+<h4>Spoilage Reports</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Item</th><th>Qty Spoiled</th><th>Reason</th><th>Photo</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for spoil in spoilages %}
+        <tr>
+            <td>{{ spoil.order_item }}</td>
+            <td>{{ spoil.quantity_spoiled }}</td>
+            <td>{{ spoil.reason }}</td>
+            <td>
+                {% if spoil.photo %}
+                    <img src="{{ spoil.photo.url }}" width="100" />
+                {% else %}
+                    No photo
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<p><strong>Total Spoiled Quantity:</strong> {{ total_spoiled }}</p>
+{% endblock %}

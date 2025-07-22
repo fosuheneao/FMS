@@ -1,0 +1,29 @@
+{% extends "base_auth_dash.html" %}
+{% block content %}
+<div class="col-lg-8">
+
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-8">
+                <h2>{{ buyer.client_name }}</h2>
+                <p>{{ buyer.location }}</p>
+                <p>{{ buyer.contact_person }}</p>
+                <p>{{ buyer.phone }}</p>
+                <p>{{ buyer.email }}</p>
+                <p>{{ buyer.shipping_address }}</p>              
+                <a href="{% url 'aic_buyer_index' %}"><i class="fa  fa-mail-reply-all"></i> Back</a>
+              </div>
+                <div class="col-md-4">
+                      {% if buyer.photo %}
+                        <img src="{{ buyer.photo.url }}" class="img-thumbnail img-responsive" alt="Photo Preview" style="max-width: 150px; max-height: 150px; margin-top: 10px;">
+                    {% endif %}
+                </div>
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock content  %}
+
+
+

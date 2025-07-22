@@ -1,0 +1,123 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="row">
+
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title"><i class="fa fa-address-card"></i> <span class="text-danger">Service Request</span> 
+            <a href="{% url 'edo_create_service_request' %}" class="pull-right btn btn-outline-primary btn-sm">Request a Service</a>
+        </h4>
+        <hr/>
+          <div class="row flex-grow">
+            <div class="col-12 grid-margin stretch-card">
+              <div class="card card-rounded">
+                <div class="card-body">
+                  <div class="d-sm-flex justify-content-between align-items-start">
+                  </div>
+                  <div class="table-responsive  mt-1">
+                    {% if servicerequests %}
+                    <table class="table table-hover">
+                      <thead>
+                          <tr>
+                              <th>Date</th>
+                              <th>Beneficiary</th>
+                              <th>Total Items</th>
+                              <th>Total Amount</th>
+                              <th>Status</th>
+                              <th>Note</th>
+                              <th>Actions</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                        
+                              {% for item in servicerequests %}
+                                  <tr>
+                                      <td>{{ item.request_date|date:"d-m-Y" }}</td>
+                                      <td>{{ item.beneficiary.full_name }}</td>
+                                      <td>{{ item.total_items }}</td>
+                                      <td>{{ item.total_amount|currency }}</td>
+                                      <td>{{ item.status }}</td>
+                                      <td>
+                                          <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="{{ item.description }}"></i>
+                                      </td>
+                                      <td>
+                                          
+                                        {% if item.status == "completed" %}
+                                          <i class="fa fa-check text-primary"></i> Approved
+                                        {% else %}
+                                            <a href="{% url 'edo_update_service_request' item.id %}" class="btn btn-primary text-white btn-sm">
+                                                <i class="fa fa-pencil-square"></i> Update
+                                            </a>
+                                        {% endif %}
+                                          <button class="btn btn-info btn-sm text-white" data-toggle="collapse" data-target="#details{{ item.id }}">
+                                              <i class="fa fa-eye"></i> View Details
+                                          </button>
+                                      </td>
+                                  </tr>
+                                  <tr id="details{{ item.id }}" class="collapse dtr-details">
+                                      <td colspan="7">
+                                          <div class="card" style="background:#F1F3F4">
+                                              <div class="card-header">
+                                                  <h6><strong>Service Request Details</strong></h6>
+                                              </div>
+                                              <div class="card-body">
+                                                  <h6><strong>Beneficiary:</strong> {{ item.beneficiary.full_name }}</h6>
+                                                  <h6><strong>Request Date:</strong> {{ item.request_date|date:"d-m-Y" }}</h6>
+                                                  <h6><strong>Description:</strong> {{ item.description }}</h6>
+                                                  <hr>
+                                                  <h6><strong>Requested Items:</strong></h6>
+                                                  {% if item.servicerequest_items.all %}
+                                                  <table class="table table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Service Item</th>
+                                                            <th>Quantity</th>
+                                                            <th>Unit Cost</th>
+                                                            <th>Total Cost</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>                                              
+                                                       
+                                                        {% for service_item in item.servicerequest_items.all %}
+                                                            <tr>
+                                                                <td>{{ service_item.serviceitem.service_name }} - {{ service_item.serviceitem.farmseason }}</td>
+                                                                <td>{{ service_item.quantity }}</td>
+                                                                <td>{{ service_item.unitcost }}</td>
+                                                                <td>{{ service_item.total_cost }}</td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                  </tbody>
+                                                  <tfoot>
+                                                      <tr>
+                                                          <th colspan="3" class="text-right">Total Amount:</th>
+                                                          <th>{{ item.total_cost_sum|currency }}</th>
+                                                      </tr>
+                                                  </tfoot>
+                                              </table>
+                                              {% else %}
+                                                    <span class="text-muted">No request items found.</span>
+                                                {% endif %}
+                                              </div>
+                                          </div>
+                                      </td>
+                                  </tr>
+                             {% endfor %}  
+                      </tbody>
+                  </table>
+                  {% else %}
+                  No service request found.
+                 {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+      </div>
+    </div>
+</div>
+{% endblock %}

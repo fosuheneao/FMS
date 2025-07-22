@@ -1,0 +1,86 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Enterprise Development Officers 
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'aic_create_edo' %}" class="pull-right btn btn-outline-primary btn-sm">
+                   <i class="fa fa-plus-circle"></i> Create EDO
+                </a>      
+                </h4> 
+              
+              <hr/>
+              <div class="table-responsive">
+
+                <table id="myTable"  class="table table-hover">                  
+                  <thead class="table-info">
+                    <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Phone</th>
+                      <th>Ghana Card</th>
+                      <th>Assigned City</th>
+                      <th>Assigned GH</th>
+                      <th>Notes</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% if edos %}
+                    {% for edo in edos %}
+                     <tr>
+                      <td>{{ edo.fullname }}</td>
+                      <td>{{ edo.email }}</td>
+                      <td>{{ edo.phone_number }}</td>
+                      <td>{{ edo.nationalId }}</td>
+                      <td>
+                        <i class="fa fa-home text-primary fa-lg" 
+                           data-toggle="tooltip" 
+                           data-placement="top" 
+                           title="{% for cit in edo.city.all %}{{ cit.name }}{% if not forloop.last %}, {% endif %}{% endfor %}">
+                        </i>
+                    </td>
+                    <td>
+                      <i class="fa fa-home text-warning fa-lg" 
+                         data-toggle="tooltip" 
+                         data-placement="top" 
+                         title="{% for greenh in edo.greenhouse.all %}{{ greenh.name }}{% if not forloop.last %}, {% endif %}{% endfor %}">
+                      </i>
+                  </td>
+                      <td>
+                        <i class="fa  fa-info-circle text-primary fa-lg" data-toggle="tooltip" data-placement="top" title="{{ edo.description }}"></i>
+                                      
+                      </td>
+                      <td>
+                        <a href="{% url 'aic_edo_detail' edo.id %}" data-toggle="tooltip" data-placement="top" title="View Record">
+                          <i class="fa  fa-wpexplorer text-success fa-lg"></i>
+                        </a> &nbsp;&nbsp;
+                        <a href="{% url 'aic_update_edo' edo.id %}" data-toggle="tooltip" data-placement="top" title="Update Record">
+                          <i class="fa  fa-pencil text-primary fa-lg"></i>
+                        </a> &nbsp;&nbsp;
+                    </td>
+                    </tr>  
+                    {% endfor %}        
+                    {% else %}
+                      No assigned EDO Found
+                    {% endif %}
+                  </tbody>
+                </table>
+
+              </div>
+            </div>
+          </div>
+          
+          {% comment %} <div class="card col-md-3" style="border: 2px solid blue"></div> {% endcomment %}
+
+        </div>
+   
+     
+
+{% endblock %}

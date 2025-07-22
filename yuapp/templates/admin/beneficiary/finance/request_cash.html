@@ -1,0 +1,74 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="col-lg-12">
+  <div class="card shadow-lg border-0 rounded-4">
+      <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+              <h5 class="card-title">
+                  <i class="fa fa-hand-holding-usd text-primary me-2"></i> Finance: 
+                  <span class="text-primary fw-bold">Cash Loan Request</span>
+              </h5>
+              <a href="{% url 'finance_index' %}" class="btn btn-outline-secondary d-flex align-items-center">
+                  <i class="fa fa-arrow-left me-1"></i> Go Back
+              </a>
+          </div>
+          <hr>
+
+          {% if form.errors %}
+          <div class="alert alert-danger alert-dismissible fade show border-left border-danger px-3" role="alert">
+              <strong><i class="fa fa-exclamation-circle"></i> Errors:</strong>
+              <ul class="mb-0">
+                  {% for field in form %}
+                      {% if field.errors %}
+                          <li><strong>{{ field.label }}:</strong>
+                              <ul>
+                                  {% for error in field.errors %}
+                                      <li>{{ error }}</li>
+                                  {% endfor %}
+                              </ul>
+                          </li>
+                      {% endif %}
+                  {% endfor %}
+                  {% for error in form.non_field_errors %}
+                      <li>{{ error }}</li>
+                  {% endfor %}
+              </ul>
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+          {% endif %}
+
+          <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+
+              <div class="mb-3">
+                  {{ form.amount.label_tag }}
+                  {{ form.amount|add_class:"form-control rounded-3" }}
+              </div>
+
+              <div class="row">
+                  <div class="mb-3 col-md-6">
+                      {{ form.repayment_period_from.label_tag }}
+                      {{ form.repayment_period_from|add_class:"form-control rounded-3" }}
+                  </div>
+                  <div class="mb-3 col-md-6">
+                      {{ form.repayment_period_to.label_tag }}
+                      {{ form.repayment_period_to|add_class:"form-control rounded-3" }}
+                  </div>
+              </div>
+
+              <div class="mb-3">
+                  {{ form.notes.label_tag }}
+                  {{ form.notes|add_class:"form-control rounded-3" }}
+              </div>
+
+              <button type="submit" class="btn btn-warning text-white fw-bold rounded-3">
+                  <i class="fa fa-check-circle me-1"></i> Submit
+              </button>
+          </form>
+      </div>
+  </div>
+</div>
+
+{% endblock content  %}

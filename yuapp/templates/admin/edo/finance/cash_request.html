@@ -1,0 +1,73 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Beneficiaries and Cash Requests
+                {% comment %} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'aic_create_pricetable' %}" class="pull-right btn btn-outline-primary btn-sm">
+                 <i class="fa fa-plus-circle"></i> Add Price
+              </a>       {% endcomment %}
+              </h4>
+              <hr/>
+              <div class="table-responsive">
+
+                <table id="myTable" class="table table-hover">
+                  <thead class="table-info">
+                    <tr>
+                        <th>Beneficiary Name</th>
+                        <th>Cash Amount</th>
+                        <th>Repayment Period From</th>
+                        <th>Repayment Period To</th>
+                        <th>Info</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for beneficiary in beneficiaries %}
+                        {% for cash in beneficiary.cashassigned_set.all %}
+                            <tr>
+                                <td>{{ beneficiary.full_name }}</td>
+                                <td>{{ cash.amount }}</td>
+                                <td>{{ cash.repayment_period_from }}</td>
+                                <td>{{ cash.repayment_period_to }}</td>
+                                <td>
+                                  <i class="fa fa-info-circle text-info fa-lg" 
+                                     data-toggle="tooltip" 
+                                     data-placement="top" 
+                                     title="{{ cash.notes }}">
+                                  </i>
+                              </td>
+                                <td>
+                                   {% if cash.status == 'Pending' %}
+                                      <span class="badge text-bg-primary">{{ cash.status }}</span>
+                                   {% elif cash.status == 'Approved' %}
+                                       <span class="badge text-bg-success">{{ cash.status }}</span>
+                                   {% else %}
+                                      <span class="badge text-bg-danger">{{ cash.status }}</span>
+                                   {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'aic_change_cash_status' cash.id 'Approved' %}" class="text-primary">Approve</a> |
+                                    <a href="{% url 'aic_change_cash_status' cash.id 'Denied' %}" class="text-danger">Deny</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+                
+                </table>
+
+              </div>
+            </div>
+          </div>
+          
+     
+        </div>
+   {% endblock %}

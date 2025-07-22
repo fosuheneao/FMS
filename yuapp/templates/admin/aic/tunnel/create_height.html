@@ -1,0 +1,89 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+{% block content %}
+<div class="col-lg-12">
+<style>
+  .backIcon:hover {
+      color: white !important;
+  }
+</style>
+
+<div class="card">
+  <div class="card-body">
+      <h5 class="card-title">
+        {% if form.instance.pk %}
+           Edit Height Data Record:
+              <span class="text-danger">{{ beneficiary.full_name }}</span>
+        {% else %}
+          Create Height Data Record:
+              <span class="text-secondary">{{ beneficiary.full_name }}</span>
+        {% endif %}
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <span class="btn btn-outline-primary">
+              <a href="{% url 'edo_height_data_index' %}" class="backIcon"><i class="fa fa-mail-reply-all"></i> Go Back</a>
+          </span>
+      </h5>
+
+      {% if form.errors %}
+      <div class="alert alert-danger alert-dismissible">
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          <strong>Errors:</strong>
+          <ul>
+              {% for field in form %}
+                  {% if field.errors %}
+                      <li><strong>{{ field.label }}:</strong>
+                          <ul>
+                              {% for error in field.errors %}
+                                  <li>{{ error }}</li>
+                              {% endfor %}
+                          </ul>
+                      </li>
+                  {% endif %}
+              {% endfor %}
+              {% for error in form.non_field_errors %}
+                  <li>{{ error }}</li>
+              {% endfor %}
+          </ul>
+      </div>
+      {% endif %}
+
+      {% comment %} <form method="post" action="{% if form.instance.pk %}{% url 'update_height_data' height_data.id %}{% else %}{% url 'create_height_data' %}{% endif %}">
+          {% endcomment %}
+        <form method="post" action="{% if form.instance.pk %}{% url 'edo_update_height_data' height_data.id %}{% else %}{% url 'edo_create_height_data' beneficiary.id %}{% endif %}">
+            {% csrf_token %}
+          <div class="mb-3">
+              {{ form.measurement_date.label_tag }}
+              {{ form.measurement_date }}
+          </div>
+          
+        
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                {{ form.crop.label_tag }}
+                {{ form.crop }}
+            </div>
+            <div class="col-md-4 mb-3">
+                    {{ form.average_height.label_tag }}
+                    {{ form.average_height }}
+            </div>
+            
+            <div class="mb-3 col-md-4"></div>
+        </div>
+        <div class="mb-3">
+            {{ form.description.label_tag }}
+            {{ form.description }}
+        </div>
+          <button type="submit" class="btn btn-outline-primary">
+              <i class="fa fa-check-square-o"></i> 
+                {% if form.instance.pk %}
+                    Update Height Record
+               {% else %} 
+                     Save Height 
+              {% endif %}
+          </button>
+      </form>
+
+  </div>
+</div>
+{% endblock content %}

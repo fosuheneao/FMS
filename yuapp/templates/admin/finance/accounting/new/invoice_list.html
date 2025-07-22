@@ -1,0 +1,57 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="row">
+  <div class="card shadow-lg rounded border-0">
+      <div class="card-body">
+          <h4 class="card-title d-flex justify-content-between align-items-center">
+              <span><i class="fa fa-file-invoice"></i> <span class="text-primary">Billable Items</span></span>
+              <a href="{% url 'aic_invoice_create' %}" class="btn btn-sm btn-primary shadow-sm">
+                  <i class="fa fa-plus-circle"></i> Add New Item
+              </a>
+          </h4>
+          <hr/>
+          <div class="table-responsive mt-3">
+              <table id="myTable" class="table table-hover table-bordered">
+                  <thead class="table-light">
+                      <tr>
+                          <th>Beneficiary</th>
+                          <th>Farm Season</th>
+                          <th>Total Amount</th>
+                          <th>Status</th>
+                          <th>Actions</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% if invoices %} 
+                          {% for invoice in invoices %}
+                          <tr>
+                              <td>{{ invoice.beneficiary.full_name }}</td>
+                              <td>{{ invoice.farm_season.name }}</td>
+                              <td>{{ invoice.total_amount|floatformat:2 }}</td>
+                              <td>
+                                  <span class="badge {% if invoice.status == 'Paid' %}badge-success{% elif invoice.status == 'Pending' %}badge-warning{% else %}badge-secondary{% endif %}">
+                                      {{ invoice.status }}
+                                  </span>
+                              </td>
+                              <td>
+                                  <a href="{% url 'invoice_detail' invoice.pk %}" class="btn btn-outline-info btn-sm">
+                                      <i class="fa fa-eye"></i> View
+                                  </a>
+                              </td>
+                          </tr>
+                          {% endfor %}           
+                     
+                  </tbody>
+              </table>
+              {% else %}
+              <span class="text-center text-muted">No billable items found.</span>
+          {% endif %}
+          </div>
+      </div>
+  </div>
+</div>
+{% endblock %}

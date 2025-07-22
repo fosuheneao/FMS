@@ -1,0 +1,52 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Maintenance Logs
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'maintenance_create' %}" class="pull-right btn btn-outline-primary btn-sm">
+                 <i class="fa fa-plus-circle"></i> Log Maintenance
+              </a>      
+              </h4>
+              <hr/>
+              <div class="table-responsive">
+
+                <table id="myTable" class="table table-hover">
+                    <thead class="table-info">
+                            <tr>
+                                <th>Date</th>
+                                <th>Part</th>
+                                <th>Status</th>
+                                <th>Cost</th>
+                                <th>Feedback</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                             {% for log in logs %}
+                              <tr>
+                                  <td>{{ log.date }}</td>
+                                  <td>{{ log.part }}</td>
+                                  <td>{{ log.status }}</td>
+                                  <td>{{ log.maintenance_cost }}</td>
+                                  <td>{{ log.test_feedback }}</td>
+                                  <td>
+                                      <a href="{% url 'maintenance_update' log.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                      <a href="{% url 'maintenance_delete' log.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                                  </td>
+                              </tr>
+                              {% endfor %}
+                        </tbody>
+                    </table>
+
+              </div>
+            </div>
+          </div>
+        </div>
+   {% endblock %}

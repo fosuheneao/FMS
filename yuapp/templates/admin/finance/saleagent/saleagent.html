@@ -1,0 +1,82 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+<div class="row"> 
+  <div class="col-lg-12">
+    <div class="card shadow-lg border-0">
+      <div class="card-body">
+        <h4 class="card-title d-flex align-items-center">
+          <i class="fa fa-address-card me-2 text-primary"></i> Marketing Sales Agents
+          <a href="{% url 'aic_create_sale_agent' %}" class="btn btn-outline-primary btn-sm ms-auto">
+            <i class="fa fa-plus-circle"></i> Create Sales Agent
+          </a>      
+        </h4>
+        <hr/>
+
+
+        {% if saleagents %}
+        <div class="table-responsive">
+          <table id="myTable" class="table table-hover table-bordered">
+            <thead class="table-info">
+              <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Phone</th>
+                      <th>Ghana Card</th>
+                      <th>Cluster</th>
+                      <th>Notes</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for sa in saleagents %}
+                     <tr>
+                      <td>{{ sa.fullname }}</td>
+                      <td>{{ sa.email }}</td>
+                      <td>{{ sa.phone_number }}</td>
+                      <td>{{ sa.nationalId }}</td>
+                      <td data-toggle="tooltip" data-placement="top" 
+                          title="{% for greenh in sa.greenhouse.all %}{{ greenh.name }}{% if not forloop.last %}, {% endif %}{% endfor %}, 
+                          {% for cit in sa.city.all %}{{ cit.name }}{% if not forloop.last %}, {% endif %}{% endfor %}"
+                          >
+                       {% for cit in sa.city.all %}{{ cit.name }}{% if not forloop.last %}, {% endif %}{% endfor %} 
+                        {% for mkt in sa.marketingcentre.all %}{{ mkt.name }}{% if not forloop.last %}, {% endif %}{% endfor %}                         
+                    </td>
+                      <td>
+                        <i class="fa  fa-info-circle text-primary fa-lg" data-toggle="tooltip" data-placement="top" title="{{ sa.description }}"></i>
+                                      
+                      </td>
+                      <td>
+                        <a href="{% url 'aic_sale_agent_detail' sa.id %}" data-toggle="tooltip" data-placement="top" title="View Record">
+                          <i class="fa  fa-wpexplorer text-success fa-lg"></i>
+                        </a> &nbsp;&nbsp;
+                        <a href="{% url 'aic_update_sale_agent' sa.id %}" data-toggle="tooltip" data-placement="top" title="Update Record">
+                          <i class="fa  fa-pencil text-primary fa-lg"></i>
+                        </a> &nbsp;&nbsp;
+                    </td>
+                    </tr>  
+                    {% endfor %}  
+                  </tbody>
+                </table>
+
+              </div>
+              {% else %}
+              <div class="text-center my-4">
+                <i class="fa fa-users fa-3x text-muted"></i>
+                <p class="mt-2 text-muted">No Sale Agent found.</p>
+                <a href="{% url 'aic_create_sale_agent' %}" class="btn btn-outline-primary">
+                  <i class="fa fa-plus-circle"></i> Add First Sale Agent
+                </a>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+   
+     
+
+{% endblock %}

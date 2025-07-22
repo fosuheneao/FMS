@@ -1,0 +1,70 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Greenhouse Tunnel List
+               
+              </a>
+      
+              </h4>
+              <hr/>
+              <div class="table-responsive">
+                <!-- Display all tunnes, with a different icon or style for assigned tunnels -->
+                <h4>All Tunnesl</h4>
+                <table id="myTable"  class="table table-hover">                  
+                    <thead class="table-info">
+                        <tr>
+                            <th>Tunnel</th>
+                            <th>Latitude</th>
+                            <th>Longitude</th>
+                            <th>Notes</th>
+                            <th>Greenhouse</th>
+                            <th>Photo</th>
+                            <th>Assigned</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tunnel in all_tunels %}
+                            <tr>
+                                <td>{{ tunnel.room_name }}</td>
+                                <td>{{ tunnel.latitude }}</td>
+                                <td>{{ tunnel.longitude }}</td>
+                                <td>{{ tunnel.notes }}</td>
+                                <td>{{ tunnel.greenhouse.name }}</td>
+                                <td>
+                                    {% if tunnel.photo %}
+                                        <img src="{{ tunnel.photo.url }}" alt="{{ tunnel.name }}" style="width:50px;height:50px;">
+                                    {% else %}
+                                        No photo
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if tunnel.id == assigned_tunel.id %}
+                                        <!-- Icon for assigned tunnels (using a green checkmark or another icon) -->
+                                        <i class="mdi mdi-check-circle text-success"></i> Assigned
+                                    {% else %}
+                                        <!-- Icon for unassigned tunnels (using a grey circle or another icon) -->
+                                        <i class="mdi mdi-close-circle text-danger"></i> Not Assigned
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+              </div>
+            </div>
+          </div>
+        
+        </div>
+   
+     
+
+{% endblock %}

@@ -1,0 +1,168 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+{% block content %}
+<div class="col-lg-12">
+<style>
+  .backIcon:hover{
+      color:white!important;
+  }
+</style>
+  
+<div class="card">
+  <div class="card-body">        
+      <h5 class="card-title">
+          Update Harvest Record:
+              <span style="background:#0F6CBD;padding:0.2%; color:#fff"> 
+                  {{ harvest.crop.name }}
+              </span>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <span class="btn btn-outline-primary">
+              <a href="{% url 'harvest_index' %}" class="backIcon"><i class="fa fa-mail-reply-all"></i> Go Back</a> 
+          </span>
+      </h5>
+
+      <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Update Harvest Record</button>
+    </form>
+    
+      {% comment %} <form method="post" id="harvest-form" action="{% if form.instance.pk %}{% url 'update_harvest' harvest_id=form.instance.pk %}{% else %}{% url 'create_harvest' crop_assigned_id=crop.id %}{% endif %}">
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.date.label_tag }}
+            {{ form.date }}
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                {{ form.quantity.label_tag }}
+                {{ form.quantity }}
+            </div>
+            <div class="col-md-4 mb-3">
+                {{ form.grade.label_tag }}
+                {{ form.grade }}
+            </div>
+            <div class="col-md-4 mb-3">
+                {{ form.unit.label_tag }}
+                {{ form.unit }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="mb-3 col-md-6">
+                <label for="price-display">Price (per unit):</label>
+                <input type="text" id="price-display" class="form-control" readonly>
+            </div>
+            <div class="mb-3 col-md-6">
+                <label for="total-price-display">Total Price:</label>
+                <input type="text" id="total-price-display" class="form-control" readonly>
+            </div>
+        </div>
+        <div class="mb-3">
+            {{ form.description.label_tag }}
+            {{ form.description }}
+        </div>
+        <button type="submit" id="save-harvest-btn" class="btn btn-warning" disabled>
+            <i class="fa fa-check-square-o"></i> Save Harvest
+        </button>
+    </form> {% endcomment %}
+  
+      
+  </div>
+</div>
+
+<!-- JavaScript to fetch price and calculate total -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+      // Check if the form is in update mode by looking for a specific data attribute or hidden field
+      var isUpdate = "{{ harvest.id }}" !== "";  // Assuming 'harvest' is passed to the template context
+      
+      // Function to fetch price based on grade and unit
+      function fetchPrice(gradeId, unitId) {
+          if (gradeId && unitId) {
+              $.ajax({
+                  url: "{% url 'get_price_for_grade_and_unit' %}",  // Update with appropriate URL
+                  data: {
+                      'grade_id': gradeId,
+                      'unit_id': unitId,
+                      'crop_id': "{{ crop.id }}"  // Pass the crop ID to filter by crop
+                  },
+                  dataType: 'json',
+                  success: function(data) {
+                      if (data.price) {
+                          $('#price-display').val(data.price);
+                          $('#save-harvest-btn').prop('disabled', false); // Enable Save button
+                          calculateTotalPrice();
+                      } else {
+                          $('#price-display').val('No price available');
+                          $('#save-harvest-btn').prop('disabled', true); // Disable Save button
+                          $('#total-price-display').val('');
+                      }
+                  }
+              });
+          }
+      }
+
+      // Function to calculate total price
+      function calculateTotalPrice() {
+          var price = parseFloat($('#price-display').val());
+          var quantity = parseFloat($('#id_quantity').val());
+
+          if (!isNaN(price) && !isNaN(quantity)) {
+              var total = price * quantity;
+              $('#total-price-display').val(total.toFixed(2));
+          } else {
+              $('#total-price-display').val('');
+          }
+      }
+
+      // Only bind change events if in update mode
+      if (isUpdate) {
+          // Trigger price fetch when grade or unit is changed
+          $('#id_grade, #id_unit').change(function() {
+              var gradeId = $('#id_grade').val();
+              var unitId = $('#id_unit').val();
+              fetchPrice(gradeId, unitId);
+          });
+
+          // Calculate total price when quantity is entered/changed
+          $('#id_quantity').on('input', function() {
+              calculateTotalPrice();
+          });
+      }
+  });
+
+  // Existing function for fetching and updating price (adjusted for update mode)
+  function updatePriceAndTotal() {
+    // Only execute if the form is in update mode
+    const isUpdate = "{{ harvest.id }}" !== "";  // Assuming 'harvest' is passed to the template context
+
+    if (isUpdate) {
+        // Fetch selected grade, unit, and quantity
+        const grade = document.querySelector('[name="grade"]').value;
+        const unit = document.querySelector('[name="unit"]').value;
+        const quantity = parseFloat(document.querySelector('[name="quantity"]').value) || 0;
+
+        // Only proceed if grade and unit are selected
+        if (grade && unit && quantity > 0) {
+            // Make an AJAX request to get the price and calculate the total
+            fetch(`/get-price/?grade_id=${grade}&unit_id=${unit}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.price) {
+                        const totalPrice = data.price * quantity;
+                        document.querySelector('#totalPrice').textContent = `Total Price: ${totalPrice.toFixed(2)}`;
+                        document.querySelector('button[type="submit"]').disabled = false;
+                    } else {
+                        document.querySelector('button[type="submit"]').disabled = true;
+                    }
+                });
+        } else {
+            document.querySelector('button[type="submit"]').disabled = true;
+        }
+    }
+  }
+</script>
+
+{% endblock content  %}

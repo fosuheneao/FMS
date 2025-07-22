@@ -1,0 +1,85 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load currency_filters %}
+{% block content %}
+{% comment %} <div class="col-lg-12">
+  <style>
+    .backIcon:hover {
+      color: white !important;
+    }
+  </style>
+  <div class="card shadow-sm rounded-lg border-0">
+    <div class="card-body">
+      <h4 class="card-title d-flex align-items-center">
+        <i class="fa fa-credit-card text-primary me-2"></i>
+        Make Payment: <span class="text-primary ms-2">{{ order.date }}</span>
+      </h4>
+      <hr>
+      <div class="d-flex justify-content-start">
+        <a href="{% url 'orders' %}" class="btn btn-outline-primary rounded-pill px-4">
+          <i class="fa fa-arrow-left"></i> Go Back
+        </a>
+      </div>
+    </div>
+  </div>
+</div> {% endcomment %}
+
+{% comment %} 
+<h2>Make Payment for Order: {{ order }}</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit Payment</button>
+</form> {% endcomment %}
+
+
+<div class="col-lg-6">
+  <div class="card shadow-sm border-0 rounded">
+      <div class="card-body">
+          <h1 class="fs-4 fw-semibold text-primary">Make Payment for Order: {{ order }}
+              <a href="{% url 'orders' %}" class="btn btn-light btn-sm float-end">
+                  <i class="fa fa-arrow-left"></i> Back to Orders
+              </a>
+          </h1>
+          <hr/>
+          
+          <form method="post" class="mt-3">
+              {% csrf_token %}
+              
+              <div class="mb-3">
+                  <label for="payment_date" class="form-label fw-semibold"> Date</label>
+                  <input type="date" id="payment_date" name="payment_date" class="form-control" required value="{{ now|date:'Y-m-d' }}">
+              </div>
+
+              <div class="mb-3">
+                {{ form.amount_paid.label_tag }}
+                {{ form.amount_paid }}
+             </div>
+
+             <div class="mb-3">
+              {{ form.payment_method.label_tag }}
+              {{ form.payment_method }}
+           </div>
+
+              <div class="mb-3">
+                {{ form.notes.label_tag }}
+                {{ form.notes }}
+             </div>
+
+             <div class="col-md-4 mb-3">
+              {{ form.receipt_image.label_tag }}
+              {{ form.receipt_image }} 
+              {% comment %} {% if beneficiary.cardphoto %}
+                  <img src="{{ beneficiary.cardphoto.url }}" class="img-thumbnail" style="max-width: 150px; max-height: 150px;">
+              {% endif %} {% endcomment %}
+            </div>
+
+              <button type="submit" class="btn btn-primary w-100">
+                  <i class="fa fa-money"></i> Submit Payment
+              </button>
+          </form>
+      </div>
+  </div>
+</div>
+
+{% endblock content  %}

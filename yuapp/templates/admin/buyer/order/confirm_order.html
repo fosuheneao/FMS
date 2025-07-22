@@ -1,0 +1,37 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="col-lg-6">
+  <div class="card shadow-sm border-0 rounded">
+      <div class="card-body">
+          <h1 class="fs-4 fw-semibold text-primary">Order Confirmation
+              <a href="{% url 'orders' %}" class="btn btn-light btn-sm float-end">
+                  <i class="fa fa-arrow-left"></i> Back to Orders
+              </a>
+          </h1>
+          <hr/>
+          
+          <form method="post" class="mt-3">
+              {% csrf_token %}
+              
+              <div class="mb-3">
+                  <label for="delivery_date" class="form-label fw-semibold">Delivery Date</label>
+                  <input type="date" id="delivery_date" name="delivery_date" class="form-control" required value="{{ now|date:'Y-m-d' }}">
+              </div>
+
+              <div class="mb-3">
+                {{ form.confirmation_note.label_tag }}
+                {{ form.confirmation_note }}
+             </div>
+              
+              <button type="submit" class="btn btn-primary w-100">
+                  <i class="fa fa-check-circle"></i> Confirm Order
+              </button>
+          </form>
+      </div>
+  </div>
+</div>
+{% endblock %}

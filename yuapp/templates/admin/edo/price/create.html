@@ -1,0 +1,80 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+{% block content %}
+<div class="col-lg-12">
+<style>
+  .backIcon:hover{
+      color:white!important;
+  }
+</style>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">
+            {% if form.instance.pk %} Edit {% else %} Create {% endif %} Price Table
+          <span class="text-primary"></span>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <span class="btn btn-outline-primary">
+                 <a href="{% url 'price_index' %}" class="backIcon"><i class="fa fa-mail-reply-all"></i> Go Back</a> 
+          </span>
+        </h5>  
+        
+         <!-- Display messages for success or error -->
+            {% if messages %}
+                <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+
+            <form method="post" action="{% if form.instance.pk %}{% url 'price_update' pk=form.instance.pk %}{% else %}{% url 'create_price' %}{% endif %}">
+                {% csrf_token %}
+                {% comment %} {{ form.as_p }} {% endcomment %}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form.market_center.label_tag }}
+                        {{ form.market_center }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.crop.label_tag }}
+                        {{ form.crop }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        {{ form.grade.label_tag }}
+                        {{ form.grade }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        {{ form.unit.label_tag }}
+                        {{ form.unit }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        {{ form.price.label_tag }}
+                        {{ form.price }}
+                    </div>
+                </div>
+               <div class="row">
+                  <div class="col-md-6 mb-3">
+                      {{ form.from_date.label_tag }}
+                      {{ form.from_date }}
+                  </div>
+                  <div class="col-md-6 mb-3">
+                      {{ form.to_date.label_tag }}
+                      {{ form.to_date }}
+                  </div>
+              </div>
+              
+              <div class="mb-3">
+                {{ form.notes.label_tag }}
+                {{ form.notes }}
+             </div> 
+        <button type="submit" class="btn btn-warning"> <i class="fa fa-check-square-o"></i> Submit</button>
+    </form>
+
+    
+</div>
+</div>
+</div>
+{% endblock content  %}

@@ -1,0 +1,233 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+{% block content %}
+        <div class="row">
+          <div class="col-lg-12">
+              <div class="card shadow-sm border-0">
+                  <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                      <h4 class="mb-0">
+                          <i class="fa fa-address-card"></i> Harvest Record for: <span class="text-secondary ms-1">{{ selected_crop.name }}</span>
+                    </h4>
+                    <a href="{% url 'harvest_index' %}" class="btn btn-sm btn-primary border shadow-sm text-white">
+                      <i class="fa fa-mail-reply-all"></i> Go Back
+                    </a>
+                  </div>
+      
+                  <div class="card-body">
+                      {% if messages %}
+                          {% for message in messages %}
+                              <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                  <strong>{{ message }}</strong>
+                                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                  </button>
+                              </div>
+                          {% endfor %}
+                      {% endif %}
+        <!-- Toast Container -->
+        <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toast-container" style="z-index: 1080;">
+        </div>
+
+        <div class="table-responsive mt-2">
+          <table id="myTable" class="table table-hover table-bordered align-middle">
+            <thead class="table-primary text-dark fw-bold">
+              <tr>
+                <th>Date</th>
+                <th>Crop</th>
+                <th>Grade</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th>Unit</th>
+                <th>Status</th>
+                <th>Info</th>
+                <th>Action</th>
+                <th>Recorded By</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for harvest in harvest_records %}
+              <tr>
+                <td>{{ harvest.date|date:"d-m-Y" }}</td>
+                <td>{{ harvest.crop.name }}</td>
+                <td>{{ harvest.grade.name }}</td>
+                <td>{{ harvest.quantity|floatformat:0 }}</td>
+                <td>{{ harvest.price_record.price }}</td>
+                <td>{{ harvest.total_price }}</td>
+                <td>{{ harvest.unit.expression }}</td>
+                <td>
+                  {% if harvest.confirmation == 'Open' %}
+                     <span class="badge badge-danger text-danger">{{ harvest.confirmation }} </span>
+                  {% else %} 
+                    <span class="badge badge-primary text-success">{{ harvest.confirmation }} </span>                  
+                  {% endif %}
+                </td>
+                <td>
+                  <i class="fa fa-info-circle text-primary fa-lg"
+                    data-toggle="tooltip" data-placement="top" title="{{ harvest.description }}">
+                  </i>
+                </td>
+                <td>
+                 <a href="{% url 'view_harvest' harvest.id %}" class="text-primary ms-2" 
+                  data-toggle="tooltip" title="View Harvest Record">
+                  <i class="fa fa-eye fa-lg"></i>
+                </a>&nbsp;&nbsp;
+                {% if harvest.reviewed_status == 'Open' %}
+                <!-- Agree Button -->
+               <button class="btn btn-sm btn-success text-white review-harvest" 
+               data-harvest-id="{{ harvest.id }}" data-status="Agree" data-toggle="tooltip" title="Click to confirm harvest record. This action cannot be reverse.">
+               <i class="fa fa-check"></i> Agree
+               </button>
+
+               <!-- Disagree Button -->
+               <button class="btn btn-sm btn-danger text-white review-harvest" 
+               data-harvest-id="{{ harvest.id }}" data-status="Disagree" data-toggle="tooltip" title="Click if you do not agree to the harvest record. Reason for this action is required.">
+               <i class="fa fa-times"></i> Disagree
+               </button>
+               {% else %} 
+                      {% if harvest.reviewed_status == 'Agree' %}
+                      <span class="fa fa-info-circle text-primary"
+                          data-toggle="tooltip" title="You {{ harvest.reviewed_status }}d to this record. Recorded at: {{ harvest.reviewed_at }} by: {{ harvest.reviewed_by.username }} ">
+                        {{ harvest.reviewed_status }} 
+                      </span> 
+                    {% else %} 
+                      <span class="fa fa-info-circle text-danger"
+                          data-toggle="tooltip" title="You {{ harvest.reviewed_status }}d to this record. Recorded at: {{ harvest.reviewed_at }} by: {{ harvest.reviewed_by.username }}. Reason: {{ harvest.review_note }} ">
+                        {{ harvest.reviewed_status }} 
+                      </span> 
+                    {% endif %}
+               {% endif %}
+                </td>
+                <td>{{ harvest.created_by.username }}</td>
+              </tr>
+              {% empty %}
+                <span> No harvest records available.</span>
+              {% endfor %}
+            </tbody>
+            <tfoot class="table-light">
+              <tr class="fw-bold text-dark">
+                <td>Total Price Sum:</td>
+                <td colspan="2"></td>
+                <td class="text-end">{{ total_quantity|floatformat:0 }}</td>
+                <td></td>
+                <td colspan="1" class="text-end">{{ total_sum|currency}}</td>
+                <td colspan="5"></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Disagree Modal -->
+<div class="modal fade" id="disagreeModal" tabindex="-1" aria-labelledby="disagreeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="disagreeForm">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title">Disagree with Harvest</h5>
+          <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="disagreeHarvestId" name="harvest_id">
+          <div class="mb-3">
+            <label for="disagreeReason" class="form-label">Reason</label>
+            <textarea class="form-control" id="disagreeReason" name="reason" rows="4" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger">Submit Disagreement</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function () {
+    // Handle Agree directly
+    $('.review-harvest[data-status="Agree"]').on('click', function () {
+      const harvestId = $(this).data('harvest-id');
+
+      $.post("{% url 'confirm_harvest_ajax' %}", {
+        'harvest_id': harvestId,
+        'status': 'Agree',
+        'csrfmiddlewaretoken': '{{ csrf_token }}'
+      }, function (response) {
+        if (response.success) {
+          showToast(response.message, 'success');
+          if (response.aggregation_message) {
+              showToast(response.aggregation_message, 'info'); // another toast
+          }
+          location.reload();
+        } else {
+          showToast(response.message, 'danger');
+        }
+      });
+    });
+
+    // Handle Disagree open modal
+    $('.review-harvest[data-status="Disagree"]').on('click', function () {
+      const harvestId = $(this).data('harvest-id');
+      $('#disagreeHarvestId').val(harvestId);
+      $('#disagreeModal').modal('show');
+    });
+
+    // Handle modal submit
+    $('#disagreeForm').submit(function (e) {
+      e.preventDefault();
+
+      const harvestId = $('#disagreeHarvestId').val();
+      const reason = $('#disagreeReason').val();
+
+      $.post("{% url 'confirm_harvest_ajax' %}", {
+        'harvest_id': harvestId,
+        'status': 'Disagree',
+        'reason': reason,
+        'csrfmiddlewaretoken': '{{ csrf_token }}'
+      }, function (response) {
+        if (response.success) {
+          $('#disagreeModal').modal('hide');
+          location.reload();
+        } else {
+          alert(response.message);
+        }
+      });
+    });
+  });
+
+  function showToast(message, type = 'success') {
+    const toastId = 'toast-' + Date.now();
+    const toastHtml = `
+        <div id="${toastId}" class="toast align-items-center text-white bg-${type} border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">${message}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    `;
+    
+    const toastContainer = document.getElementById('toast-container');
+    toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+
+    const toastEl = document.getElementById(toastId);
+    const bsToast = new bootstrap.Toast(toastEl);
+    bsToast.show();
+
+    // Auto-remove toast from DOM after it's hidden
+    toastEl.addEventListener('hidden.bs.toast', () => toastEl.remove());
+}
+
+</script>
+
+     
+
+{% endblock %}

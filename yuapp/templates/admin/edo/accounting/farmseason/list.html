@@ -1,0 +1,65 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+               <div class="container-fluid">
+                              <div class="card shadow-sm rounded-4 border-0">
+                                  <div class="card-body">
+                                      <h4 class="card-title d-flex align-items-center">
+                                          <i class="fa fa-address-card text-primary me-2"></i>
+                                          <span class="text-danger fw-bold">Farm Cycle</span>
+                                          <a href="{% url 'edo_create_farm_season' %}" class="ms-auto btn btn-light border rounded-pill px-3">
+                                              <i class="fa fa-plus me-1"></i> Add New Cycle
+                                          </a>
+                                      </h4>
+                                      <hr />
+                            
+                                      <div class="table-responsive mt-3">
+
+
+                              <table id="myTable" class="table table-hover align-middle">
+                                  <thead class="bg-primary text-white">
+                                      <tr>
+                                          <th>Cycle</th>
+                                          <th>Start Date</th>
+                                          <th>End Date</th>
+                                          <th>Note</th>
+                                          <th>Actions</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      {% if farmseasons %}
+                                          {% for item in farmseasons %}
+                                          <tr class="bg-white shadow-sm">
+                                              <td class="fw-bold text-dark">{{ item.name }}</td>
+                                              <td class="text-muted">{{ item.season_start_date|date:"d-m-Y" }}</td>
+                                              <td class="text-muted">{{ item.season_end_date|date:"d-m-Y" }}</td>
+                                              <td>
+                                                  <i class="fa fa-info-circle text-info" data-toggle="tooltip" title="{{ item.description }}"></i>
+                                              </td>
+                                              <td>
+                                                  <a href="{% url 'edo_update_farm_season' item.id %}" class="btn btn-outline-primary btn-sm">
+                                                      <i class="fa fa-pencil-alt"></i> Edit
+                                                  </a>
+                                              </td>
+                                          </tr>
+                                          {% endfor %}
+                                      {% else %}
+                                          <tr>
+                                              <td colspan="5" class="text-danger fw-bold">No Farming Cycle found.</td>
+                                          </tr>
+                                      {% endif %}
+                                  </tbody>
+                              </table>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+{% endblock %}

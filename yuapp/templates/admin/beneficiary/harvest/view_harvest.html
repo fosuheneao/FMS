@@ -1,0 +1,132 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-12">
+      <div class="card shadow-sm border-0">
+          <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+              <h4 class="mb-0">
+                  <i class="fa fa-address-card"></i> Harvest Record Details
+              </h4>
+              <a href="{% url 'harvest_index' %}" class="btn btn-light btn-sm shadow-sm">
+                  <i class="fa fa-mail-reply-all"></i> Go Back
+              </a>
+          </div>
+
+          <div class="card-body">
+              <div class="table-responsive">
+                  <table class="table table-hover table-bordered align-middle">
+                      <tbody>
+                          <tr>
+                              <th>Date</th>
+                              <td>{{ harvest.date|date:"d-m-Y" }}</td>
+                          </tr>
+                          <tr>
+                              <th>Crop Name</th>
+                              <td>{{ harvest.crop.name }}</td>
+                          </tr>
+                          <tr>
+                              <th>Grade</th>
+                              <td>{{ harvest.grade.name }}</td>
+                          </tr>
+                          <tr>
+                              <th>Unit</th>
+                              <td>{{ harvest.unit.name }}</td>
+                          </tr>
+                          <tr>
+                              <th>Quantity</th>
+                              <td>{{ harvest.quantity }}</td>
+                          </tr>
+                          <tr>
+                              <th>Unit Price</th>
+                              <td>{{ price_table.price }}</td>
+                          </tr>
+                          <tr>
+                              <th>Total Price</th>
+                              <td class="fw-bold text-primary">{{ harvest.total_price }}</td>
+                          </tr>
+                          <tr>
+                              <th>Description</th>
+                              <td>{{ harvest.description|default:"No description available" }}</td>
+                          </tr>
+                          <tr>
+                            <th>Confirmation Status</th>
+                            <td class="fw-bold text-primary">
+                              {% if harvest.reviewed_status == 'Open' %}
+                                    <!-- Agree Button -->
+                                  <button class="btn btn-sm btn-success text-white review-harvest" 
+                                  data-harvest-id="{{ harvest.id }}" data-status="Agree" data-toggle="tooltip" title="Click to confirm harvest record. This action cannot be reverse.">
+                                  <i class="fa fa-check"></i> Agree
+                                  </button>
+
+                                  <!-- Disagree Button -->
+                                  <button class="btn btn-sm btn-danger text-white review-harvest" 
+                                  data-harvest-id="{{ harvest.id }}" data-status="Disagree" data-toggle="tooltip" title="Click if you do not agree to the harvest record. Reason for this action is required.">
+                                  <i class="fa fa-times"></i> Disagree
+                                  </button>
+                                  {% else %} 
+                                        {% if harvest.reviewed_status == 'Agree' %}
+                                            <span class="fa fa-info-circle text-primary"
+                                                data-toggle="tooltip" title="You {{ harvest.reviewed_status }}d to this record. Recorded at: {{ harvest.reviewed_at }} by: {{ harvest.reviewed_by.username }} ">
+                                              {{ harvest.reviewed_status }} 
+                                            </span> 
+                                          {% else %} 
+                                            <span class="fa fa-info-circle text-danger"
+                                                data-toggle="tooltip" title="You {{ harvest.reviewed_status }}d to this record. Recorded at: {{ harvest.reviewed_at }} by: {{ harvest.reviewed_by.username }} ">
+                                              {{ harvest.reviewed_status }} 
+                                            </span> 
+                                          {% endif %}
+                                  {% endif %}
+                            </td>
+                        </tr>
+                      </tbody>
+                  </table>
+              </div>
+
+              <!-- Action Buttons -->
+              {% comment %} <div class="d-flex justify-content-center mt-4">
+                  <button class="btn btn-primary btn-lg mx-2 text-white review-harvest shadow-sm" data-harvest-id="{{ harvest.id }}" data-status="Agree">
+                      <i class="fa fa-check"></i> Agree
+                  </button>
+                  <button class="btn btn-danger btn-lg mx-2 text-white review-harvest shadow-sm" data-harvest-id="{{ harvest.id }}" data-status="Disagree">
+                      <i class="fa fa-times"></i> Disagree
+                  </button>
+              </div> {% endcomment %}
+          </div>
+      </div>
+  </div>
+</div>
+   
+     
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $(".review-harvest").click(function() {
+      var harvestId = $(this).data("harvest-id");
+      var reviewStatus = $(this).data("status");
+      
+      $.ajax({
+        url: `/harvest/review/${harvestId}/`,
+        type: "POST",
+        data: {
+          review_status: reviewStatus,
+          csrfmiddlewaretoken: "{{ csrf_token }}"
+        },
+        success: function(response) {
+          if (response.status === "success") {
+            alert(response.message);
+            location.reload();
+          } else {
+            alert("Error: " + response.message);
+          }
+        },
+        error: function(xhr) {
+          alert("Request failed: " + xhr.responseJSON.message);
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}

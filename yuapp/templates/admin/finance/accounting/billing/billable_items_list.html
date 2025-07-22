@@ -1,0 +1,63 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="row">
+
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title"><i class="fa fa-address-card"></i> <span class="text-danger">Billable Items</span> 
+            <a href="{% url 'aic_create_billable_item' %}" class="pull-right btn btn-outline-primary btn-sm">Add New Item</a>
+
+            {% comment %} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'aic_create_buyer' %}" class="pull-right btn btn-outline-primary btn-sm">
+              <i class="fa fa-plus-circle"></i> Add Buyer {% endcomment %}
+
+        </h4>
+        <hr/>
+          <div class="row flex-grow">
+            <div class="col-12 grid-margin stretch-card">
+              <div class="card card-rounded">
+                <div class="card-body">
+                  <div class="d-sm-flex justify-content-between align-items-start">
+                  </div>
+                  <div class="table-responsive  mt-1">
+                    <table id="myTable" class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Greenhouse</th>
+                                <th>Applies to All</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                          {% if billable_items %}
+                            {% for item in billable_items %}
+                            <tr>
+                                <td>{{ item.name }}</td>
+                                <td>{{ item.greenhouse.name|default:"General" }}</td>
+                                <td>{{ item.applies_to_all|yesno:"Yes,No" }}</td>
+                                <td>
+                                    <a href="{% url 'aic_update_billable_item' item.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                    {% comment %} <a href="{% url 'aic_delete_billable_item' item.id %}" class="btn btn-danger btn-sm">Delete</a> {% endcomment %}
+                                </td>
+                            </tr>
+                            {% endfor %}            
+                          {% else %}
+                            No billable items found.
+                            {% endif %}
+                        </tbody>
+                    </table>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+      </div>
+    </div>
+</div>
+{% endblock %}

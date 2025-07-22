@@ -1,0 +1,1167 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+<span style="font-size:0.85em">Welcome, {{ edo.full_name }}</span>
+{% comment %} <p>This is your Beneficiary Dashboard.</p> {% endcomment %}
+<div class="row">
+    <div class="col-sm-12">
+      <div class="statistics-details d-flex align-items-center justify-content-between">
+        <div data-toggle="tooltip" data-placement="top" title="Sum of cash sales for harvest records.">
+          
+          <p class="statistics-title">Volume of Crop Sales
+            <a href="{% url 'harvest_history' %}">
+            <i class="fa fa-arrow-up text-primary" style="font-size:0.95em"></i>
+          </a>
+          </p>
+          
+          <h3 class="rate-percentage" style="font-size:1.1em!important">GHS {{ total_sum|floatformat:2|intcomma }}</h3>
+          <p class="text-primary d-flex"><i class="fa fa-money"></i><span></span></p>
+        </div>
+        <div data-toggle="tooltip" data-placement="top" title="Sum of all accumulated harvest records produced in units.">
+          <p class="statistics-title">Accumulated Yield for the Year</p>
+          <h3 class="rate-percentage" style="font-size:1.1em!important">{{ total_quantity|floatformat:0 }}</h3>
+          <p class="text-success d-flex"><i class="fa fa-balance-scale"></i><span></span></p>
+        </div>
+        <div data-toggle="tooltip" data-placement="top" title="Cash Loans taken">
+          <p class="statistics-title">Cash Loaned
+            <a href="{% url 'finance_index' %}">
+              <i class="fa fa-arrow-up text-primary" style="font-size:0.95em"></i>
+            </a>
+          </p>
+          <h3 class="rate-percentage" style="font-size:1.1em!important">{{ total_cash_loan|currency }}</h3>
+          <p class="text-danger d-flex"><i class="fa fa-money"></i><span></span></p>
+        </div>
+        <div data-toggle="tooltip" data-placement="top" title="Cash Loan resettlements made, Outstanding {{ total_cash_loan_arrears |currency }} to settle">
+          <p class="statistics-title">Cash Loan Repayment</p>
+          <h3 class="rate-percentage" style="font-size:1.1em!important">{{ total_loan_repayment|currency }}</h3>
+          <p class="text-success d-flex"><i class="fa fa-money"></i><span></span></p>
+        </div>
+        <div class="d-none d-md-block" data-toggle="tooltip" data-placement="top" title="Total production cost from requests {{ total_requests_bill_totals|currency }} to settle">
+        
+          <p class="statistics-title">Producation Cost
+            <a href="{% url 'beneficiary_service_request_list' %}">
+              <i class="fa fa-arrow-up text-primary" style="font-size:0.95em"></i>
+            </a>
+          </p>
+  
+          <h3 class="rate-percentage" style="font-size:1.1em!important">{{ total_requests_bill_totals|currency }}</h3>
+          <p class="text-danger d-flex"><i class="fa fa-money"></i><span></span></p>
+          
+        </div>
+        
+        <div class="d-none d-md-block" data-toggle="tooltip" data-placement="top" title="Cost of all my farm inputs received from EDO in {{ accumulated_farminput_total_cost_distributed_edo|currency }} to settle">
+          <p class="statistics-title">My Input Cost</p>
+          <h3 class="rate-percentage" style="font-size:1.1em!important;">{{ accumulated_farminput_total_cost_distributed_edo|currency }}</h3>
+          <p class="text-danger d-flex"><i class="fa fa-money"></i><span></span></p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  
+<div class="row">
+    <div class="col-lg-8 d-flex flex-column">
+      <div class="row flex-grow">
+        <div class="col-12 col-lg-4 col-lg-12 grid-margin stretch-card">
+          <div class="card card-rounded">
+            <div class="card-body">
+              <div class="d-sm-flex justify-content-between align-items-start">
+                <div>
+                  <h4 class="card-title card-title-dash">Weekly Crop Production</h4>
+                </div>
+              </div>
+              <div class="mt-4">
+                {% comment %} Weekly Crop Production {% endcomment %}
+                <canvas id="weeklyCropChart" style="width:100%!important; height:300px!important"></canvas>
+                {% comment %} End of Weekly Crop Production {% endcomment %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 d-flex flex-column">
+      <div class="row flex-grow">
+        <div class="col-md-6 col-lg-12 grid-margin stretch-card">
+            <div class="card bg-info card-rounded" style="height:300px!important">
+              <h4 class="card-title card-title-dash" style="padding:1%; color:#000!important">Crop Yield over Years</h4>
+              <div class="card-body pb-0 text-center">
+                      <div style="height:200px!important; margin-top:-5%; margin-left:-10%">
+                        <center><canvas id="cropYieldPieChart" style="width:100%; height:260px!important;"></canvas></center> 
+                      </div>
+              </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-12 grid-margin stretch-card">
+          <div class="card card-rounded">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="d-flex justify-content-between align-items-center mb-2 mb-sm-0">
+                    <div class="circle-progress-width">
+                      <div id="totalVisitors" class="progressbar-js-circle pr-2"></div>
+                    </div>
+                    <div>
+                      <p class="text-small mb-2">Total Visitors</p>
+                      <h4 class="mb-0 fw-bold">26.80%</h4>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="circle-progress-width">
+                      <div id="visitperday" class="progressbar-js-circle pr-2"></div>
+                    </div>
+                    <div>
+                      <p class="text-small mb-2">Visits per day</p>
+                      <h4 class="mb-0 fw-bold">9065</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- END OF TOP ROW CHARTS (Weekly Crop Production and Crop Yield Over Years)-->
+
+
+
+<!-- BEGINNING OF SECOND ROW CHARTS (Revenuw per cluster and Total Revenue Over Years)-->
+  <div class="row" style="border:8px solid rgba(2, 145, 50, 0.1)">
+      <div class="row">
+          <div class="col-lg-6"> <canvas id="revenuePerClusterChart"></canvas></div>
+          <div class="col-lg-6"> <canvas id="totalRevenueChart"></canvas></div>
+      </div>
+  </div>
+<!-- END OF SECOND ROW CHARTS (Revenuw per cluster and Total Revenue Over Years)-->
+<hr/>
+
+
+<!-- BEGINNING OF A THIRD ROW CHARTS (Revenuw per cluster and Total Revenue Over Years)-->
+<div class="row" style="background:#d1e7f9; height:525px!important">
+    <div class="col-lg-6" style="padding-top:1%">
+        <div class="row flex-grow">
+          <div class="col-12 grid-margin stretch-card">
+            <div class="card card-rounded">
+              <div class="card-body">
+                <div class="d-sm-flex justify-content-between align-items-start">
+                  <div>
+                    <h4 class="card-title card-title-dash">Market Overview</h4>
+                    <p class="card-subtitle card-subtitle-dash">Crop Revenue Contribution</p>
+                  </div>
+                  <div>
+                    <div class="dropdown">
+                      <h2 class="me-2 fw-bold">GHS {{ total_sum|floatformat:2|intcomma }}</h2>
+                    </div>
+                  </div>
+                </div>
+                <div class="chartjs-bar-wrapper mt-3">              
+                  <canvas id="revenuePerCropChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6" style="padding-top:1%">
+              <div class="row flex-grow">
+                <div class="col-12 grid-margin stretch-card">
+                  <div class="card card-rounded">
+                    <div class="card-body">
+                      <div class="d-sm-flex justify-content-between align-items-start">
+                        <div>
+                        <h4 class="card-title card-title-dash">Cluster Crop Production</h4>
+                        <p class="card-subtitle card-subtitle-dash">Crops by cluster</p>
+                      </div>
+                      <div>
+                        <div class="dropdown">
+                          <h2 class="me-2 fw-bold">{{ total_quantity|floatformat:0 }}</h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="chartjs-bar-wrapper mt-3">              
+                      <canvas id="weeklyTunnelYielddCropChart"></canvas>
+                    </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
+<!-- END OF SECOND ROW CHARTS (Revenuw per cluster and Total Revenue Over Years)-->
+ {% comment %} <br/><br/>
+<hr/>
+<br/> {% endcomment %}
+
+
+<!-- BEGINNING OF A FOURTH ROW CHARTS (Farm Input Distribution and Total Yield per Crop)-->
+<div class="row mt-5" style="background:rgba(0, 29, 53, 0.9)">
+  <div class="col-lg-7" style="padding-top:1%">
+      <div class="row flex-grow">
+        <div class="col-12 grid-margin stretch-card">
+          <div class="card card-rounded">
+            <div class="card-body">
+              <div class="chartjs-bar-wrapper mt-3">
+                {% comment %} <canvas id="farmInputChart"></canvas>
+                <hr/> {% endcomment %}
+                <canvas id="edoFarmInputDistributionChart" width="400" height="200"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    <div class="col-lg-5" style="padding-top:1%">
+        <div class="row flex-grow" style="height:200px!important;">
+          <div class="col-12 grid-margin stretch-card">         
+            <div class="card card-rounded">
+              <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                      <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="card-title card-title-dash">Cluster Crop Production</h4>
+                      </div>
+                      <canvas id="cropYieldBarChart"></canvas>
+                    </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- END OF FOURTH ROW CHARTS (Farm Input Distribution and Total Yield per Crop)-->
+<hr/>
+
+
+  <div class="row" style="">
+    
+   <div class="col-lg-8 d-flex flex-column">
+     {% comment %} 
+      <div class="row flex-grow">
+        <div class="col-12 grid-margin stretch-card">
+          <div class="card card-rounded table-darkBGImg">
+            <div class="card-body">
+              <div class="col-sm-8">
+                <h3 class="text-white upgrade-info mb-0"> Enhance your <span class="fw-bold">Campaign</span> for better outreach </h3>
+                <a href="#" class="btn btn-info upgrade-btn">Upgrade Account!</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>  {% endcomment %}
+
+    <div class="row flex-grow">
+        <div class="col-12 grid-margin">
+          <div class="card card-rounded bg-default">
+            <div class="card-body">
+              <div class="d-sm-flex justify-content-between align-items-start">
+                  <div>
+                    <h4 class="card-title card-title-dash">Trend Knowledge Bank</h4>
+                  </div>
+                  <div>
+                  <i class="fa fa-info-circle text-danger"></i> <spannclass="text-primary">You have 50+ new requests</span>
+                  </div>
+              </div>
+               <div class="accordion" id="trendKnowledgeAccordion">
+                    {% for bank in trend_knowledge_banks %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading{{ bank.id }}">
+                            <button
+                                class="accordion-button collapsed"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#collapse{{ bank.id }}"
+                                aria-expanded="false"
+                                aria-controls="collapse{{ bank.id }}"
+                            >
+                                {{ bank.title }}
+                            </button>
+                        </h2>
+                        <div
+                            id="collapse{{ bank.id }}"
+                            class="accordion-collapse collapse"
+                            aria-labelledby="heading{{ bank.id }}"
+                            data-bs-parent="#trendKnowledgeAccordion"
+                        >
+                            <div class="accordion-body">
+                                <p><strong>Description:</strong> {{ bank.description }}</p>
+                                <p><strong>Location:</strong> {{ bank.latitude }}, {{ bank.longitude }}</p>
+                                {% if bank.photo %}
+                                <p>
+                                    <strong>Photo:</strong><br>
+                                    <img src="{{ bank.photo.url }}" alt="Photo" class="img-fluid" style="max-width: 200px;" />
+                                </p>
+                                {% endif %}
+                                
+                                <h5>Discussions:</h5>
+                                {% if bank.trendknowledgediscussion_set.all %}
+                                    <ul>
+                                        {% for discussion in bank.trendknowledgediscussion_set.all %}
+                                        <li>
+                                            <p><strong>Discussion:</strong> {{ discussion.discussion }}</p>
+                                            <p><strong>Created By:</strong> {{ discussion.created_by }}</p>
+                                            <p><strong>Created At:</strong> {{ discussion.created_at }}</p>
+                                            {% if discussion.photo %}
+                                            <p>
+                                                <strong>Photo:</strong><br>
+                                                <img src="{{ discussion.photo.url }}" alt="Discussion Photo" class="img-fluid" style="max-width: 200px;" />
+                                            </p>
+                                            {% endif %}
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p>No discussions available for this Trend Knowledge Bank.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+            </div>
+                       
+              </div>
+          </div>
+        </div>
+      </div>
+
+
+     
+    </div>
+
+    
+    <div class="col-lg-4 d-flex flex-column">
+
+      <div class="row flex-grow">
+        <div class="col-12 grid-margin stretch-card">
+          <div class="card card-rounded">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="card-title card-title-dash">Todo list</h4>
+                    <div class="add-items d-flex mb-0">
+                      <a class="nav-link add btn btn-icons btn-rounded btn-primary me-0 pl-12p" 
+                       href="#" 
+                       data-bs-toggle="modal" 
+                       data-bs-target="#createTodoModal" 
+                       data-toggle="tooltip" 
+                       data-placement="top" 
+                       title="Create Todo Activity">
+                       <i class="fa fa-plus-circle text-white"></i>
+                     </a>
+                     </div>
+                   </div>
+                   <div class="list-wrapper">
+                     <ul class="todo-list todo-list-rounded">
+                            {% if todos %}
+                             {% for todo in todos %}
+                               <li class="d-block">
+                                 <div class="form-check w-100">
+                                   <label class="form-check-label">
+                                     <input class="checkbox" type="checkbox">{{ todo.description }}<i class="input-helper rounded"></i>
+                                   </label>
+                                   <div class="d-flex mt-2">
+                                     <div class="ps-4 text-small me-3">{{ todo.created_at|date:"d-m-Y" }}</div>
+                                     <div class="badge 
+                                           {% if todo.days_left > 3 %} 
+                                               badge-opacity-info
+                                           {% elif todo.days_left >= 0 %}
+                                               badge-opacity-warning
+                                           {% else %}
+                                               badge-opacity-danger
+                                           {% endif %}"  data-toggle="tooltip" data-placement="top" title="You have 
+                                              {% if todo.days_left > 0 %}
+                                                {{ todo.days_left }} 
+                                              {% else %}
+                                                 0
+                                               {% endif %}
+                                               to complete this task"
+                                            >
+                                           {% if todo.days_left > 0 %}
+                                             {{ todo.days_left }}
+                                                days left
+                                           {% elif todo.days_left == 0 %}
+                                             Due today
+                                           {% else %}
+                                             Overdue
+                                           {% endif %}                                         
+                                         </div>
+                                       </div>
+                                     </div>
+                                   </li>
+                                 {% endfor %}
+                                 {% endif %}
+                             </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+     
+  </div>
+
+</div>
+
+  {% comment %} <div class="row" style="border:0px solid yellow!important; background:rgba(14, 0, 43, 0.1)">
+    <div class="row flex-grow mt-3">
+      <div class="col-md-4 col-lg-4 grid-margin stretch-card">
+        <div class="card card-rounded">
+          <div class="card-body card-rounded">
+            <h4 class="card-title  card-title-dash">Recent Events</h4>
+            <div class="list align-items-center border-bottom py-2">
+              <div class="wrapper w-100">
+                <p class="mb-2 fw-medium"> Change in Directors </p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="d-flex align-items-center">
+                    <i class="mdi mdi-calendar text-muted me-1"></i>
+                    <p class="mb-0 text-small text-muted">Mar 14, 2019</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="list align-items-center border-bottom py-2">
+              <div class="wrapper w-100">
+                <p class="mb-2 fw-medium"> Other Events </p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="d-flex align-items-center">
+                    <i class="mdi mdi-calendar text-muted me-1"></i>
+                    <p class="mb-0 text-small text-muted">Mar 14, 2019</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="list align-items-center border-bottom py-2">
+              <div class="wrapper w-100">
+                <p class="mb-2 fw-medium"> Quarterly Report </p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="d-flex align-items-center">
+                    <i class="mdi mdi-calendar text-muted me-1"></i>
+                    <p class="mb-0 text-small text-muted">Mar 14, 2019</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="list align-items-center border-bottom py-2">
+              <div class="wrapper w-100">
+                <p class="mb-2 fw-medium"> Change in Directors </p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="d-flex align-items-center">
+                    <i class="mdi mdi-calendar text-muted me-1"></i>
+                    <p class="mb-0 text-small text-muted">Mar 14, 2019</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="list align-items-center pt-3">
+              <div class="wrapper w-100">
+                <p class="mb-0">
+                  <a href="#" class="fw-bold text-primary">Show all <i class="mdi mdi-arrow-right ms-2"></i></a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 col-lg-4 grid-margin stretch-card">
+        <div class="card card-rounded">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <h4 class="card-title card-title-dash">Activities</h4>
+              <p class="mb-0">20 finished, 5 remaining</p>
+            </div>
+            <ul class="bullet-line-list">
+              <li>
+                <div class="d-flex justify-content-between">
+                  <div><span class="text-light-green">Ben Tossell</span> assign you a task</div>
+                  <p>Just now</p>
+                </div>
+              </li>
+              <li>
+                <div class="d-flex justify-content-between">
+                  <div><span class="text-light-green">Oliver Noah</span> assign you a task</div>
+                  <p>1h</p>
+                </div>
+              </li>
+              <li>
+                <div class="d-flex justify-content-between">
+                  <div><span class="text-light-green">Jack William</span> assign you a task</div>
+                  <p>1h</p>
+                </div>
+              </li>
+              <li>
+                <div class="d-flex justify-content-between">
+                  <div><span class="text-light-green">Leo Lucas</span> assign you a task</div>
+                  <p>1h</p>
+                </div>
+              </li>
+              <li>
+                <div class="d-flex justify-content-between">
+                  <div><span class="text-light-green">Thomas Henry</span> assign you a task</div>
+                  <p>1h</p>
+                </div>
+              </li>
+              <li>
+                <div class="d-flex justify-content-between">
+                  <div><span class="text-light-green">Ben Tossell</span> assign you a task</div>
+                  <p>1h</p>
+                </div>
+              </li>
+              <li>
+                <div class="d-flex justify-content-between">
+                  <div><span class="text-light-green">Ben Tossell</span> assign you a task</div>
+                  <p>1h</p>
+                </div>
+              </li>
+            </ul>
+            <div class="list align-items-center pt-3">
+              <div class="wrapper w-100">
+                <p class="mb-0">
+                  <a href="#" class="fw-bold text-primary">Show all <i class="mdi mdi-arrow-right ms-2"></i></a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 col-lg-4 grid-margin stretch-card">
+        <div class="col-12 grid-margin stretch-card">
+          <div class="card card-rounded">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                      <h4 class="card-title card-title-dash">Top Performer</h4>
+                    </div>
+                  </div>
+                  <div class="mt-3">
+                    <div class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
+                      <div class="d-flex">
+                        <img class="img-sm rounded-10" src="{% static 'admin/images/faces/face1.jpg' %}" alt="profile">
+                        <div class="wrapper ms-3">
+                          <p class="ms-1 mb-1 fw-bold">Brandon Washington</p>
+                          <small class="text-muted mb-0">162543</small>
+                        </div>
+                      </div>
+                      <div class="text-muted text-small"> 1h ago </div>
+                    </div>
+                    <div class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
+                      <div class="d-flex">
+                        <img class="img-sm rounded-10" src="{% static 'admin/images/faces/face2.jpg' %}" alt="profile">
+                        <div class="wrapper ms-3">
+                          <p class="ms-1 mb-1 fw-bold">Wayne Murphy</p>
+                          <small class="text-muted mb-0">162543</small>
+                        </div>
+                      </div>
+                      <div class="text-muted text-small"> 1h ago </div>
+                    </div>
+                    <div class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
+                      <div class="d-flex">
+                        <img class="img-sm rounded-10" src="{% static 'admin/images/faces/face3.jpg' %}" alt="profile">
+                        <div class="wrapper ms-3">
+                          <p class="ms-1 mb-1 fw-bold">Katherine Butler</p>
+                          <small class="text-muted mb-0">162543</small>
+                        </div>
+                      </div>
+                      <div class="text-muted text-small"> 1h ago </div>
+                    </div>
+                    <div class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
+                      <div class="d-flex">
+                        <img class="img-sm rounded-10" src="{% static 'admin/images/faces/face4.jpg' %}" alt="profile">
+                        <div class="wrapper ms-3">
+                          <p class="ms-1 mb-1 fw-bold">Matthew Bailey</p>
+                          <small class="text-muted mb-0">162543</small>
+                        </div>
+                      </div>
+                      <div class="text-muted text-small"> 1h ago </div>
+                    </div>
+                    <div class="wrapper d-flex align-items-center justify-content-between pt-2">
+                      <div class="d-flex">
+                        <img class="img-sm rounded-10" src="{% static 'admin/images/faces/face5.jpg' %}" alt="profile">
+                        <div class="wrapper ms-3">
+                          <p class="ms-1 mb-1 fw-bold">Rafell John</p>
+                          <small class="text-muted mb-0">Alaska, USA</small>
+                        </div>
+                      </div>
+                      <div class="text-muted text-small"> 1h ago </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  
+   <!--Todo Modal -->
+   <div class="modal fade" id="createTodoModal" tabindex="-1" aria-labelledby="createTodoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <div class="modal-header" style="background:#1F3BB3!important;color:white!important">
+          <h5 class="modal-title" id="createTodoModalLabel">Create Todo</h5>
+          <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Render Form -->
+          <form method="post" id="todoCreateForm" action="{% url 'aic_create_todo' %}">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+              {{ form.description.label_tag }}
+              {{ form.description }}
+            </div>
+            <div class="mb-3">
+              {{ form.todostate.label_tag }}
+              {{ form.todostate }}
+            </div>
+            <div class="mb-3">
+              {{ form.expected_date.label_tag }}
+              {{ form.expected_date }}
+            </div>
+            <div class="d-flex justify-content-end">
+              <button type="button" class="btn btn-danger btn-sm text-white" data-bs-dismiss="modal">
+                <i class="fa fa-times-circle text-white"></i>
+                Cancel
+              </button>
+              <button type="submit" class="btn btn-primary btn-sm text-white ms-2">
+                <i class="fa fa-plus-circle text-white"></i> Add Todo
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>{% endcomment %}
+  </div> 
+
+<script>
+  document.getElementById('todoCreateForm').addEventListener('submit', function(e) 
+    {
+      e.preventDefault(); // Prevent the default form submission
+
+      const form = this;
+      const url = form.action;
+      const formData = new FormData(form);
+
+      fetch(url, {
+        method: 'POST',
+        body: formData,
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert(data.message); // Show success message
+          window.location.reload(); // Reload the page or update the dashboard dynamically
+        } else {
+          console.error(data.errors);
+          alert('An error occurred while creating the Todo.');
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        alert('Something went wrong!');
+      });
+    });
+</script>
+  <!-- end of Todo Modal -->
+
+  <!--Pie chart for crops records-->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Chart data from the server
+    const chartData = JSON.parse('{{ chart_datas|escapejs }}'); // Use escapejs to ensure proper escaping
+    
+    const labels = chartData.labels;
+    const data = chartData.data;
+    {% comment %} console.log(chartData.labels);
+    console.log(chartData.data); {% endcomment %}
+    // Pie Chart
+    const pieCtx = document.getElementById('cropYieldPieChart').getContext('2d');
+    // Set the canvas width and height dynamically
+    new Chart(pieCtx, {
+        type: 'doughnut',  //pie/polarArea
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: ['#1F3BB3', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'],
+                hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
+            }]
+        },
+        options: {
+            responsive: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+            }
+        }
+    });
+
+    // Bar Chart
+    const barCtx = document.getElementById('cropYieldBarChart').getContext('2d');
+    new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Total Yield',
+                data: data,
+                backgroundColor: '#0F6CBD',
+                borderColor: '#36A2EB',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    beginAtZero: true
+                },
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    //weekly chart data
+    {% comment %} const chartDatas = JSON.parse('{{ weekly_chart_datas|safe }}');
+          console.log(chartDatas);
+    const ctx = document.getElementById('weeklyChart').getContext('2d');
+    const weeklyChart = new Chart(ctx, {
+        type: 'bar', // or 'line', 'pie', etc.
+        data: {
+            labels: chartDatas.labels,
+            datasets: [{
+                label: 'Weekly Production',
+                data: chartDatas.data,
+                backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    }); {% endcomment %}
+
+   ////////// Weekly by Weekly Crop Production ////////////////////
+const weekly_crop_chartData = JSON.parse('{{ weekly_crop_production_chart_datas|safe }}');
+console.log(weekly_crop_chartData);
+
+// Generate random colors for each crop
+// Fixed colors for datasets
+const fixedColors = [
+    'rgba(255, 99, 132, 0.8)',  // Red
+    'rgba(54, 162, 235, 0.8)',  // Blue
+    'rgba(75, 192, 192, 0.8)',  // Green
+    'rgba(255, 206, 86, 0.8)',  // Yellow
+    'rgba(153, 102, 255, 0.8)', // Purple
+    'rgba(255, 159, 64, 0.8)'   // Orange
+];
+{% comment %} weekly_crop_chartData.datasets.forEach((dataset) => {
+    const randomColor = () => Math.floor(Math.random() * 256); // Random color generator
+    const backgroundColor = `rgba(${randomColor()}, ${randomColor()}, ${randomColor()}, 0.8)`; // Semi-transparent background
+    const borderColor = `rgba(${randomColor()}, ${randomColor()}, ${randomColor()}, 1)`; // Solid border color
+    dataset.backgroundColor = backgroundColor;
+}); {% endcomment %}
+// Assign fixed colors to each dataset
+weekly_crop_chartData.datasets.forEach((dataset, index) => {
+  dataset.backgroundColor = fixedColors[index % fixedColors.length]; // Cycle through fixed colors
+  dataset.borderColor = dataset.backgroundColor.replace('0.8', '1'); // Set border to solid color
+});
+
+const ctxs = document.getElementById('weeklyCropChart').getContext('2d');
+
+// Add a nice background color for the canvas
+ctxs.canvas.style.background = 'linear-gradient(135deg, #f3f4f6, #e2e8f0)';
+
+// Define an array of colors to assign to each crop
+const colorPalette = [
+    'rgba(75, 192, 192, 0.8)', // Teal
+    'rgba(255, 99, 132, 0.8)', // Red
+    'rgba(54, 162, 235, 0.8)', // Blue
+    'rgba(255, 206, 86, 0.8)', // Yellow
+    'rgba(153, 102, 255, 0.8)', // Purple
+    'rgba(255, 159, 64, 0.8)', // Orange
+    'rgba(101, 143, 191, 0.8)' // Custom colors (add more if needed)
+];
+
+const weeklyCropChart = new Chart(ctxs, {
+    type: 'line',
+    data: {
+        labels: weekly_crop_chartData.labels,
+        datasets: weekly_crop_chartData.datasets.map((dataset, index) => ({
+            ...dataset,
+            backgroundColor: colorPalette[index % colorPalette.length], // Assign colors cyclically
+            borderColor: colorPalette[index % colorPalette.length], // Use the same color for the border
+            pointBackgroundColor: colorPalette[index % colorPalette.length], // Color for data points
+            pointBorderColor: '#fff', // Border color for data points
+            borderWidth: 2,
+            tension: 0.4 // Smooth curve for the line
+        }))
+    },
+    options: {
+        animations: {
+            tension: {
+                duration: 3000,
+                easing: 'easeOutElastic',
+                from: 1,
+                to: 0,
+                loop: false
+            }
+        },
+        scales: {
+            x: {
+                grid: {
+                    display: false // Hide the x-axis grid lines
+                },
+                title: {
+                    display: true,
+                    text: 'Week',
+                    color: '#4a5568',
+                    font: {
+                        size: 16,
+                        weight: 'bold'
+                    }
+                },
+                ticks: {
+                    color: '#2d3748' // x-axis label color
+                }
+            },
+            y: {
+                grid: {
+                    display: false // Hide the y-axis grid lines
+                },
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Quantity',
+                    color: '#4a5568',
+                    font: {
+                        size: 16,
+                        weight: 'bold'
+                    }
+                },
+                ticks: {
+                    color: '#2d3748' // y-axis label color
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#2d3748', // Legend text color
+                    font: {
+                        size: 14
+                    }
+                }
+            },
+            tooltip: {
+                backgroundColor: '#4a5568', // Tooltip background color
+                titleColor: '#fff', // Tooltip title color
+                bodyColor: '#fff' // Tooltip body text color
+            }
+        }
+    }
+});
+
+const weekly_tunnel_yieldChartData = JSON.parse('{{ yield_per_tunnel_weekly_chart_datas|safe }}');
+
+if (weekly_tunnel_yieldChartData.datasets && weekly_tunnel_yieldChartData.datasets.length > 0) {
+    weekly_tunnel_yieldChartData.datasets.forEach((dataset) => {
+        const randomColor = () => Math.floor(Math.random() * 256);
+        const backgroundColor = `rgba(${randomColor()}, ${randomColor()}, ${randomColor()}, 0.8)`;
+        const borderColor = `rgba(${randomColor()}, ${randomColor()}, ${randomColor()}, 1)`;
+        dataset.backgroundColor = backgroundColor;
+        dataset.borderColor = borderColor;
+    });
+}
+
+const ctxY = document.getElementById('weeklyTunnelYielddCropChart').getContext('2d');
+const weeklyTunnelYielddCropChart = new Chart(ctxY, {
+    type: 'bar',
+    data: {
+        labels: weekly_tunnel_yieldChartData.labels || [],
+        datasets: weekly_tunnel_yieldChartData.datasets || []
+    },
+    options: {
+       // animations: {
+          //tension: {
+           // duration: 10000,
+           // easing: 'linear',
+           // from: 1,
+           // to: 0,
+           // loop: true
+          //}
+       // },
+        scales: {
+            x: {
+                title: {
+                    display: true,
+                    text: 'Week'
+                }
+            },
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Yield Quantity'
+                }
+            }
+        }
+    }
+});
+
+
+///TOTAL REVENUE Chart 
+    const totalRevenueData = {{ total_revenue|safe }};
+    const totalRevenueCtx = document.getElementById('totalRevenueChart').getContext('2d');
+    new Chart(totalRevenueCtx, {
+        type: 'bar', // or 'pie', 'line', etc.
+        data: {
+            labels: ['Total Revenue'],
+            datasets: [{
+                label: 'Revenue',
+                data: [totalRevenueData],
+                backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Revenue'
+                    }
+                }
+            }
+        }
+    });
+    /// END OF TOTAL REVENUE Chart
+
+
+    //REVENUE PER CROP Chart
+    const revenuePerCropData = JSON.parse('{{ revenue_per_crop_chart_data|safe }}');
+    //console.log(revenuePerCropData);
+    const revenuePerCropCtx = document.getElementById('revenuePerCropChart').getContext('2d');
+    new Chart(revenuePerCropCtx, {
+        type: 'bar',
+        data: {
+            labels: revenuePerCropData.labels,
+            datasets: [{
+                label: 'Revenue Per Crop',
+                data: revenuePerCropData.data,
+                backgroundColor: 'rgba(56, 99, 132, 0.8)',
+                borderColor: 'rgba(22, 99, 132, 1)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+          scales: {
+            x: {
+                grid: {
+                    display: false // Hide the x-axis grid lines
+                },
+                title: {
+                    display: true,
+                    text: 'Crops',
+                    color: '#4a5568',
+                    font: {
+                        size: 16,
+                        weight: 'bold'
+                    }
+                },
+                ticks: {
+                    color: '#2d3748' // x-axis label color
+                }
+            },
+            y: {
+                grid: {
+                    display: false // Hide the y-axis grid lines
+                },
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Revenue',
+                    color: '#4a5568',
+                    font: {
+                        size: 16,
+                        weight: 'bold'
+                    }
+                },
+                ticks: {
+                    color: '#2d3748' // y-axis label color
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#2d3748', // Legend text color
+                    font: {
+                        size: 14
+                    }
+                }
+            },
+            tooltip: {
+                backgroundColor: '#4a5568', // Tooltip background color
+                titleColor: '#fff', // Tooltip title color
+                bodyColor: '#fff' // Tooltip body text color
+            }
+        }
+    }
+});
+        /* options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Revenue'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Crops'
+                    }
+                }
+            }
+        }
+    });*/
+    // END OF REVENUE PER CROP CHART
+
+    //REVENUE PER CLUSTER CHART
+    const revenuePerClusterData = JSON.parse('{{ revenue_per_cluster_chart_data|safe }}');
+    const revenuePerClusterCtx = document.getElementById('revenuePerClusterChart').getContext('2d');
+    new Chart(revenuePerClusterCtx, {
+        type: 'bar',
+        data: {
+            labels: revenuePerClusterData.labels,
+            datasets: [{
+                label: 'Revenue Per Cluster',
+                data: revenuePerClusterData.data,
+                backgroundColor: 'rgba(75, 192, 192, 0.8)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Revenue'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Clusters'
+                    }
+                }
+            }
+        }
+    });
+    //END OF REVENUE PER CLUSTER CHART
+
+    //FARM INPUT AND CHARTS
+      // Chart data passed from the Django view
+    //const FMchartData = JSON.parse('{{ farminput_chart_data|safe }}');
+    const FMchartData = JSON.parse('{{ farminput_chart_datas|safe }}');
+
+    // Prepare labels and datasets
+    const dealers = Object.keys(FMchartData);
+    const categories = Array.from(
+      new Set(dealers.flatMap(dealer => Object.keys(FMchartData[dealer])))
+    );
+
+    const datasets = categories.map(category => ({
+      label: category,
+      data: dealers.map(dealer => FMchartData[dealer][category] || 0),
+      backgroundColor: `rgba(${Math.floor(Math.random() * 255)}, 
+                             ${Math.floor(Math.random() * 255)}, 
+                             ${Math.floor(Math.random() * 255)}, 0.6)`
+    }));
+
+    // Render the chart
+    {% comment %} const fmctx = document.getElementById('farmInputChart').getContext('2d');
+    new Chart(fmctx, {
+      type: 'bar',
+      data: {
+        labels: dealers,
+        datasets: datasets
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top'
+          },
+          title: {
+            display: true,
+            text: 'Farm Input Distribution by Dealer and Category'
+          }
+        },
+        scales: {
+          x: {
+            stacked: true
+          },
+          y: {
+            stacked: true
+          }
+        }
+      }
+    });  {% endcomment %}
+    //END OF FARM INPUTS
+
+    
+    //EDO FARM INPUT RECEIVE AND DISTRIBUTE CHART
+    var ctx_input = document.getElementById('edoFarmInputDistributionChart').getContext('2d');
+      var chartData_input = JSON.parse('{{ chart_data_edo_dist_chart|safe }}');  // Ensure the JSON is properly passed from Django
+
+      var myChart = new Chart(ctx_input, {
+          type: 'bar',  // You can change this to other chart types like 'line', 'pie', etc.
+          data: chartData_input,
+          options: {
+              responsive: true,
+              scales: {
+                  x: {
+                      beginAtZero: true
+                  }
+              }
+          }
+      });
+    //EDO FARM INPUT RECEIVE AND DISTRIBUTE CHART
+ </script>
+  <!--End of pie chart for crops records-->
+{% endblock %}

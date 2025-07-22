@@ -1,0 +1,81 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}  
+      <div class="row">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Harvest Records For:
+                <span class="text-danger"> {{ beneficiary.full_name }}</span>
+              </h4>
+              <hr/>
+                <div class="row flex-grow">
+                  <div class="col-12 grid-margin stretch-card">
+                    <div class="card card-rounded">
+                      <div class="card-body">
+                        <div class="d-sm-flex justify-content-between align-items-start">
+                        </div>
+                        <div class="table-responsive  mt-1">
+                            <h3 style="font-size:0.90em!important">Assigned Harvest Records</h3>
+                                <table class="table table-striped table-hover">
+                                    <tr>
+                                        <th>Crop</th>
+                                        <th>Grade</th>
+                                        <th>Quantity</th>                                
+                                        <th>Unit</th>
+                                        <th>Date</th>
+                                        <th>Confirmation</th>
+                                    </tr>
+                                    {% for record in assigned_harvest_records %}
+                                    <tr>
+                                        <td>{{ record.crop.name }}</td>
+                                        <td>{{ record.grade.name }}</td>
+                                        <td>{{ record.quantity|floatformat:0 }}</td>
+                                        <td>{{ record.unit.expression }}</td>
+                                        <td>{{ record.date|date:"l, d F Y" }}</td>
+                                        <td>
+                                            <div class="badge badge-opacity-warning">{{ record.confirmation }}</div>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="3">No assigned harvest records found.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                                <hr/>
+                                <h3 style="font-size:0.90em!important">All Assigned Harvest Records</h3>
+                                <table class="table table-striped table-hover">
+                                    <tr>
+                                        <th>Crop</th>
+                                        <th>Description</th>
+                                        <th>Harvest Date</th>
+                                        <th>Assigned</th>
+                                    </tr>
+                                    {% for record in all_harvest_records %}
+                                    <tr>
+                                        <td>{{ record.crop.name }}</td>
+                                        <td>{{ record.crop.description }}</td>
+                                        <td>{{ record.harvest_date|date:"l, d F Y" }}</td>
+                                        <td>{% if record.is_assigned == 0 %}Yes{% else %}No{% endif %}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="4">No harvest records found.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                        
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </div>
+        </div>
+   
+     
+
+{% endblock %}

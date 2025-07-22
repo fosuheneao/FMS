@@ -1,0 +1,172 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+{% block content %}
+<div class="col-lg-12">
+  <style>
+    .backIcon:hover{
+        color:white!important;
+    }
+  </style>
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">
+            {% if form.instance.pk %} Edit {% else %} Create {% endif %} Transfer Stock
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <span class="btn btn-outline-primary">
+                   <a href="{% url 'movement_list' %}" class="backIcon"><i class="fa fa-mail-reply-all"></i> Go Back</a> 
+            </span>
+          </h5>
+  
+      {% if form.errors %}
+      <div class="alert alert-danger alert-dismissible">
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          <strong>Errors:</strong>
+          <ul>
+              {% for field in form %}
+                  {% if field.errors %}
+                      <li><strong>{{ field.label }}:</strong>
+                          <ul>
+                              {% for error in field.errors %}
+                                  <li>{{ error }}</li>
+                              {% endfor %}
+                          </ul>
+                      </li>
+                  {% endif %}
+              {% endfor %}
+              {% for error in form.non_field_errors %}
+                  <li>{{ error }}</li>
+              {% endfor %}
+          </ul>
+      </div>
+  {% endif %}
+
+  <form method="post">
+    {% csrf_token %}
+    {% comment %} {{ form.as_p }} {% endcomment %}
+    <div class="row">
+      <div class="mb-3 col-md-10">
+          {{ form.to_market_centre.label_tag }}
+          {{ form.to_market_centre }}
+      </div>
+
+      <div class="row">
+        <div class="mb-3 col-md-6">
+            {{ form.crop.label_tag }}
+            {{ form.crop }}
+        </div>
+        <div class="mb-3 col-md-6">
+          {{ form.cropvariety.label_tag }}
+          {{ form.cropvariety }}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="mb-3 col-md-6">
+            {{ form.grade.label_tag }}
+            {{ form.grade }}
+        </div>
+        <div class="mb-3 col-md-6">
+          {{ form.unit.label_tag }}
+          {{ form.unit }}
+        </div>
+      </div>
+      <div class="mb-3 col-md-6">
+        <label for="stock_balance">Available Stock</label>
+        <input type="text" id="stock_balance" class="form-control form-control-sm" readonly>
+      
+      <div id="stock-message" class="alert alert-info d-none"></div>
+    </div>
+      <div class="mb-3 col-md-6">
+        {{ form.quantity.label_tag }}
+        {{ form.quantity }}
+      </div>
+
+
+   </div>
+
+    <button type="submit">Submit Transfer</button>
+  </form>
+
+</div>
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  const fields = ['id_to_market_centre', 'id_crop', 'id_cropvariety', 'id_grade', 'id_unit'];
+
+  fields.forEach(fieldId => {
+    document.getElementById(fieldId)?.addEventListener('change', fetchStockBalance);
+  });
+
+  function fetchStockBalance() {
+    const data = {
+      'to_market_centre': document.getElementById('id_to_market_centre')?.value,
+      'crop': document.getElementById('id_crop')?.value,
+      'cropvariety': document.getElementById('id_cropvariety')?.value,
+      'grade': document.getElementById('id_grade')?.value,
+      'unit': document.getElementById('id_unit')?.value,
+    };
+
+    // Only fetch if all required fields are selected
+    if (Object.values(data).every(v => v)) {
+      fetch("{% url 'check_stock_balance' %}", {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": "{{ csrf_token }}",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      .then(res => res.json())
+      .then(res => {
+        const stockField = document.getElementById("stock_balance");
+        if (res.success) {
+          stockField.value = res.stock + " units available";
+
+          const msg = document.getElementById("stock-message");
+          msg.classList.remove("d-none");
+          msg.textContent = res.success ? `Available Stock: ${res.stock}` : "No stock available.";
+
+        } else {
+          stockField.value = "No stock available";
+        }
+      });
+    } else {
+      document.getElementById("stock_balance").value = "Select all fields to see stock";
+    }
+  }
+
+
+  $(document).ready(function() {
+    $("#id_crop").change(function() {
+        var cropId = $(this).val();
+        if (cropId) {
+            $.ajax({
+                url: "{% url 'ajax_load_crop_varieties' %}",
+                data: {
+                    'crop_id': cropId
+                },
+                dataType: 'json',
+                success: function(data) {
+                  console.log(data);
+                    let varietySelect = $("#id_cropvariety");
+                    varietySelect.empty();
+                    varietySelect.append('<option value="">---------</option>');
+                    data.forEach(function(variety) {
+                        varietySelect.append(
+                            $('<option></option>').val(variety.id).text(variety.name)
+                        );
+                    });
+                }
+            });
+        } else {
+            $("#id_cropvariety").empty().append('<option value="">---------</option>');
+        }
+    });
+});
+
+</script>
+
+{% endblock %}

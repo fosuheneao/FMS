@@ -1,0 +1,498 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+{% load dashboard_extras %}
+{% load chart_tags %}
+
+{% block content %}
+<!-- Dashboard Template: Styled with Office 365 / Fluent UI Principles -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  .card-rounded {
+    border-radius: 1rem;
+  }
+  .fluent-header {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    color: #323130;
+  }
+  .fluent-section {
+    background-color: #f3f2f1;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    margin-bottom: 2rem;
+  }
+  .fluent-table thead {
+    background-color: #e1dfdd;
+    font-weight: bold;
+  }
+  .fluent-table td, .fluent-table th {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.9rem;
+  }
+</style>
+
+<div class="row mb-3">
+  <div class="col-12 text-end">
+    <h6 class="fluent-header">Welcome, <span class="text-primary">{{ saleagent.fullname }}</span></h6>
+  </div>
+</div>
+
+<div class="row">
+  {% for card in dashboard_cards %}
+  <div class="col-md-4 col-lg-2 mb-3">
+    <div class="card card-rounded border-start border-{{ card.color }} shadow-sm h-100 py-2" data-toggle="tooltip" title="{{ card.tooltip }}">
+      <div class="card-body text-center">
+        <div class="text-uppercase text-{{ card.color }} fw-semibold small">{{ card.title }}</div>
+        <div class="fs-5 fw-bold text-dark">{{ card.value }}</div>
+        <i class="fa {{ card.icon }} text-{{ card.color }} fa-lg mt-2"></i>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Chart Sections -->
+<div class="row">
+  <div class="col-md-8 mb-4">
+    <div class="card card-rounded shadow-sm">
+      <div class="card-body">
+        <h5 class="fluent-header">Harvest Quantity by Crop</h5>
+        <canvas id="harvestByCropChart" height="120"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-4">
+    <div class="card card-rounded shadow-sm">
+      <div class="card-body">
+        <h5 class="fluent-header">Stock by Market Centre</h5>
+        <canvas id="stockByCentreChart" height="120"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8 mb-4">
+    <div class="card card-rounded shadow-sm">
+      <div class="card-body">
+        <h5 class="fluent-header">Harvest Movements</h5>
+        <canvas id="movementChart" height="100"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-4">
+    <div class="card card-rounded shadow-sm">
+      <div class="card-body">
+        <h5 class="fluent-header">Order Status Distribution</h5>
+        <canvas id="orderStatusChart" height="100"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h4 class="fluent-header">Spoilage Trends</h4>
+<div class="row">
+  <div class="col-md-4">
+    <div class="fluent-section">
+      <h6 class="text-muted">Daily Spoilage</h6>
+      <canvas id="dailySpoilageChart"></canvas>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="fluent-section">
+      <h6 class="text-muted">Weekly Spoilage</h6>
+      <canvas id="weeklySpoilageChart"></canvas>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="fluent-section">
+      <h6 class="text-muted">Monthly Spoilage</h6>
+      <canvas id="monthlySpoilageChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<h4 class="mt-5 fluent-header">Harvest, Stock & Movement Trends</h4>
+<div class="row">
+  <div class="col-md-6">
+    <div class="fluent-section">
+      <h6>Harvest vs Stock (Daily)</h6>
+      <canvas id="harvestVsStockChart"></canvas>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="fluent-section">
+      <h6>Stock vs Movement (Daily)</h6>
+      <canvas id="stockVsMovementChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<br/><br/>
+<div class="card">
+  <div class="card-header bg-primary"><h4 class="text-white">Harvest by Crop</h4></div>
+  <div class="card-body">
+    <table class="table table-striped table-sm">
+      <thead>
+        <tr>
+          <th>Greenhouse</th>
+          <th>Tunnel</th>
+          <th>Crop</th>
+          <th>Variety</th>
+          <th>Quantity</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for h in harvest_by_crop %}
+          <tr>
+             <td>{{ h.greenhouse__name }}</td>
+             <td>{{ h.greenhouse_room__room_name }}</td>
+              <td>{{ h.crop__name }}</td>
+              <td>{{ h.cropvariety__name }}</td>
+              <td>{{ h.total_qty }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6">No stock record found.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<br/><br/>
+<div class="card">
+  <div class="card-header bg-success"><h4 class="text-white">Stock by Market Centre</h4></div>
+  <div class="card-body">
+    <table class="table table-striped table-sm">
+      <thead>
+        <tr>
+          <th>Market Centre</th>
+          <th>Crop</th>
+          <th>Variety</th>
+          <th>Quantity</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for s in stock_by_centre %}
+            <tr>
+              <td>{{ s.market_centre__name }}</td>
+              <td>{{ s.crop__name }}</td>
+              <td>{{ s.cropvariety__name }}</td>
+              <td>{{ s.total_qty }}</td>
+            </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6">No stock record found.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<br/><br/>
+<div class="card">
+  <div class="card-header bg-info"><h4>Harvest Movement</h4></div>
+  <div class="card-body">
+    <table class="table table-striped table-sm">
+      <thead>
+        <tr>
+          <th>From</th>
+          <th>To</th>
+          <th>Crop</th>
+          <th>Variety</th>
+          <th>Quantity</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for m in movement_summary %}
+            <tr>
+                  <td>{{ m.from_market_centre__name }}</td>
+                  <td>{{ m.to_market_centre__name }}</td>
+                  <td>{{ m.crop__name }}</td>
+                  <td>{{ m.cropvariety__name }}</td>
+                  <td>{{ m.total_qty }}</td>
+            </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6">No stock movement record found.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<br/><br/>
+<div class="card">
+  <div class="card-header bg-secondary"><h4 class="text-white">Order Payments</h4></div>
+  <div class="card-body">
+    <table class="table table-striped table-sm">
+      <thead>
+        <tr>
+          <th>Buyer</th>
+          <th>Order ID</th>
+          <th>Order Date</th>
+           <th>Total Items</th>
+          <th>Total Due</th>
+          <th>Amount Paid</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for balance in outstanding_balances %}
+          <tr>
+            <td>{{ balance.order.buyer }}</td>
+            <td>#{{ balance.order.id }}</td>
+            <td>{{ balance.order.order_date|date:"M d, Y" }}</td>
+            <td>{{ balance.order.total_items }}</td>
+            <td>{{ balance.total_due|floatformat:2 }}</td>
+            <td>{{ balance.amount_paid|floatformat:2 }}</td>
+            <td>
+              {% if balance.amount_paid == 0 %}
+                <span class="badge bg-danger">Unpaid</span>
+              {% elif balance.amount_paid < balance.total_due %}
+                <span class="badge bg-warning text-dark">Partially Paid</span>
+              {% else %}
+                <span class="badge bg-success">Paid</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6">No outstanding balances found.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<br/><br/>
+<div class="card">
+  <div class="card-header bg-danger"><h4 class="text-white">Outstanding Balances</h4></div>
+  <div class="card-body">
+    <table class="table table-striped table-sm">
+      <thead>
+           <tr>
+            <th>Order ID</th>
+            <th>Buyer</th>
+            <th>Sales Agent</th>
+            <th>Order Date</th>
+            <th>Total Amount</th>
+            <th>Amount Paid</th>
+            <th>Status</th>
+          </tr>
+      </thead>
+      <tbody>
+        {% for order in unpaid_orders %}
+          <tr>
+            <td>#{{ order.id }}</td>
+            <td>{{ order.buyer }}</td>
+            <td>{{ order.created_by.username }}</td>
+            <td>{{ order.order_date|date:"M d, Y" }}</td>
+            <td>{{ order.total_amount|floatformat:2 }}</td>
+            <td>{{ order.balance.amount_paid|floatformat:2 }}</td>
+            <td>
+              {% if order.balance.amount_paid == 0 or order.balance.amount_paid == ''  %}
+                <span class="badge bg-danger" data-toggle="tooltip" title="No payment made">Unpaid</span>
+              {% elif order.balance.amount_paid < order.balance.total_due %}
+                <span class="badge bg-warning text-dark" data-toggle="tooltip" title="Partial Payment">Partially Paid</span>
+              {% else %}
+                <span class="badge bg-success" data-toggle="tooltip" title="Fully paid">Paid</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7">No unpaid orders found.</td></tr>
+        {% endfor %}       
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Embed JSON Data for All Charts -->
+{{ harvest_by_crop|json_script:"harvest-by-crop-data" }}
+{{ stock_by_centre|json_script:"stock-by-centre-data" }}
+{{ movement_summary|json_script:"movement-summary-data" }}
+{{ order_status_summary|json_script:"order-status-data" }}
+{{ daily_spoilage|json_script:"daily-spoilage-data" }}
+{{ weekly_spoilage|json_script:"weekly-spoilage-data" }}
+{{ monthly_spoilage|json_script:"monthly-spoilage-data" }}
+
+{{ daily_harvest|json_script:"daily-harvest-data" }}
+{{ daily_stock|json_script:"daily-stock-data" }}
+{{ daily_move|json_script:"daily-move-data" }}
+
+
+<script>
+  // Utility Function
+  function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-GB'); // or 'en-US' as preferred
+  }
+
+  // Parse JSON Data
+  const harvestByCropData = JSON.parse(document.getElementById('harvest-by-crop-data').textContent);
+  const stockByCentreData = JSON.parse(document.getElementById('stock-by-centre-data').textContent);
+  const movementData = JSON.parse(document.getElementById('movement-summary-data').textContent);
+  const orderStatusDataRaw = JSON.parse(document.getElementById('order-status-data').textContent);
+  const dailySpoilage = JSON.parse(document.getElementById('daily-spoilage-data').textContent);
+  const weeklySpoilage = JSON.parse(document.getElementById('weekly-spoilage-data').textContent);
+  const monthlySpoilage = JSON.parse(document.getElementById('monthly-spoilage-data').textContent);
+
+  const dailyHarvest = JSON.parse(document.getElementById('daily-harvest-data').textContent);
+  const dailyStock = JSON.parse(document.getElementById('daily-stock-data').textContent);
+  const dailyMove = JSON.parse(document.getElementById('daily-move-data').textContent);
+
+  // Harvest by Crop Bar Chart
+  new Chart(document.getElementById('harvestByCropChart'), {
+    type: 'bar',
+    data: {
+      labels: harvestByCropData.map(item => item.crop__name),
+      datasets: [{
+        label: 'Quantity (kg)',
+        data: harvestByCropData.map(item => item.total_qty),
+        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1
+      }]
+    }
+  });
+
+  // Stock by Centre Pie Chart
+  new Chart(document.getElementById('stockByCentreChart'), {
+    type: 'pie',
+    data: {
+      labels: stockByCentreData.map(item => item.market_centre__name),
+      datasets: [{
+        data: stockByCentreData.map(item => item.total_qty),
+        backgroundColor: ['#4CAF50', '#FFC107', '#2196F3', '#FF5722', '#9C27B0']
+      }]
+    }
+  });
+
+  // Harvest Movement Line Chart
+  new Chart(document.getElementById('movementChart'), {
+    type: 'line',
+    data: {
+      labels: movementData.map(item => `${item.from_market_centre__name} → ${item.to_market_centre__name}`),
+      datasets: [{
+        label: 'Qty Moved',
+        data: movementData.map(item => item.total_qty),
+        fill: false,
+        borderColor: 'rgba(255, 99, 132, 1)',
+        tension: 0.3
+      }]
+    }
+  });
+
+  // Order Status Pie Chart
+  new Chart(document.getElementById('orderStatusChart'), {
+    type: 'pie',
+    data: {
+      labels: orderStatusDataRaw.map(item => item.status),
+      datasets: [{
+        label: 'Order Status',
+        data: orderStatusDataRaw.map(item => item.count),
+        backgroundColor: ['#ffc107', '#28a745', '#dc3545']
+      }]
+    }
+  });
+
+  // Spoilage Trends (Reusable Function)
+  function buildLineChart(ctxId, data, label) {
+    const ctx = document.getElementById(ctxId).getContext('2d');
+    const labels = data.map(item => formatDate(item.day || item.week || item.month));
+    const values = data.map(item => item.total_qty);
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: label,
+          data: values,
+          backgroundColor: 'rgba(255,99,132,0.2)',
+          borderColor: 'rgba(255,99,132,1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: true },
+          tooltip: { enabled: true }
+        },
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  }
+
+  //trend charts for Harvest, HarvestStockAggregate, HarvestMovement
+  new Chart(document.getElementById('harvestVsStockChart'), {
+    type: 'line',
+    data: {
+      labels: dailyHarvest.map(item => formatDate(item.day)),
+      datasets: [
+        {
+          label: 'Harvest Quantity',
+          data: dailyHarvest.map(item => item.total_qty),
+          borderColor: '#007bff',
+          backgroundColor: 'rgba(0,123,255,0.2)',
+          fill: true
+        },
+        {
+          label: 'Stock Quantity',
+          data: dailyStock.map(item => item.total_qty),
+          borderColor: '#28a745',
+          backgroundColor: 'rgba(40,167,69,0.2)',
+          fill: true
+        }
+      ]
+    }
+  });
+
+  new Chart(document.getElementById('stockVsMovementChart'), {
+    type: 'line',
+    data: {
+      labels: dailyStock.map(item => formatDate(item.day)),
+      datasets: [
+        {
+          label: 'Stock Quantity',
+          data: dailyStock.map(item => item.total_qty),
+          borderColor: '#ffc107',
+          backgroundColor: 'rgba(255,193,7,0.2)',
+          fill: true
+        },
+        {
+          label: 'Movement Quantity',
+          data: dailyMove.map(item => item.total_qty),
+          borderColor: '#dc3545',
+          backgroundColor: 'rgba(220,53,69,0.2)',
+          fill: true
+        }
+      ]
+    }
+  });
+
+  // Render Spoilage Charts
+  buildLineChart('dailySpoilageChart', dailySpoilage, 'Daily Spoilage (kg)');
+  buildLineChart('weeklySpoilageChart', weeklySpoilage, 'Weekly Spoilage (kg)');
+  buildLineChart('monthlySpoilageChart', monthlySpoilage, 'Monthly Spoilage (kg)');
+</script>
+{% endblock %}
+{% endblock %}

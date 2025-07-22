@@ -1,0 +1,54 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="card shadow-lg border-0">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h4 class="mb-0"><i class="fa fa-money"></i> Payments
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <span class="btn btn-outline-primary" style="font-size:0.90em!important">
+                    <a href="{% url 'sa_order_list' %}" class="backIcon text-white"><i class="fa fa-mail-reply-all"></i> Back To Orders</a> 
+                </span>
+          </h4>
+          {% comment %} <a href="{% url 'sa_create_order' %}" class="btn btn-light btn-sm">
+            <i class="fa fa-plus-circle"></i> Create New Order
+          </a> {% endcomment %}
+          
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table id="myTable" class="table table-hover table-bordered">
+              <thead class="table-info">
+            <tr>
+               <th>#</th>
+                <th>Order</th>
+                <th>Total Items</th>
+                <th>Amount Paid</th>
+                <th>Method</th>
+                <th>Paid By</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for payment in payments %}
+            <tr>
+                <td>{{ payment.order.id }}</td>
+                <td>{{ payment.order.notes }}</td>
+                <td>{{ payment.order.total_items }}</td>
+                <td>{{ payment.amount_paid|currency }}</td>
+                <td>{{ payment.get_payment_method_display }}</td>
+                <td>{{ payment.created_by.username }}</td>
+                <td>{{ payment.payment_date|date:"d-m-Y" }}</td>
+                <td><a href="{% url 'sa_payment_detail' payment.id %}" class="btn btn-info btn-sm">View</a></td>
+            </tr>
+            {% empty %}
+            <span class="text-center">No payments recorded.</span>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

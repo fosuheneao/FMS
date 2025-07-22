@@ -1,0 +1,63 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="row">
+  <div class="card shadow-lg border-0 rounded-4">
+      <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+              <h4 class="fw-bold text-primary">
+                  <i class="fa fa-address-card me-2"></i> My Loans
+              </h4>
+              <a href="{% url 'request_cash' %}" class="btn btn-primary btn-lg text-white">
+                  <i class="fa fa-money"></i> Cash Request
+              </a>
+          </div>
+          <hr />
+
+          <div class="table-responsive mt-3">
+              <table id="myTable" class="table table-hover align-middle">
+                  <thead class="table-primary">
+                      <tr>
+                          <th>Date</th>
+                          <th>Amount (GHS)</th>
+                          <th>Repayment Period</th>
+                          <th>Status</th>
+                          <th>Repaid (GHS)</th>
+                          <th>Actions</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% for cash in cash_assigned_list %}
+                      <tr>
+                          <td>{{ cash.created_at|date:"d-m-Y" }}</td>
+                          <td><strong>{{ cash.amount|currency }}</strong></td>
+                          <td>
+                              <span class="text-primary">{{ cash.repayment_period_from|date:"d-m-Y" }}</span> - 
+                              <span class="text-danger">{{ cash.repayment_period_to|date:"d-m-Y" }}</span>
+                          </td>
+                          <td>
+                              <span class="badge {% if cash.status == 'Pending' %}badge-warning{% else %}badge-success{% endif %}">
+                                  {{ cash.status }}
+                              </span>
+                          </td>
+                          <td><strong>{{ total_repayments|get_item:cash.id|currency }}</strong></td>
+                          <td>
+                              <a href="{% url 'submit_repayment' cash.id %}" class="btn btn-success btn-sm text-white">
+                                  <i class="fa fa-money"></i> Repay
+                              </a>
+                              <a href="{% url 'cash_assigned_detail' cash.id %}" class="btn btn-secondary btn-sm text-white">
+                                  <i class="fa fa-eye"></i> View
+                              </a>
+                          </td>
+                      </tr>
+                      {% endfor %}
+                  </tbody>
+              </table>
+          </div>
+      </div>
+  </div>
+</div>
+
+{% endblock %}

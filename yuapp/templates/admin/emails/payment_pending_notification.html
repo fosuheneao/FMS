@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>YuGEP Application Notification</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .header { background-color: #f5f5f5; padding: 10px; }
+        .content { padding: 15px; }
+        .footer { font-size: 12px; color: #999; margin-top: 20px; }
+    </style>  
+</head>
+<body>
+    <div class="header">
+        <h2>Pending Payment Notification</h2>
+    </div>
+    <div class="content">
+        <p>Hello Admin,</p>
+        <p>A new <strong>{{ payment_type }}</strong> payment has been submitted for <strong>Order #{{ order_id }}</strong>.</p>
+
+        <p><strong>Payment Details:</strong></p>
+        <ul>
+            <li><strong>Amount:</strong> {{ amount }}</li>
+            <li><strong>Date:</strong> {{ date }}</li>
+            <li><strong>Paid By:</strong> {{ paid_by }}</li>
+            <li><strong>Reference:</strong> {{ reference }}</li>
+        </ul>
+
+        <p>Please log in to the admin dashboard to review and take action.</p>
+    </div>
+    <div class="footer">
+        <p>This is an automated message from your system.</p>
+    </div>
+</body>
+</html>

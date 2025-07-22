@@ -1,0 +1,53 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+{% block content %}
+<div class="col-lg-12">
+<style>
+  .backIcon:hover{
+      color:white!important;
+  }
+</style>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">
+          Harvest Record for : <span class="text-primary"> {{ crop.name }}</span>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <span class="btn btn-outline-primary">
+                 <a href="{% url 'harvest_index' %}" class="backIcon"><i class="fa fa-mail-reply-all"></i> Go Back</a> 
+          </span>
+        </h5>    
+            <form method="post">
+                {% csrf_token %}
+                {% comment %} {{ form.as_p }} {% endcomment %}
+                <div class="mb-3">
+                  {{ form.date.label_tag }}
+                  {{ form.date }}
+                </div>
+               <div class="row">
+                  <div class="col-md-4 mb-3">
+                      {{ form.quantity.label_tag }}
+                      {{ form.quantity }}
+                  </div>
+                  <div class="col-md-4 mb-3">
+                      {{ form.grade.label_tag }}
+                      {{ form.grade }}
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    {{ form.unit.label_tag }}
+                    {{ form.unit }}
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                {{ form.description.label_tag }}
+                {{ form.description }}
+             </div>
+        <button type="submit" class="btn btn-warning"> <i class="fa fa-check-square-o"></i> Save Harvest</button>
+    </form>
+
+    
+</div>
+</div>
+</div>
+{% endblock content  %}

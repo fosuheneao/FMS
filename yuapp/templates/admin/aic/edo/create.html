@@ -1,0 +1,145 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="col-lg-12">
+    <style>
+        .backIcon:hover {
+            color: white !important;
+        }
+        .fluent-card {
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+        .fluent-btn {
+            border-radius: 6px;
+            font-weight: 600;
+        }
+        .form-label {
+            font-weight: 500;
+        }
+    </style>
+    
+    <div class="card fluent-card">
+        <div class="card-body">
+            <h4 class="card-title text-primary fw-bold">
+                <i class="fa fa-edit"></i>
+                {% if form.instance.pk %} Edit {% else %} Create {% endif %} EDO
+            </h4>
+            <hr>
+            
+            <a href="{% url 'aic_edo_index' %}" class="btn btn-outline-primary fluent-btn">
+                <i class="fa fa-arrow-left"></i> Go Back
+            </a>
+            
+            {% if form.errors %}
+                <div class="alert alert-danger mt-3">
+                    <strong>Errors:</strong>
+                    <ul>
+                        {% for field in form %}
+                            {% if field.errors %}
+                                <li><strong>{{ field.label }}:</strong>
+                                    <ul>
+                                        {% for error in field.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            
+            <form method="post" action="{% if form.instance.pk %}{% url 'aic_update_edo' edo_id=form.instance.pk %}{% else %}{% url 'aic_create_edo' %}{% endif %}" enctype="multipart/form-data" class="mt-4">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    {{ form.fullname.label_tag }}
+                    {{ form.fullname }}
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Gender</label><br>
+                        {% for radio in form.gender %}
+                            <div class="form-check form-check-inline">
+                                {{ radio.tag }} {{ radio.choice_label }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.age.label_tag }}
+                        {{ form.age }}
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form.email.label_tag }}
+                        {{ form.email }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.phone_number.label_tag }}
+                        {{ form.phone_number }}
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form.city.label_tag }}
+                        {{ form.city }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.greenhouse.label_tag }}
+                        {{ form.greenhouse }}
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form.photo.label_tag }}
+                        {{ form.photo }}
+                        {% if edo.photo %}
+                            <img src="{{ edo.photo.url }}" class="img-thumbnail mt-2" alt="Photo Preview" style="max-width: 150px;">
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.cardphoto.label_tag }}
+                        {{ form.cardphoto }}
+                        {% if edo.cardphoto %}
+                            <img src="{{ edo.cardphoto.url }}" class="img-thumbnail mt-2" alt="Card Preview" style="max-width: 150px;">
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    {{ form.description.label_tag }}
+                    {{ form.description }}
+                </div>
+                
+                <div class="d-flex justify-content-between">
+                    {% if form.instance.pk %}
+                        <button type="submit" class="btn btn-success fluent-btn">
+                            <i class="fa fa-check-square"></i> Update
+                        </button>
+                    {% else %}
+                        <button type="submit" class="btn btn-primary fluent-btn">
+                            <i class="fa fa-plus-square"></i> Create
+                        </button>
+                    {% endif %}
+                    
+                    <a href="{% url 'aic_edo_index' %}" class="btn btn-danger fluent-btn">
+                        <i class="fa fa-arrow-left"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content  %}

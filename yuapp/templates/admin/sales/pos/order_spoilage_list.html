@@ -1,0 +1,118 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="card shadow-lg border-0">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h4 class="mb-0"><i class="fa fa-retweet"></i> Spoilage
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                {% comment %} <span class="btn btn-outline-primary" style="font-size:0.90em!important">
+                    <a href="{% url 'sa_order_list' %}" class="backIcon"><i class="fa fa-mail-reply-all"></i> Back To Orders</a> 
+                </span> {% endcomment %}
+          </h4>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            {% if spoilages %}
+            <table id="myTable" class="table table-hover table-bordered">
+              <thead class="table-info">
+            <tr>
+                <th>#</th>
+                <th>Crop</th>
+                <th>Variety</th>
+                <th>Grade</th>
+                <th>Quantity</th>
+                <th>Reported at</th>
+                <th>Buyer</th>
+                <th>Notes</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for spoil in spoilages %}
+            <tr>
+                <td>#ID_{{ spoil.id }}</td>
+                <td>{{ spoil.orderitem.harveststock.crop.name }}</td>
+                <td>{{ spoil.orderitem.harveststock.cropvariety.name }}</td>
+                <td>{{ spoil.orderitem.harveststock.grade.name }}</td>
+                <td>{{ spoil.quantity_spoiled }}</td>
+                <td>{{ spoil.reported_at }}</td>
+                <td>{{ spoil.reported_by.first_name }} {{ spoil.reported_by.last_name }}</td>
+                <td><i class="fa fa-info-circle" data-toggle="tooltip" title="{{ spoil.notes }}"></td>                
+                <td>{{ spoil.spoilage_date|date:"d-m-Y"}}</td>
+                <td>{% if spoil.received %}Received{% else %}Pending{% endif %}</td>
+                <td>
+                    {% if spoil.status == 'Pending' %}
+                      <button 
+                        class="btn btn-primary btn-sm text-white confirm-btn"
+                        data-id="{{ spoil.id }}">
+                        <i class="fa fa-check-square-o"></i> Accept
+                      </button>
+                    {% else %}
+                      <span class="btn btn-success btn-sm">Confirmed</span>
+                    {% endif %}
+                  </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+            <span class="text-center"><i class="fa fa-exclamation-circle text-dnager"></i> No spoilage record found.</span>
+     {% endif %}
+</div>
+
+
+<!-- Include SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const buttons = document.querySelectorAll(".confirm-btn");
+
+    buttons.forEach(button => {
+      button.addEventListener("click", function() {
+        const spoilageId = this.dataset.id;
+
+        Swal.fire({
+          title: 'Confirm Spoilage?',
+          input: 'textarea',
+          inputLabel: 'Add Note (Reason or Confirmation)',
+          inputPlaceholder: 'Type your note here...',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, confirm it',
+          cancelButtonText: 'Cancel',
+          preConfirm: (note) => {
+            return fetch(`/spoilage/confirm/${spoilageId}/`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}',
+              },
+              body: new URLSearchParams({
+                confirmation_note: note
+              })
+            })
+            .then(response => response.json())
+            .catch(() => {
+              Swal.showValidationMessage(`Request failed`);
+            });
+          }
+        }).then((result) => {
+          if (result.isConfirmed && result.value.success) {
+            Swal.fire('Confirmed!', result.value.message, 'success').then(() => {
+              location.reload();  // Reload to reflect updated status
+            });
+          } else if (result.value && !result.value.success) {
+            Swal.fire('Error!', result.value.message, 'error');
+          }
+        });
+      });
+    });
+  });
+</script>
+
+{% endblock %}

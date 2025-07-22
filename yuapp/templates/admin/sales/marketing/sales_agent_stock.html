@@ -1,0 +1,110 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
+<div class="row">
+
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title"><i class="fa fa-address-card"></i>
+        <span class="text-primary">{{ agent.marketingcentre.name }} </span>: Stock Available for Sale Agent
+        </h4>
+        <hr/>
+          <div class="row flex-grow">
+            <div class="col-12 grid-margin stretch-card">
+              <div class="card card-rounded">
+                <div class="card-body">
+                  <div class="d-sm-flex justify-content-between align-items-start">
+                  </div>
+                  <div class="table-responsive  mt-1">
+                    {% if stocks %}
+                    <table class="table table-hover table-striped">
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Crop</th>
+                    <th>Variety</th>
+                    <th>Grade</th>
+                    <th>Unit</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total Cost</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <body>
+                {% for stock in stocks %}
+                <tr>
+                    <td>{{ stock.aggregation_date|date:"d-m-Y"}}</td>
+                    <td>{{ stock.crop.name }}</td>
+                    <td>{{ stock.cropvariety.name }}</td>
+                    <td>{{ stock.grade.name }}</td>
+                    <td>{{ stock.unit.name }}</td>
+                    <td>{{ stock.total_quantity }}</td>
+                    <td>{{ stock.unit_price.selling_price }}</td>
+                    <td>{{ stock.total_value }}</td>
+                    <td>
+                      {% comment %} {{ stock.total_value }} {% endcomment %}
+                      {% if not stock.unit_price %}
+                        <button class="btn btn-sm btn-outline-primary update-price-btn"
+                                data-id="{{ stock.id }}">
+                          <i class="fa fa-refresh"></i> Update Price
+                        </button>
+                      {% else %}
+                        <span class="badge badge-success">Synced</span>
+                      {% endif %}
+                    </td>
+                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+          <span class="text-muted"> No record found.</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('.update-price-btn').click(function() {
+      let stockId = $(this).data('id');
+      //console.log(stockId);
+      $.ajax({
+        url: '{% url "sa_update_stock_unit_price" %}',
+        type: 'POST',
+        data: {
+          'stock_id': stockId,
+          'csrfmiddlewaretoken': '{{ csrf_token }}',
+        },
+        success: function(response) {
+          if (response.success) {
+            Swal.fire('Success!', response.message, 'success').then(() => {
+              location.reload();
+            });
+          } else {
+            Swal.fire('Not Found', response.message, 'warning');
+          }
+        },
+        error: function() {
+          Swal.fire('Error', 'Something went wrong!', 'error');
+        }
+      });
+    });
+  });
+</script>
+
+
+{% endblock %}

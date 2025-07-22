@@ -1,0 +1,102 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+{% block content %}
+<div class="col-lg-12">
+<style>
+  .backIcon:hover{
+      color:white!important;
+  }
+</style>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">
+          {% if form.instance.pk %} Edit {% else %} Create {% endif %} Item Costing  
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <span class="btn btn-outline-primary">
+                 <a href="{% url 'aic_maintenance_cost_list' %}" class="backIcon"><i class="fa fa-mail-reply-all"></i> Go Back</a> 
+          </span>
+        </h5>
+
+    {% if form.errors %}
+    <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <strong>Errors:</strong>
+        <ul>
+            {% for field in form %}
+                {% if field.errors %}
+                    <li><strong>{{ field.label }}:</strong>
+                        <ul>
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+<form method="post" action="{% if form.instance.pk %}{% url 'aic_maintenance_cost_update' costing_id=form.instance.pk %}{% else %}{% url 'aic_maintenance_cost_create' %}{% endif %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    {% comment %} <div class="row">
+        <div class="mb-3">
+            {{ form.billable_item.label_tag }}
+            {{ form.billable_item }}
+        </div>
+    
+        <div class="mb-3">
+            {{ form.greenhouse.label_tag }}
+            {{ form.greenhouse }}
+            {% if form.greenhouse.help_text %}
+            <small class="form-text text-muted" style="background:#002b2a; color:#fff!important; padding:0.2%">{{ form.greenhouse.help_text }}</small>
+             {% endif %}
+        </div>
+    </div>
+    
+    <div class="mb-3">
+        {{ form.beneficiary.label_tag }}
+        {{ form.beneficiary }}
+        {% if form.beneficiary.help_text %}
+            <small class="form-text text-muted" style="background:#002b2a; color:#fff!important; padding:0.2%">{{ form.beneficiary.help_text }}</small>
+        {% endif %}
+    </div>
+    
+    <div class="row">
+        <div class="col-md-4 mb-4 mt-2">
+            {{ form.total_cost.label_tag }}
+            {{ form.total_cost }}
+        </div>  
+        <div class="col-md-3 mb-3">
+            {{ form.date_incurred }}
+            {{ form.date_incurred.label_tag }} 
+                {% if form.date_incurred.help_text %}
+                    <small class="form-text text-muted" style="background:#002b2a; color:#fff!important; padding:0.2%">{{ form.date_incurred.help_text }}</small>
+                {% endif %}      
+        </div>
+        <div class="col-md-3 mb-3">
+            {{ form.date_validTo }}
+            {{ form.date_validTo.label_tag }} 
+                {% if form.date_validTo.help_text %}
+                    <small class="form-text text-muted" style="background:#002b2a; color:#fff!important; padding:0.2%">{{ form.date_validTo.help_text }}</small>
+                {% endif %}      
+        </div>        
+    </div> {% endcomment %}
+    {% if form.instance.pk %}
+        <button type="submit" class="btn btn-success"><i class="fa fa-check-square-o"></i> Update</button>
+    {% else %}
+        <button type="submit" class="btn btn-primary text-white"><i class="fa fa-plus-square-o"></i> Create</button>
+    {% endif %}
+</form>
+</div>
+</div>
+</div>
+ 
+    
+
+{% endblock content  %}

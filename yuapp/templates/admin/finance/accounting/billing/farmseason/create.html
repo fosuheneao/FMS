@@ -1,0 +1,92 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="col-lg-12">
+    <style>
+      .backIcon {
+        text-decoration: none;
+        color: inherit;
+      }
+      .backIcon:hover {
+        color: white !important;
+      }
+    </style>
+  
+    <div class="card shadow-sm border-0 rounded-3">
+      <div class="card-body">
+        <h5 class="card-title d-flex align-items-center">
+          <i class="fa fa-calendar text-primary me-2"></i> 
+          {% if form.instance.pk %} Edit {% else %} Create {% endif %} Farming Cycle  
+        </h5>
+        
+        <div class="mb-3">
+          <a href="{% url 'aic_farm_season_index' %}" class="btn btn-outline-primary btn-sm backIcon">
+            <i class="fa fa-mail-reply-all"></i> Go Back
+          </a>
+        </div>
+  
+        {% if form.errors %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <strong>Errors:</strong>
+          <ul class="mb-0">
+            {% for field in form %}
+              {% if field.errors %}
+                <li><strong>{{ field.label }}:</strong>
+                  <ul>
+                    {% for error in field.errors %}
+                      <li>{{ error }}</li>
+                    {% endfor %}
+                  </ul>
+                </li>
+              {% endif %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endif %}
+  
+        <form method="post" action="{% if form.instance.pk %}{% url 'aic_update_farm_season' farmseason_id=form.instance.pk %}{% else %}{% url 'aic_create_farm_season' %}{% endif %}">
+          {% csrf_token %}
+  
+          <div class="mb-3">
+            {{ form.name.label_tag }}
+            {{ form.name|add_class:"form-control" }}
+            {% if form.name.help_text %}
+              <small class="form-text text-muted">
+                <i class="fa fa-exclamation-circle text-primary"></i> {{ form.name.help_text }}
+              </small>
+            {% endif %}
+          </div>
+  
+          <div class="row">
+            <div class="mb-3 col-md-6">
+              {{ form.season_start_date.label_tag }}
+              {{ form.season_start_date|add_class:"form-control" }}
+            </div>
+            <div class="mb-3 col-md-6">
+              {{ form.season_end_date.label_tag }}
+              {{ form.season_end_date|add_class:"form-control" }}
+            </div>
+          </div>
+  
+          <div class="mb-3">
+            {{ form.description.label_tag }}
+            {{ form.description|add_class:"form-control" }}
+          </div>
+  
+          <button type="submit" class="btn btn-primary text-white">
+            <i class="fa {% if form.instance.pk %}fa-check-square-o{% else %}fa-plus-square-o{% endif %}"></i> 
+            {% if form.instance.pk %} Update {% else %} Create {% endif %}
+          </button>
+        </form>
+  
+      </div>
+    </div>
+  </div>
+  
+{% endblock content  %}

@@ -1,0 +1,25 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% comment %} {% load currency_filters %} {% endcomment %}
+
+{% block content %}
+<div class="col-lg-6">
+<div class="card">
+    <div class="card-body">
+              
+      <h1 style="font-size:1.2em!important; font-weight:600">Order Confirmation
+        <a href="{% url 'orders' %}" class="backIcon" style="font-size:0.85em!important"><i class="fa fa-mail-reply-all"></i> Back to Orders</a>
+      </h1>
+  <hr/>
+<!-- fulfill_order.html -->
+<form method="post">
+    {% csrf_token %}
+    <label for="delivery_date">Delivery Date:</label> 
+    <input type="date" id="delivery_date" name="delivery_date" required value="{{ now|date:'d-m-Y' }}">
+    <button type="submit" class="btn btn-primary btn-sm">Fulfill Order</button>
+</form>
+</div>
+</div>
+</div>
+{% endblock %}

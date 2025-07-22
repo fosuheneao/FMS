@@ -1,0 +1,90 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Co-Workers Contract History
+                {% comment %} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" class="pull-right btn btn-outline-primary btn-sm">
+                 <i class="fa fa-plus-circle"></i> Create Contract
+              </a> {% endcomment %}
+      
+              </h4>
+              {% comment %} <p class="card-description"> Add class <code>.table-hover</code>
+              </p> {% endcomment %}
+              <hr/>
+              <div class="table-responsive">
+
+                <table id="myTable"  class="table table-hover">                  
+                  <thead class="table-info">
+                    <tr>
+                      <th>Worker</th>
+                      <th>Beneficiary</th>
+                      <th>Contract Type</th>
+                      <th>From Date</th>
+                      <th>To Date</th>
+                      <th>Charge Fee</th>
+                      <th>Terms</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% if contracts %}
+                    {% for contract in contracts %}
+                     <tr>
+                      <td>{{ contract.worker.full_name }}</td>
+                      <td>{{ contract.beneficiary.full_name }}</td>
+                      <td>
+                        {% if contract.contract_type == 'Temporary' %}
+                            <label class="text-danger">{{ contract.contract_type }}</label>
+                        {% elif contract.contract_type == 'Casual' %}
+                            <label class="text-primary">{{ contract.contract_type }}</label>
+                        {% else %}
+                            <label class="text-success">{{ contract.contract_type }}</label>
+                        {% endif %}
+                    </td>
+                      <td>{{ contract.from_date|date:"Y-m-d" }}</td>
+                      <td>{{ contract.to_date|date:"Y-m-d" }}</td>
+                      <td>{{ contract.charge_per_day }}</td>
+                      <td>{{ contract.payment_mode_type }}</td>
+                      <td>
+                        {% if contract.status == 'Active' %}
+                        <label class="badge badge-success">{{ contract.status }}</label>
+                        {% else %}
+                        <label class="badge badge-danger">{{ contract.status }}</label>
+                        {% endif %}
+                      </td>
+                      <td>
+                        <a href="#" data-toggle="tooltip" data-placement="top" title="View Record">
+                          <i class="fa  fa-wpexplorer text-success fa-lg"></i>
+                        </a> &nbsp;&nbsp;
+                        <a href="{% url 'update_contract' contract.id %}" data-toggle="tooltip" data-placement="top" title="Update Record">
+                          <i class="fa  fa-cubes text-primary fa-lg"></i>
+                        </a> &nbsp;&nbsp;
+                       
+                    </td>
+                    </tr>
+                    {% endfor %}            
+                    {% else %}
+                      No record Found
+                    {% endif %}
+                  </tbody>
+                </table>
+
+              </div>
+            </div>
+          </div>
+          
+          {% comment %} <div class="card col-md-3" style="border: 2px solid blue"></div> {% endcomment %}
+
+        </div>
+   
+     
+
+{% endblock %}

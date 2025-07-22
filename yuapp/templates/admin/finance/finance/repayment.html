@@ -1,0 +1,111 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Beneficiaries and Repayments
+                {% comment %} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'aic_create_pricetable' %}" class="pull-right btn btn-outline-primary btn-sm">
+                 <i class="fa fa-plus-circle"></i> Add Price
+              </a>       {% endcomment %}
+              </h4>
+              <hr/>
+              <div class="table-responsive">
+
+                <table id="myTable" class="table table-hover">
+                  <thead class="table-info">
+                    <tr>
+                            <th>Beneficiary</th>
+                            <th>Cash Amount</th>
+                            <th>Amount Paid</th>
+                            <th>Balance Amount</th>
+                            <th>Date Paid</th>
+                            <th>Info</th>
+                            <th>Status</th>
+                            <th>Evidence</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for repayment in repayments %}
+                            <tr>
+                                <td>{{ repayment.cash_assigned.beneficiary.full_name }}</td>
+                                <td>{{ repayment.cash_assigned.amount }}</td>
+                                <td>{{ repayment.amount_paid }}</td>
+                                <td>{{ repayment.bal_amount }}</td>
+                                <td>{{ repayment.date_paid |date:"d-m-Y" }}</td>
+                                <td>
+                                    <i class="fa fa-info-circle text-warning fa-lg" 
+                                       data-toggle="tooltip" 
+                                       data-placement="top" 
+                                       title="{{ repayment.notes }}">
+                                    </i>
+                                </td>
+                                 <td>
+                                     {% if repayment.status == 'Pending' %}
+                                        <span class="badge text-bg-primary">{{ repayment.status }}</span>
+                                     {% elif repayment.status == 'Approved' %}
+                                         <span class="badge text-bg-success">{{ repayment.status }}</span>
+                                     {% else %}
+                                        <span class="badge text-bg-danger">{{ repayment.status }}</span>
+                                     {% endif %}
+                                  </td>
+                                  <td>
+                                    {% if repayment.photo %}
+                                    <!-- Trigger the Modal -->
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#evidenceModal{{ repayment.id }}">
+                                        <i class="fa fa-picture-o fa-lg" data-toggle="tooltip" data-placement="top"  title="View Evidence"></i>
+                                    </a>                      
+                                    <!-- The Modal -->
+                                    <div class="modal fade" id="evidenceModal{{ repayment.id }}" tabindex="-1" aria-labelledby="evidenceModalLabel{{ repayment.id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="evidenceModalLabel{{ repayment.id }}">Evidence for Repayment on {{ repayment.date_paid }}</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <img src="{{ repayment.photo.url }}" class="img-thumbnail img-responsive" alt="Repayment Evidence" style="width:300px; height:300px; align:center" />
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-primary text-white" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    No Evidence
+                                {% endif %}
+                                  </td>
+                                <td>
+                                    {% if repayment.status == 'Approved' %}
+                                    <a href="#" data-toggle="tooltip" data-placement="top"  title="Transaction is already Approved. You cannot undo it after action">
+                                        <i class="fa fa-check-circle text-success fa-lg"></i>
+                                    </a> |
+                                    {% else  %}
+                                    <a href="{% url 'aic_change_repayment_status' repayment.id 'Approved' %}" data-toggle="tooltip" data-placement="top"  title="Approve Transaction. You cannot undo it after action">
+                                        <i class="fa fa-check-circle text-primary fa-lg"></i>
+                                    </a> |
+                                    {% endif %}
+                                    <a href="{% url 'aic_change_repayment_status' repayment.id 'Denied' %}" data-toggle="tooltip" data-placement="top"  title="Cancel Transaction. You cannot undo it after action">
+                                        <i class="fa fa-window-close-o text-danger fa-lg"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                
+                </table>
+
+              </div>
+            </div>
+          </div>
+          
+     
+        </div>
+   {% endblock %}

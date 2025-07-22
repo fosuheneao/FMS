@@ -1,0 +1,82 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+
+<div class="card shadow-lg border-0">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h4 class="mb-0"><i class="fa fa-address-card"></i>All Time Harvest Records
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <span class="btn btn-outline-primary" style="font-size:0.90em!important">
+              <a href="{% url 'edo_beneficiary_index' %}" class="backIcon"><i class="fa fa-mail-reply-all"></i> Go Back</a> 
+        </span>
+      </h4>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        {% if assigned_harvest_records %}
+        <table id="myTable" class="table table-hover table-bordered">
+          <thead class="table-info">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Cluster</th>
+                                        <th>Crop</th>
+                                        <th>Grade</th>
+                                        <th>Quantity</th>
+                                        <th>Unit Price</th>
+                                        <th>Total Price</th>
+                                        <th>Unit</th>
+                                        <th>Confirmation</th>
+                                        <th>Description</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                  
+                                        {% for harvest in assigned_harvest_records %} 
+                                            <tr>
+                                                <td>{{ harvest.date|date:"d-m-Y"  }}</td>
+                                                <td>{{ harvest.beneficiary.assigned_tunnel.greenhouse.name }}</td>
+                                                <td>{{ harvest.crop.name }}</td>
+                                                <td>{{ harvest.grade.name }}</td>
+                                                <td>{{ harvest.quantity|floatformat:0 }}</td>
+                                                <td>{{ harvest.price_record.price }}</td>
+                                                <td>{{ harvest.total_price|currency }}</td>
+                                                <td>{{ harvest.unit.expression }}</td>
+                                                <td>{{ harvest.confirmation }}</td>
+                                                <td>
+                                                    <i class="fa fa-info-circle text-primary fa-lg" data-toggle="tooltip" data-placement="top" title="{{ harvest.description }}"></i>
+                                                </td>
+                                                <td>
+                                                    {% comment %} <a href="{% url 'update_harvest' harvest.id %}" title="Update Harvest Record">
+                                                        <i class="fa fa-pencil-square-o text-danger fa-lg"></i>
+                                                    </a> {% endcomment %}
+                                                    <a href="{% url 'edo_view_harvest' harvest.id %}" title="View Harvest Record">
+                                                        <i class="fa fa-eye text-success fa-lg"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}                                   
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3"><strong>Total</strong></td>
+                                        <td class="text-danger text-bold">{{ total_quantity|floatformat:0 }}</td>
+                                        <td></td><td></td>
+                                        <td class="text-danger">GHS {{ total_price|currency }}</td>
+                                        <td colspan="4"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                            {% else %}
+                            <span class="text-muted">No record found</span>
+                             {% endif %}
+                        </div>
+                      </div>
+                    </div>
+                 
+     
+
+{% endblock %}

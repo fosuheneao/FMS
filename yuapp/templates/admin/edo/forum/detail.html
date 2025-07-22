@@ -1,0 +1,46 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+{% block content %}
+<h2>{{ trend_knowledge_bank.title }}</h2>
+
+<div class="trend-details">
+    <p><strong>Description:</strong> {{ trend_knowledge_bank.description }}</p>
+    <p><strong>Location:</strong> Latitude: {{ trend_knowledge_bank.latitude }}, Longitude: {{ trend_knowledge_bank.longitude }}</p>
+    <p><strong>Created by:</strong> {{ trend_knowledge_bank.created_by.username }} on {{ trend_knowledge_bank.created_at }}</p>
+    
+    {% if trend_knowledge_bank.photo %}
+        <p><img src="{{ trend_knowledge_bank.photo.url }}" alt="{{ trend_knowledge_bank.title }}" class="img-fluid"></p>
+    {% endif %}
+</div>
+
+<hr>
+
+<h3>Discussions</h3>
+{% if discussions %}
+    <ul>
+        {% for discussion in discussions %}
+        <li>
+            <p><strong>{{ discussion.created_by.username }}</strong> on {{ discussion.created_at }}:</p>
+            <p>{{ discussion.discussion }}</p>
+            
+            {% if discussion.photo %}
+                <p><img src="{{ discussion.photo.url }}" alt="Discussion Photo" class="img-fluid"></p>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No discussions yet. Be the first to comment!</p>
+{% endif %}
+
+<hr>
+
+<h4>Add your observation</h4>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ discussion_form.as_p }}
+    <button type="submit" class="btn btn-outline-primary">Submit to Discussion Board</button>
+</form>
+
+{% endblock %}

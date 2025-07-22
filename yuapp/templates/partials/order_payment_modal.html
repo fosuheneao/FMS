@@ -1,0 +1,153 @@
+<!--PAYMENT MODAL-->
+{% load widget_tweaks %}
+
+ <form id="orderPaymentForm" method="post" enctype="multipart/form-data">
+       {% csrf_token %}
+     <input type="hidden" name="order_id" id="order-id-input"> 
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Payment for Order #{{ order.id }} 
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="alert alert-info small">
+                    Sale Type: <strong>{{ order.get_sale_order_type_display }}</strong><br>
+                    Remaining Due: <strong class="text-danger">{{ order.amount_due }}</strong>
+                </div>
+
+                <div class="mb-3">
+                    {{ form.payment_method.label_tag }}
+                    {{ form.payment_method|add_class:"form-select form-select-sm" }}
+                </div>
+
+                <div class="mb-3" id="mobileProviderGroup" style="display:none;">
+                    {{ form.payment_method_mobile.label_tag }}
+                    {{ form.payment_method_mobile|add_class:"form-control form-control-sm" }}
+                </div>
+
+                <div class="mb-3" id="bankProviderGroup" style="display:none;">
+                    {{ form.payment_method_bank.label_tag }}
+                    {{ form.payment_method_bank|add_class:"form-control form-control-sm" }}
+                </div>
+
+                <div class="mb-3" id="referenceNumberGroup" style="display:none;">
+                    {{ form.reference_number.label_tag }}
+                    {{ form.reference_number|add_class:"form-control form-control-sm" }}
+                </div>
+
+                <div class="mb-3" id="transactionCodeGroup" style="display:none;">
+                    {{ form.transaction_code.label_tag }}
+                    {{ form.transaction_code|add_class:"form-control form-control-sm" }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.amount_paid.label_tag }}
+                    {{ form.amount_paid|add_class:"form-control form-control-sm" }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.payin_slip.label_tag }}
+                    {{ form.payin_slip|add_class:"form-control form-control-sm" }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.notes.label_tag }}
+                    {{ form.notes|add_class:"form-control form-control-sm" }}
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+                    <i class="fa fa-times"></i> Cancel
+                </button>
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="fa fa-money"></i> Submit Payment
+                </button>
+            </div>
+        </div>
+    </form>
+
+
+
+
+
+
+{% comment %} 
+{% with order=order form=payment_form %}
+<div class="modal fade" id="orderPaymentModal" tabindex="-1">
+<div class="modal-dialog modal-md">
+    <form id="orderPaymentForm" method="post" enctype="multipart/form-data">
+       {% csrf_token %}
+     <input type="hidden" name="order_id" id="order-id-input">     
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Payment for Order #{{ item.id }} 
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="alert alert-info small">
+                    Sale Type: <strong>{{ order.get_sale_order_type_display }}</strong><br>
+                    Remaining Due: <strong class="text-danger">{{ order.amount_due }}</strong>
+                </div>
+
+                <div class="mb-3">
+                    {{ form.payment_method.label_tag }}
+                    {{ form.payment_method|add_class:"form-select form-select-sm" }}
+                </div>
+
+                <div class="mb-3" id="mobileProviderGroup" style="display:none;">
+                    {{ form.payment_method_mobile.label_tag }}
+                    {{ form.payment_method_mobile|add_class:"form-control form-control-sm" }}
+                </div>
+
+                <div class="mb-3" id="bankProviderGroup" style="display:none;">
+                    {{ form.payment_method_bank.label_tag }}
+                    {{ form.payment_method_bank|add_class:"form-control form-control-sm" }}
+                </div>
+
+                <div class="mb-3" id="referenceNumberGroup" style="display:none;">
+                    {{ form.reference_number.label_tag }}
+                    {{ form.reference_number|add_class:"form-control form-control-sm" }}
+                </div>
+
+                <div class="mb-3" id="transactionCodeGroup" style="display:none;">
+                    {{ form.transaction_code.label_tag }}
+                    {{ form.transaction_code|add_class:"form-control form-control-sm" }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.amount_paid.label_tag }}
+                    {{ form.amount_paid|add_class:"form-control form-control-sm" }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.payin_slip.label_tag }}
+                    {{ form.payin_slip|add_class:"form-control form-control-sm" }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.notes.label_tag }}
+                    {{ form.notes|add_class:"form-control form-control-sm" }}
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+                    <i class="fa fa-times"></i> Cancel
+                </button>
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="fa fa-money"></i> Submit Payment
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+{% endwith %} {% endcomment %}
+<!-- END OF PAYMENT MODAL-->

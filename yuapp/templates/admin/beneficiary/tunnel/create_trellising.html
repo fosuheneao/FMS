@@ -1,0 +1,96 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="col-lg-12">
+    <style>
+        .backIcon:hover {
+            color: white !important;
+        }
+        .fluent-card {
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+        .fluent-btn {
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        .fluent-input {
+            border-radius: 6px;
+            border: 1px solid #d0d0d0;
+            padding: 10px;
+            width: 100%;
+        }
+    </style>
+
+    <div class="card fluent-card">
+        <div class="card-body">
+            <h5 class="card-title">
+                {% if form.instance.pk %}
+                    <i class="mdi mdi-pencil"></i> Edit Trellising Record:
+                    <span class="text-danger">{{ crop.name }}</span>
+                {% else %}
+                    <i class="mdi mdi-plus-circle"></i> Create Trellising Record:
+                    <span class="text-secondary">{{ crop.name }}</span>
+                {% endif %}
+                <a href="{% url 'trellising_data_index' %}" class="btn btn-outline-primary fluent-btn float-end">
+                    <i class="mdi mdi-arrow-left"></i> Go Back
+                </a>
+            </h5>
+
+            {% if form.errors %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Errors:</strong>
+                <ul>
+                    {% for field in form %}
+                        {% if field.errors %}
+                            <li><strong>{{ field.label }}:</strong>
+                                <ul>
+                                    {% for error in field.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+
+            <form method="post" action="{% if form.instance.pk %}{% url 'update_trellising_data' trellising_data.id %}{% else %}{% url 'create_trellising_data' %}{% endif %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ form.date_trellised.label_tag }}
+                    {{ form.date_trellised|attr:"class:fluent-input" }}
+                </div>
+                
+                <div class="mb-3">
+                    {{ form.crop.label_tag }}
+                    {{ form.crop|attr:"class:fluent-input" }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.method.label_tag }}
+                    {{ form.method|attr:"class:fluent-input" }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.description.label_tag }}
+                    {{ form.description|attr:"class:fluent-input" }}
+                </div>
+
+                <button type="submit" class="btn btn-primary fluent-btn">
+                    <i class="mdi mdi-check"></i>
+                    {% if form.instance.pk %} Update Record {% else %} Save {% endif %}
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,67 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-8 mx-auto">
+      <div class="card shadow-sm">
+          <div class="card-body">
+              <h4 class="card-title d-flex align-items-center" style="font-size:1.1em; font-weight:600">
+                  <i class="fa fa-address-card me-2"></i> Harvest Record For: 
+                  <span class="text-danger ms-2">{{ harvest.crop.name }} on {{ harvest.date|date:"d-m-Y" }}</span>
+              </h4>
+              <hr/>
+              <div class="table-responsive">
+                  <table class="table table-bordered">
+                      <tbody>
+                          <tr>
+                              <th>Date</th>
+                              <td>{{ harvest.date|date:"d-m-Y" }}</td>
+                          </tr>
+                          <tr>
+                              <th>Crop Name</th>
+                              <td>{{ harvest.crop.name }}</td>
+                          </tr>
+                          <tr>
+                              <th>Grade</th>
+                              <td>{{ harvest.grade.name }}</td>
+                          </tr>
+                          <tr>
+                              <th>Unit</th>
+                              <td>{{ harvest.unit.name }}</td>
+                          </tr>
+                          <tr>
+                              <th>Quantity</th>
+                              <td>{{ harvest.quantity }}</td>
+                          </tr>
+                          <tr>
+                              <th>Unit Price</th>
+                              <td>{{ price_table.price }}</td>
+                          </tr>
+                          <tr>
+                              <th>Total Price</th>
+                              <td>{{ harvest.total_price }}</td>
+                          </tr>
+                          <tr>
+                              <th>Source</th>
+                              <td>{{ harvest.beneficiary.assigned_tunnel.greenhouse.name }}, 
+                                  {{ harvest.beneficiary.assigned_tunnel.room_name }}</td>
+                          </tr>
+                          <tr>
+                              <th>Description</th>
+                              <td>{{ harvest.description }}</td>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <div class="d-flex justify-content-end mt-3">
+                  <a href="{% url 'aic_harvest_history' %}" class="btn btn-primary">
+                      <i class="fa fa-mail-reply-all"></i> Back to Harvest List
+                  </a>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+{% endblock %}

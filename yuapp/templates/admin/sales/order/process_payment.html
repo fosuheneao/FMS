@@ -1,0 +1,70 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="col-lg-6">
+<div class="card">
+    <div class="card-body">
+              
+      <h1 style="font-size:1.2em!important; font-weight:600">Payment Process for Order No: {{ order.id }}
+        <a href="{% url 'sale_all_orders' %}" class="backIcon" style="font-size:0.85em!important"><i class="fa fa-mail-reply-all"></i> Back to Orders</a>
+      </h1>
+  <hr/>
+  <span style="font-size:0.95em!important; font-weight:600">Amount Due: {{ order.total_amount|currency}}</span>
+<div class="container">    
+    <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">                    
+        <div class="panel panel-info" >
+                
+                <div class="panel-body" >
+
+                  
+                    <form method="post">
+                        {% csrf_token %}
+                          
+                        <div class="form-group">
+                          <label for="exampleInputEmail1">
+                            <i class="fa fa-info-circle text-warning" data-toggle="tooltip" title="Select Transaction Type. Choose Purchase for Only crop production sales. Choose Delivery if it is cost for delivery of goods."></i>
+                            Transaction Type:</label>
+                            <select class="form-control" id="transaction_type" name="transaction_type" required>
+                              <option value ="" > Select Transaction Type</option>
+                              <option value ="Purchase"> Purchase</option>
+                              <option value ="Delivery"> Delivery</option>
+                            </select>
+                        </div>
+
+                           <div class="form-group">
+                                <label for="exampleInputEmail1">Amount Paid</label>
+                                <input type="number" class="form-control" id="amount_paid" name="amount_paid" value="" placeholder="Enter amount paid">
+                              </div>
+                              <div class="form-group">
+                                <label for="exampleInputPassword1">Payment Date</label>
+                                <input type="date" id="payment_date" class="form-control" name="payment_date" required value="{{ now|date:'d-m-Y' }}" placeholder="Payment Date">
+                       
+                              </div>
+                              
+                              <a href="#" class="btn btn-danger btn-sm text-white">Cancel  </a>
+                              <button type="submit" class="btn btn-primary btn-sm text-white">Record Payment</button>
+                        
+                            </form>
+
+                    </div>                     
+                </div>  
+    </div>
+   
+                     </div>
+                </div>
+
+           
+           
+            
+     </div> 
+</div>
+
+
+
+</div>
+</div>
+</div>
+{% endblock %}

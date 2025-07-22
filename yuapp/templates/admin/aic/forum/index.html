@@ -1,0 +1,67 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> My Trend Knowledge
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'create_trend_knowledge' %}" class="pull-right btn btn-outline-primary btn-sm">
+                 <i class="fa fa-plus-circle"></i> Create Trend
+              </a>
+      
+              </h4>
+              <hr/>
+              <div class="table-responsive">
+
+                <table id="myTable"  class="table table-hover">                  
+                  <thead class="table-info">
+                    <tr>
+                      <th>Topic</th>
+                      <th>Description</th>
+                      <th>Latitude</th>
+                      <th>Longitude</th>
+                     <th>Photo</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% if trends %}
+                    {% for act in trends %}
+                     <tr>
+                      <td>{{ act.title }}</td>
+                      <td>{{ act.description }}</td>
+                      <td>{{ act.latitude }}</td>
+                      <td>{{ act.longitude }}</td>
+                      <td>
+                      <img src="{{ act.photo.url }}" alt="Photo Preview" style="max-width: 150px; max-height: 150px; margin-top: 10px;">
+                      </td>
+                      
+                      <td>
+                        <a href="{% url 'discussion_trend_knowledge' pk=act.pk %}"><i class="fa fa-wpexplorer"></i></a>
+                        <a href="{% url 'discussion_trend_knowledge' act.pk %}">Join Discussion</a>
+                       
+                    </td>
+                    </tr>
+                    {% endfor %}            
+                    {% else %}
+                      No record Found
+                    {% endif %}
+                  </tbody>
+                </table>
+
+              </div>
+            </div>
+          </div>
+          
+          {% comment %} <div class="card col-md-3" style="border: 2px solid blue"></div> {% endcomment %}
+
+        </div>
+   
+     
+
+{% endblock %}

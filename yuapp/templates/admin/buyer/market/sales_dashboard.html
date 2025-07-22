@@ -1,0 +1,436 @@
+{% extends "base_auth_dash.html" %}
+{% comment %} <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> {% endcomment %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f3f3f3;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .statistics-title {
+            font-weight: 600;
+            color: #0F6CBD;
+        }
+        .tooltip-inner {
+            background-color: #0F6CBD !important;
+            color: #ffffff;
+            border: 1px solid #0F6CBD;
+        }
+        .tooltip .arrow::before {
+            border-top-color: #0F6CBD !important;
+        }
+        .badge {
+            font-size: 0.85em;
+        }
+        .btn-default {
+            background-color: #0F6CBD;
+            color: white;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h4 class="mb-3">Sales Dashboard</h4>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <p class="statistics-title">Total Orders Placed</p>
+                    <h5>GHS {{ buyer_orders }}</h5>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <p class="statistics-title">Total Items Count in Kg</p>
+                    <h5>{{ buyer_order_items_count }}</h5>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <p class="statistics-title">Total Payments Received</p>
+                    <h5>GHS {{ total_payments_received|currency }}</h5>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <p class="statistics-title">Total Orders</p>
+                    <h5>{{ total_orders }}</h5>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-8">
+                <div class="card p-4">
+                    <h4 class="card-title">Pending Orders</h4>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Date</th>
+                                <th>Total Items</th>
+                                <th>Total Amount GHS</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for bd in buyer_orders_all %}
+                            <tr>
+                                <td>{{ bd.id }}</td>
+                                <td>{{ bd.order_date|date:"d-m-Y" }}</td>
+                                <td>{{ bd.total_items }}</td>
+                                <td>GHS {{ bd.total_amount |currency }}</td>
+                                <td>
+                                    <span class="badge {% if bd.status == 'pending' %}bg-danger{% elif bd.status == 'in_progress' %}bg-primary{% else %}bg-success{% endif %}">
+                                        {{ bd.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a class="btn btn-default btn-sm" href="{% url 'order_detail' bd.id %}">Detail</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr>
+                
+                <div class="row flex-grow">
+                  <div class="grid-margin stretch-card">
+                   <div class="card card-rounded">
+                     <div class="card-body">
+                       <div class="d-flex align-items-center justify-content-between mb-3">
+                         <h4 class="card-title card-title-dash">Activities</h4>
+                         <p class="mb-0">20 finished, 5 remaining</p>
+                       </div>
+                       <ul class="bullet-line-list">
+                         {{ buyer_orders }}
+                         {% if buyer_orders %}
+                           {% for item in buyer_orders_all %}
+                           <li>
+                             <div class="d-flex justify-content-between">
+                               <div><span class="text-light-green">Ben Tossell</span> assign you a task</div>
+                               <p>{{ item.date }}</p>
+                             </div>
+                           </li>
+                           {% endfor %}
+                         {% else %}
+                           <span> No New Orders!</span>
+                         {% endif %}
+                       </ul>
+                       <div class="list align-items-center pt-3">
+                         <div class="wrapper w-100">
+                           <p class="mb-0">
+                             <a href="#" class="fw-bold text-primary">Show all <i class="mdi mdi-arrow-right ms-2"></i></a>
+                           </p>
+                         </div>
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+
+
+            </div>
+
+
+
+            <div class="col-md-4">
+                <div class="card p-4">
+                    <h4 class="card-title">Todo List</h4>
+                    <ul class="list-group">
+                        <li class="list-group-item">Task 1</li>
+                        <li class="list-group-item">Task 2</li>
+                        <li class="list-group-item">Task 3</li>
+                    </ul>
+                </div>
+            </div>
+
+
+
+            
+
+        </div>
+    </div>
+
+{% comment %} <style>
+  .tooltip-inner {
+    background-color: #0F6CBD !important; /* Replace with your desired color */
+    color: #ffffff; /* Change text color if needed */
+    border: 1px solid #0F6CBD; /* Optional: add a border with a different color */
+}
+.tooltip .arrow::before {
+    border-top-color: #0F6CBD !important; /* Adjust this if you change the tooltip position */
+}
+</style>
+<span style="font-size:0.95em">Sales Dashboard</span>
+<div class="row">
+    <div class="col-sm-12">
+      <div class="statistics-details d-flex align-items-center justify-content-between">
+        <div data-toggle="tooltip" data-placement="top" title="Total number of orders placed by {{ buyer.client_name }}.">
+          <p class="statistics-title">Total Orders Placed</p>
+          <h3 class="rate-percentage" style="font-size:1.1em!important">GHS {{ buyer_orders }}</h3>
+          <p class="text-primary d-flex"><i class="fa fa-money"></i><span></span></p>
+        </div>
+        <div data-toggle="tooltip" data-placement="top" title="Sum of all Items from each order by {{ buyer.client_name }}.">
+          <p class="statistics-title">Total Items Count in Kg</p>
+          <h3 class="rate-percentage" style="font-size:1.1em!important">{{ buyer_order_items_count }}</h3>
+          <p class="text-success d-flex"><i class="fa fa-balance-scale"></i><span></span></p>
+        </div>
+        <div data-toggle="tooltip" data-placement="top" title="Cash Loans taken">
+          <p class="statistics-title">Total Payments Received</p>
+          <h3 class="rate-percentage" style="font-size:1.1em!important">GHS {{ total_payments_received|floatformat:2|intcomma }}</h3>
+          <p class="text-danger d-flex"><i class="fa fa-money"></i><span></span></p>
+        </div>
+        <div data-toggle="tooltip" data-placement="top" title="Total orders to fulfill: {{ total_orders }}">
+          <p class="statistics-title">Total Orders</p>
+          <h3 class="rate-percentage" style="font-size:1.1em!important">{{ total_orders }}</h3>
+          <p class="text-success d-flex"><i class="fa fa-money"></i><span></span></p>
+        </div>
+        <div class="d-none d-md-block">
+          <p class="statistics-title">Total Deliveries</p>
+          <h3 class="rate-percentage" style="font-size:1.1em!important">{{ total_deliveries }}</h3>
+          <p class="text-success d-flex"><i class="fa fa-money"></i><span></span></p>
+        </div>
+        <div class="d-none d-md-block">
+          <p class="statistics-title">Production Cost</p>
+          <h3 class="rate-percentage" style="font-size:1.1em!important">68.8</h3>
+          <p class="text-danger d-flex"><i class="mdi mdi-menu-down"></i><span>68.8</span></p>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+  
+<div class="row">
+ 
+  <div class="row">
+    <div class="col-lg-8 d-flex flex-column">
+     
+      <div class="row flex-grow">
+        <div class="col-12 grid-margin stretch-card">
+          <div class="card card-rounded">
+            <div class="card-body">
+              <div class="d-sm-flex justify-content-between align-items-start">
+                <div>
+                  <h4 class="card-title card-title-dash">Pending Orders</h4>
+                </div>
+              </div>
+              
+              <div class="table-responsive  mt-1">
+                <table class="table select-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Date</th>
+                      <th>Total Items</th>
+                      <th>Total Amount GHS</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% if buyer_orders_all %}
+                        {% for bd in buyer_orders_all %}
+                            <tr>
+                              <td><h6>{{ bd.id }}</h6> </td>
+                              <td> <h6>{{ bd.order_date|date:"d-m-Y" }}</h6> </td>
+                              <td>
+                                <h6>{{ bd.total_items }}</h6>
+                              </td>
+                              <td><p class="text-primary">{{ bd.total_amount |currency  }}
+
+                                {% if bd.is_paid == True %}
+                                    <i class="fa fa-check-circle text-success" data-toggle="tooltip" title="Payment done"></i> 
+                                {% else %}
+                                    <i class="fa fa-times-circle-o text-danger" data-toggle="tooltip" title="Awaits Payment"></i> 
+                                {% endif %}
+                              </p>
+                              
+                              </td>
+                              <td> 
+                                {% if bd.status == 'pending' %}
+                                <span class="badge badge-danger" data-toggle="tooltip" title="Order placed, awaits fulfillment from supplier">{{ bd.status }}</span>
+                                {% elif bd.status == 'in_progress' %}
+                                <span class="badge badge-primary" data-toggle="tooltip" title="Fulfillment done, awaits confirmation of receipts of goods from you">{{ bd.status }}</span>
+                                {% else %}
+                                <span class="badge badge-success" data-toggle="tooltip" title="Order complete, check payment status to see if payment is received by supplier.">{{ bd.status }}</span>
+                                {% endif %}
+                              </td>
+                              <td>
+                                <a class="btn btn-default btn-sm" href="{% url 'order_detail' bd.id %}" data-toggle="tooltip" title="View Order Details">
+                                  <i class="fa fa-eye-slash"></i>Detail
+                              </a>
+                            </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        You have no order record.
+                    {% endif %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+     
+     
+      <div class="row flex-grow">
+         <div class="grid-margin stretch-card">
+          <div class="card card-rounded">
+            <div class="card-body">
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <h4 class="card-title card-title-dash">Activities</h4>
+                <p class="mb-0">20 finished, 5 remaining</p>
+              </div>
+              <ul class="bullet-line-list">
+                {{ buyer_orders }}
+                {% if buyer_orders %}
+                  {% for item in buyer_orders_all %}
+                  <li>
+                    <div class="d-flex justify-content-between">
+                      <div><span class="text-light-green">Ben Tossell</span> assign you a task</div>
+                      <p>{{ item.date }}</p>
+                    </div>
+                  </li>
+                  {% endfor %}
+                {% else %}
+                  <span> No New Orders!</span>
+                {% endif %}
+              </ul>
+              <div class="list align-items-center pt-3">
+                <div class="wrapper w-100">
+                  <p class="mb-0">
+                    <a href="#" class="fw-bold text-primary">Show all <i class="mdi mdi-arrow-right ms-2"></i></a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col-lg-4 d-flex flex-column">
+      <div class="row flex-grow">
+        <div class="col-12 grid-margin stretch-card">
+          <div class="card card-rounded">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="card-title card-title-dash">Todo list</h4>
+                    <div class="add-items d-flex mb-0">
+                      <button class="add btn btn-icons btn-rounded btn-primary todo-list-add-btn text-white me-0 pl-12p"><i class="mdi mdi-plus"></i></button>
+                    </div>
+                  </div>
+                  <div class="list-wrapper">
+                    <ul class="todo-list todo-list-rounded">
+                     
+                      <li class="d-block">
+                        <div class="form-check w-100">
+                          <label class="form-check-label">
+                            <input class="checkbox" type="checkbox"> Lorem Ipsum is simply dummy text of the printing <i class="input-helper rounded"></i>
+                          </label>
+                          <div class="d-flex mt-2">
+                            <div class="ps-4 text-small me-3">24 June 2020</div>
+                            <div class="badge badge-opacity-warning me-3">Due tomorrow</div>
+                            <i class="mdi mdi-flag ms-2 flag-color"></i>
+                          </div>
+                        </div>
+                      </li>
+
+                      <li class="d-block">
+                        <div class="form-check w-100">
+                          <label class="form-check-label">
+                            <input class="checkbox" type="checkbox"> Lorem Ipsum is simply dummy text of the printing <i class="input-helper rounded"></i>
+                          </label>
+                          <div class="d-flex mt-2">
+                            <div class="ps-4 text-small me-3">23 June 2020</div>
+                            <div class="badge badge-opacity-success me-3">Done</div>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="form-check w-100">
+                          <label class="form-check-label">
+                            <input class="checkbox" type="checkbox"> Lorem Ipsum is simply dummy text of the printing <i class="input-helper rounded"></i>
+                          </label>
+                          <div class="d-flex mt-2">
+                            <div class="ps-4 text-small me-3">24 June 2020</div>
+                            <div class="badge badge-opacity-success me-3">Done</div>
+                          </div>
+                        </div>
+                      </li>
+                      <li class="border-bottom-0">
+                        <div class="form-check w-100">
+                          <label class="form-check-label">
+                            <input class="checkbox" type="checkbox"> Lorem Ipsum is simply dummy text of the printing <i class="input-helper rounded"></i>
+                          </label>
+                          <div class="d-flex mt-2">
+                            <div class="ps-4 text-small me-3">24 June 2020</div>
+                            <div class="badge badge-opacity-danger me-3">Expired</div>
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row flex-grow">
+        <div class="col-12 grid-margin stretch-card">
+          <div class="card card-rounded">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="card-title card-title-dash">Type By Amount</h4>
+                  </div>
+                  <div>
+                    <canvas class="my-auto" id="doughnutChart"></canvas>
+                  </div>
+                  <div id="doughnutChart-legend" class="mt-5 text-center"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+     
+    </div>
+  </div> {% endcomment %}
+
+ <!-- Embedding JSON data for JavaScript usage -->
+<script type="application/json" id="order-status-counts-data">
+  {{ order_status_counts_json|safe }}
+</script>
+
+<script>
+  // Parse JSON data from the embedded script tag
+  const orderStatusCounts = JSON.parse(document.getElementById('order-status-counts-data').textContent);
+  console.log(orderStatusCounts);  // Verify in the console
+  
+  // Example: Loop through orderStatusCounts to populate chart or process data
+  orderStatusCounts.forEach(status => {
+      console.log(`Status: ${status.status}, Count: ${status.count}`);
+  });
+</script>
+
+{% endblock %}

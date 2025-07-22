@@ -1,0 +1,62 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% block content %}
+{% if cart %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h3 class="fw-bold text-primary">🛒 My Cart</h3>
+        <a href="{% url 'buyer_shop' %}" class="btn btn-outline-primary">
+            <i class="fa fa-arrow-left"></i> Continue Shopping
+        </a>
+    </div>
+    <hr>
+
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered shadow-sm">
+            <thead class="bg-primary text-white">
+                <tr>
+                    <th>Crop Name</th>
+                    <th>Grade</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                    <th>Location</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for harvest_id, item in cart.items %}
+                    <tr class="align-middle">
+                        <td class="fw-semibold">{{ item.crop_name }}</td>
+                        <td class="text-primary">{{ item.grade_name }}</td>
+                        <td>GHS {{ item.total_price|floatformat:2 }}</td>
+                        <td>
+                            <input type="number" value="{{ item.quantity|floatformat:0 }}" 
+                                   class="form-control text-center" style="width: 80px;">
+                        </td>
+                        <td class="fw-bold">GHS {{ item.total_item_cost|floatformat:2 }}</td>
+                        <td><i class="fa fa-map-marker text-danger"></i> {{ item.avlocation }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-end mt-3">
+        <div class="p-3 bg-light border rounded shadow-sm text-center">
+            <h5 class="fw-bold text-dark">Total: <span class="text-primary">GHS {{ total_cost|floatformat:2 }}</span></h5>
+            <a href="{% url 'checkout' %}" class="btn btn-success btn-lg mt-2">
+                <i class="fa fa-check-circle"></i> Proceed to Checkout
+            </a>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="text-center my-5">
+    <h4 class="text-muted">Your cart is empty 😞</h4>
+    <a href="{% url 'buyer_shop' %}" class="btn btn-primary mt-3">
+        <i class="fa fa-shopping-bag"></i> Start Shopping
+    </a>
+</div>
+{% endif %}
+
+{% endblock content  %}

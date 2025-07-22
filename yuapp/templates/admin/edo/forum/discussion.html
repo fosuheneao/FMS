@@ -1,0 +1,99 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Knowledge Sharing & Discussions</h2>
+    <div class="row clearfix g-4">
+        {% for act in trs %}
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="card fluent-card shadow-lg">
+                <div class="card-header d-flex align-items-center px-4 pt-4">
+                    <div class="me-3">
+                        {% if act.created_by.beneficiary.photo %}
+                            <img class="img-md rounded-circle" src="{{ act.created_by.beneficiary.photo.url }}" alt="{{ act.created_by.get_full_name }}" style="width:45px; height:45px; border:2px solid #fff">
+                        {% elif act.created_by.supervisor.photo %}
+                            <img class="img-md rounded-circle" src="{{ act.created_by.supervisor.photo.url }}" alt="{{ act.created_by.get_full_name }}" style="width:45px; height:45px; border:2px solid #fff">
+                        {% else %}
+                            <img class="img-md rounded-circle" src="{% static 'admin/assets/images/faces/user-no-image.png' %}" alt="No Image" style="width:45px; height:45px; border:2px solid #fff">
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h6 class="mb-0">{{ act.created_by.last_name }}, {{ act.created_by.first_name }}</h6>
+                        <small class="text-muted">{{ act.created_at|date:"M d, Y H:i" }}</small>
+                    </div>
+                </div>
+                <div class="card-body px-4 pt-2">
+                    <h5 class="card-title mb-2" title="Latitude: {{ act.latitude }}, Longitude: {{ act.longitude }}">
+                        {{ act.title }} <i class="fa fa-globe fa-lg text-primary"></i>
+                    </h5>
+                    {% if act.photo %}
+                        <img src="{{ act.photo.url }}" class="img-fluid rounded my-3" alt="{{ act.title }}">
+                    {% endif %}
+                    <p>{{ act.description }}</p>
+                    <div class="badge bg-primary my-2">
+                        <a href="{% url 'discussion_trend_knowledge' act.pk %}" class="text-white">
+                            <i class="fa fa-comments text-warning"></i> Join the discussion
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <h6>Contributors:</h6>
+                    <div class="d-flex">
+                        {% for discussion in act.trendknowledgediscussion_set.all %}
+                            {% if discussion.created_by.beneficiary.photo %}
+                                <img src="{{ discussion.created_by.beneficiary.photo.url }}" class="rounded-circle me-1" alt="{{ discussion.created_by.get_full_name }}" width="35" height="35">
+                            {% elif discussion.created_by.supervisor.photo %}
+                                <img src="{{ discussion.created_by.supervisor.photo.url }}" class="rounded-circle me-1" alt="{{ discussion.created_by.get_full_name }}" width="35" height="35">
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<hr class="my-5">
+
+<div class="container">
+    <h2 class="text-center mb-4">Discussion on {{ trend_knowledge_bank.title }}</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.discussion.label_tag }}
+            {{ form.discussion|attr:"class:form-control" }}
+        </div>
+        <div class="mb-3">
+            {{ form.photo.label_tag }}
+            {{ form.photo|attr:"class:form-control" }}
+        </div>
+        <div class="mb-3">
+            <label for="tagged_beneficiaries">Tag Beneficiaries:</label>
+            <select name="tagged_beneficiaries" id="tagged_beneficiaries" multiple class="form-control">
+                {% for beneficiary in form.tagged_beneficiaries.field.queryset %}
+                    <option value="{{ beneficiary.id }}" {% if beneficiary in form.tagged_beneficiaries.value %}selected{% endif %}>{{ beneficiary.full_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit Discussion</button>
+    </form>
+</div>
+
+<hr class="my-5">
+
+<div class="container">
+    <h3 class="text-center mb-4">Discussion on {{ trend_knowledge_bank.title }}</h3>
+    <p>{{ discussion.discussion }}</p>
+    <p><strong>Tagged Beneficiaries:</strong></p>
+    <ul>
+        {% for beneficiary in discussion.tagged_beneficiaries.all %}
+            <li>{{ beneficiary.full_name }}</li>
+        {% empty %}
+            <li>No beneficiaries tagged.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white text-center py-3">
+            <h2 class="mb-0"><i class="fa fa-leaf"></i> Harvest Summary</h2>
+        </div>
+        <div class="card-body">
+            
+            <!-- Accumulated Yield -->
+            <div class="mb-4 p-3 bg-light border-left border-primary">
+                <h4 class="text-primary"><i class="fa fa-seedling"></i> Accumulated Yield for the Year</h4>
+                <p class="fw-bold text-dark">Total Quantity: <span class="text-success">{{ accumulated_yield }}</span></p>
+            </div>
+
+            <!-- Total Yield Per Crop -->
+            <h4 class="text-primary"><i class="fa fa-pagelines"></i> Total Yield Per Crop</h4>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark text-white">
+                        <tr>
+                            <th>Crop</th>
+                            <th>Total Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for crop in total_yield_per_crop %}
+                        <tr>
+                            <td>{{ crop.crop__name }}</td>
+                            <td class="fw-bold text-success">{{ crop.total_quantity }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Total Yield Per Tunnel -->
+            <h4 class="text-primary"><i class="fa fa-warehouse"></i> Total Yield Per Tunnel</h4>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark text-white">
+                        <tr>
+                            <th>Tunnel (Greenhouse Room)</th>
+                            <th>Total Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tunnel in total_yield_per_tunnel %}
+                        <tr>
+                            <td>{{ tunnel.greenhouse_room__name }}</td>
+                            <td class="fw-bold text-success">{{ tunnel.total_quantity }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Major and Other Crops -->
+            <h4 class="text-primary"><i class="fa fa-seedling"></i> Total Yield for Major Crops & Others</h4>
+            <h5 class="text-success">Major Crops</h5>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark text-white">
+                        <tr>
+                            <th>Crop</th>
+                            <th>Total Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for crop in major_crops_yield %}
+                        <tr>
+                            <td>{{ crop.crop__name }}</td>
+                            <td class="fw-bold text-success">{{ crop.total_quantity }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <h5 class="text-danger">Other Crops</h5>
+            <p class="fw-bold">Total Quantity: <span class="text-warning">{{ other_crops_yield }}</span></p>
+
+            <!-- Revenue Section -->
+            <div class="mb-4 p-3 bg-light border-left border-success">
+                <h4 class="text-primary"><i class="fa fa-chart-line"></i> Total Revenue Earned</h4>
+                <p class="fw-bold text-dark">Total Revenue: <span class="text-success fs-4">{{ total_revenue }}</span></p>
+            </div>
+
+            <!-- Revenue Per Crop -->
+            <h4 class="text-primary"><i class="fa fa-coins"></i> Revenue Per Crop</h4>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark text-white">
+                        <tr>
+                            <th>Crop</th>
+                            <th>Total Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for crop in revenue_per_crop %}
+                        <tr>
+                            <td>{{ crop.crop__name }}</td>
+                            <td class="fw-bold text-success">{{ crop.total_revenue }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Revenue Per Cluster -->
+            <h4 class="text-primary"><i class="fa fa-industry"></i> Revenue Per Cluster (Tunnel/Greenhouse Room)</h4>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark text-white">
+                        <tr>
+                            <th>Cluster</th>
+                            <th>Total Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cluster in revenue_per_cluster %}
+                        <tr>
+                            <td>{{ cluster.greenhouse_room__name }}</td>
+                            <td class="fw-bold text-success">{{ cluster.total_revenue }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

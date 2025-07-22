@@ -1,0 +1,42 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+{% block content %}
+
+<h2>Order Placed Successfully for {{ buyer }}!</h2>
+<p>Thank you for your order. Expect your product delivery in the next 24 hrs. Do not hestitate to reach out to us should you experience further delays than expected.:</p>
+<h3>Order Items:</h3>
+
+<p>Order ID: {{ order.id }}</p>
+<p>Total Amount: GHS {{ order.total_amount|floatformat:2 }}</p>
+<p>Total Items: {{ order.total_items }}</p>
+<h3>Order Details</h3>
+<ul>
+    {% for item in order.orderitem_set.all %}
+        <li>{{ item.harvest.crop.name }} - {{ item.quantity }} units at ${{ item.price }} each</li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'buyer_shop' buyer.user.id %}">Return to Shop</a>
+{% comment %} <table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Price per kg</th>
+            <th>Total Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in order.orderitem_set.all %}
+            <tr>
+                <td>{{ item.harvest.crop.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.price }}</td>
+                <td>{{ item.price|floatformat:2|add:item.quantity }}</td>
+                
+            </tr>
+        {% endfor %}
+    </tbody>
+</table> {% endcomment %}
+{% endblock content  %}

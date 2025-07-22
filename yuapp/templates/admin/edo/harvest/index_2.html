@@ -1,0 +1,73 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Assigned Crops <span class="text-danger"></span>
+                {% comment %} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'request_cash' %}" class="pull-right btn btn-primary btn-lg text-white mb-0 me-0">
+                  <i class="fa fa-money"></i> Cash Request
+              </a>  {% endcomment %}
+              </h4>
+              <hr/>
+                <div class="row flex-grow">
+                  <div class="col-12 grid-margin stretch-card">
+                    <div class="card card-rounded">
+                      <div class="card-body">
+                        <div class="d-sm-flex justify-content-between align-items-start">
+                        </div>
+                        <div class="table-responsive  mt-1">
+                          <table id="myTable"  class="table table-select table-hover">                  
+                            <thead class="table-info">
+                              <tr>
+                                <th>Crop</th>
+                                <th>Commodity</th>
+                                <th>Progress</th>
+                                <th>Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for crop in assigned_crops %}
+                              <tr>                                
+                                <td>
+                                  <div class="d-flex ">
+                                    <div>
+                                      <h6>{{ crop.name }}</h6>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td>
+                                  <h6>{{ crop.description }}</h6>
+                                </td>
+                                <td>
+                                  <div class="badge badge-opacity-warning">{{ crop.status }}</div>
+                                </td>
+                                <td>
+                                  <a href="{% url 'create_harvest' crop.id %}" data-toggle="tooltip" data-placement="top" title="Add New Harvest Record">
+                                    <i class="fa  fa-bitbucket text-warning fa-lg"></i>
+                                </a> &nbsp;&nbsp;
+                                 <a href="{% url 'assigned_crops_and_harvests' beneficiary.id crop.id %}" data-toggle="tooltip" data-placement="top" title="View Harvest Records">
+                                    <i class="fa  fa-th text-primarry fa-lg"></i>
+                                </a>
+                               </td>
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </div>
+        </div>
+   
+     
+
+{% endblock %}

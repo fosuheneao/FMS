@@ -1,0 +1,80 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Farm Input
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'aic_add_farm_input' %}" class="pull-right btn btn-outline-primary btn-sm">
+                 <i class="fa fa-plus-circle"></i> Create New
+              </a>      
+              </h4>
+              {% comment %} <p class="card-description"> Add class <code>.table-hover</code>
+              </p> {% endcomment %}
+              <hr/>
+              <div class="table-responsive">
+
+                <table id="myTable" class="table table-hover">
+                    <thead class="table-info">
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Dealer</th>
+                                    <th>Quantity Received</th>
+                                    <th>Cost Per Unit</th>
+                                    <th>Expiry Date</th>
+                                    <th>Status</th>                                    
+                                    <th>Description</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for input in farm_inputs %}
+                                    <tr>
+                                        <td>{{ input.inputcategory.name }}</td>
+                                        <td>{{ input.inputdealer.name }}</td>
+                                        <td>{{ input.quantity_received }}</td>
+                                        <td>{{ input.cost_per_unit }}</td>
+                                        <td>{{ input.expiry_date|date:"D, M j, Y" }}</td>
+                                        <td>
+                                          {% if input.confirmation == 0 %}
+                                              <label class="badge badge-danger" data-toggle="tooltip" data-placement="top" title="Not Confirmed">
+                                                <i class="fa fa-info"></i>
+                                              </label>
+                                          {% else %}
+                                              <label class="badge badge-success" data-toggle="tooltip" data-placement="top" title="Confirmed">
+                                                <i class="fa fa-info"></i>
+                                              </label>
+                                          {% endif %}
+                                      </td>                                      
+                                       <td>
+                                        <i class="fa  fa-info-circle text-primary fa-lg" data-toggle="tooltip" data-placement="top" title="{{ input.description }}"></i>
+                                       </td>
+                                        <td>
+                                          <a href="#" data-toggle="tooltip" data-placement="top" title="View Record">
+                                            <i class="fa  fa-wpexplorer text-success fa-lg"></i>
+                                          </a> &nbsp;&nbsp;
+                                          <a href="{% url 'aic_update_farm_input' input_id=input.id %}" data-toggle="tooltip" data-placement="top" title="Update Record">
+                                            <i class="fa  fa-pencil text-primary fa-lg"></i>
+                                          </a> &nbsp;&nbsp;
+                                          {% comment %} <a href="#" data-toggle="tooltip" data-placement="top" title="Comfirm">
+                                            <i class="fa  fa-plus-square text-danger fa-lg"></i>
+                                        </a> &nbsp;&nbsp; {% endcomment %}
+                                      </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+              </div>
+            </div>
+          </div>
+          
+          {% comment %} <div class="card col-md-3" style="border: 2px solid blue"></div> {% endcomment %}
+
+        </div>
+   {% endblock %}

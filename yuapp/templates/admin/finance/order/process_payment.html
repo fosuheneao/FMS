@@ -1,0 +1,61 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="col-lg-6">
+  <div class="card shadow-lg border-0">
+      <div class="card-body">
+          <h5 class="mb-3 font-weight-bold">
+              Payment Process for Order No: {{ order.id }}
+              <a href="{% url 'aic_all_orders' %}" class="text-muted ml-3 small">
+                  <i class="fa fa-mail-reply-all"></i> Back to Orders
+              </a>
+          </h5>
+          <hr />
+          <p class="font-weight-bold small">Amount Due: {{ order.total_amount|currency }}</p>
+
+          <div class="container">
+              <div class="col-md-8 mx-auto">
+                  <div class="card border-light shadow-sm">
+                      <div class="card-body">
+                          <form method="post">
+                              {% csrf_token %}
+
+                              <div class="form-group">
+                                  <label for="transaction_type">
+                                      <i class="fa fa-info-circle text-warning" data-toggle="tooltip" title="Select Transaction Type. Choose Purchase for only crop production sales. Choose Delivery if it is cost for delivery of goods."></i>
+                                      Transaction Type:
+                                  </label>
+                                  <select class="form-control form-control-sm" id="transaction_type" name="transaction_type" required>
+                                      <option value="">Select Transaction Type</option>
+                                      <option value="Purchase">Purchase</option>
+                                      <option value="Delivery">Delivery</option>
+                                  </select>
+                              </div>
+
+                              <div class="form-group">
+                                  <label for="amount_paid">Amount Paid</label>
+                                  <input type="number" class="form-control form-control-sm" id="amount_paid" name="amount_paid" placeholder="Enter amount paid">
+                              </div>
+
+                              <div class="form-group">
+                                  <label for="payment_date">Payment Date</label>
+                                  <input type="date" id="payment_date" class="form-control form-control-sm" name="payment_date" required value="{{ now|date:'Y-m-d' }}">
+                              </div>
+
+                              <div class="d-flex justify-content-between">
+                                  <a href="#" class="btn btn-outline-danger btn-sm">Cancel</a>
+                                  <button type="submit" class="btn btn-outline-primary btn-sm">Record Payment</button>
+                              </div>
+                          </form>
+                      </div>
+                  </div>
+              </div>  
+          </div>
+      </div> 
+  </div>
+</div>
+
+{% endblock %}

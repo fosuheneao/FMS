@@ -1,0 +1,66 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    
+<style>
+    #map {
+        height: 500px; /* Ensure map is visible */
+        width: 100%;
+    }
+</style>
+  
+<div class="row">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title"><i class="fa fa-address-card"></i> Greenhouse: {{ greenhouse.name }}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <span class="btn btn-outline-primary">
+                       <a href="{% url 'aic_greenhouse_index' %}" class="backIcon"><i class="fa fa-mail-reply-all"></i> Go Back</a> 
+                </span>
+            </h4>
+            <p>{{ greenhouse.description }}</p>
+            
+            <!-- Map Container -->
+            <div id="map"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Default coordinates for Ghana (if greenhouse has no lat/lng)
+        var defaultLat = 7.9465;
+        var defaultLng = -1.0232;
+
+        // Get greenhouse coordinates
+        var lat = {{ greenhouse.latitude|default:"7.9465" }};
+        var lng = {{ greenhouse.longitude|default:"-1.0232" }};
+
+        // Initialize the map
+        var map = L.map('map').setView([lat, lng], 10); // Zoom level 10 to show Ghana
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Prepare the popup content
+        var popupContent = "<b>{{ greenhouse.name }}</b><br>{{ greenhouse.description }}<br><br><hr/>{{ greenhouse.marketing_centres }}<hr/>";
+
+        {% if greenhouse.photo %}
+            popupContent += '<img src="{{ greenhouse.photo.url }}" alt="{{ greenhouse.name }}" style="width:100px;height:100px;border-radius:5px;margin-top:5px;">';
+        {% else %}
+            popupContent += "<i>No photo available</i>";
+        {% endif %}
+
+        // Add marker
+        var marker = L.marker([lat, lng]).addTo(map)
+            .bindPopup(popupContent)
+            .openPopup();
+    });
+</script>
+{% endblock %}

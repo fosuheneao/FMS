@@ -1,0 +1,85 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Buyers List
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'sale_create_buyer' %}" class="pull-right btn btn-outline-primary btn-sm">
+                 <i class="fa fa-plus-circle"></i> Add Buyer
+              </a>
+      
+              </h4>
+              {% comment %} <p class="card-description"> Add class <code>.table-hover</code>
+              </p> {% endcomment %}
+              <hr/>
+              <div class="table-responsive">
+
+                <table id="myTable"  class="table table-hover">                  
+                  <thead class="table-info">
+                    <tr>
+                      <th>Enterprise</th>
+                      <th>Location</th>
+                      <th>Contact Person</th>
+                      <th>Phone</th>
+                      <th>Email</th>
+                      <th>Address</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% if buyers %}
+                    {% for buyer in buyers %}
+                     <tr>
+                      <td>{{ buyer.client_name }}</td>
+                      <td>{{ buyer.location }}</td>
+                      <td>{{ buyer.contact_person }}</td>
+                      <td>{{ buyer.phone }}</td>
+                      <td>{{ buyer.email }}</td>
+                      <td>{{ buyer.shipping_address }}</td>
+                      {% comment %} <td>
+                        <a href="{% url 'aic_buyer_detail' pk=act.pk %}"><i class="fa fa-wpexplorer"></i></a>
+                    </td> {% endcomment %}
+
+                    <td>
+                      <a href="{% url 'aic_buyer_detail' pk=buyer.pk %}" data-toggle="tooltip" data-placement="top" title="View Record">
+                        <i class="fa  fa-wpexplorer text-success fa-lg"></i>
+                      </a> &nbsp;&nbsp;
+                      <a href="{% url 'aic_update_buyer' buyer_id=buyer.id %}" data-toggle="tooltip" data-placement="top" title="Update Record">
+                        <i class="fa  fa-pencil text-primary fa-lg"></i>
+                      </a> &nbsp;&nbsp;
+                      {% if buyer.user and buyer.user.id %}
+                        <a href="{% url 'aic_buyer_shop' buyer.user.id %}" data-toggle="tooltip" data-placement="top" title="Create Order for Buyer">
+                            <i class="fa fa-plus-square text-primary fa-lg"></i>
+                        </a>
+                    {% else %}
+                        <span title="No associated user">
+                            <i class="fa fa-exclamation-circle text-danger fa-lg" data-toggle="tooltip" data-placement="top" title="User account not created for buyer"></i>
+                        </span>
+                    {% endif %}
+                    
+                  </td>
+                    </tr>
+                    {% endfor %}            
+                    {% else %}
+                      No record Found
+                    {% endif %}
+                  </tbody>
+                </table>
+
+              </div>
+            </div>
+          </div>
+          
+          {% comment %} <div class="card col-md-3" style="border: 2px solid blue"></div> {% endcomment %}
+
+        </div>
+   
+     
+
+{% endblock %}

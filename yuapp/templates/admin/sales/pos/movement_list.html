@@ -1,0 +1,67 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% block content %}
+
+<div class="card shadow-lg border-0">
+  <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+    <h4 class="mb-0">
+      <i class="fa fa-truck-moving"></i> My Stock Movement
+    </h4>
+    <a href="{% url 'create_harvest_movement' %}" class="btn btn-light btn-sm">
+      <i class="fa fa-plus"></i> New Movement
+    </a>
+  </div>
+
+  <div class="card-body">
+    <div class="table-responsive">
+      {% if movements %}
+      <table id="myTable" class="table table-hover table-bordered">
+        <thead class="table-info">
+          <tr>
+            <th>Date</th>
+            <th>Crop</th>
+            <th>Variety</th>
+            <th>Grade</th>
+            <th>To Market Centre</th>
+            <th>Quantity</th>
+            <th>Unit</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for movement in movements %}
+          <tr>
+            <td>{{ movement.movement_date |date:"d M Y" }}</td>
+            <td>{{ movement.crop }}</td>
+            <td>{{ movement.cropvariety.name }}</td>
+            <td>{{ movement.grade }}</td>
+            <td>{{ movement.to_market_centre }}</td>
+            <td>{{ movement.quantity }}</td>
+            <td>{{ movement.unit.name }}</td>
+            <td>{% if movement.received %}<span class="badge bg-success">Received</span>{% else %}<span class="badge bg-warning text-dark">Pending</span>{% endif %}</td>
+           <td>
+              {% if not movement.received %}
+                {% if request.user != movement.created_by %}
+                  <a href="{% url 'confirm_movement_receipt' movement.id %}" class="btn btn-sm btn-success">
+                    <i class="fa fa-check"></i> Confirm Receipt
+                  </a>
+                {% else %}
+                  <span class="text-muted">Awaiting Confirmation</span>
+                {% endif %}
+              {% else %}
+                <span class="text-muted">Confirmed</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <span class="text-center">No stock movements found.</span>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

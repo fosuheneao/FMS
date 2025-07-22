@@ -1,0 +1,60 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Assigned Crops <span class="text-danger"></span>
+                {% comment %} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'request_cash' %}" class="pull-right btn btn-primary btn-lg text-white mb-0 me-0">
+                  <i class="fa fa-money"></i> Cash Request
+              </a>  {% endcomment %}
+              </h4>
+              <hr/>
+                <div class="row flex-grow">
+                  <div class="col-12 grid-margin stretch-card">
+                    <div class="card card-rounded">
+                      <div class="card-body">
+                        <div class="d-sm-flex justify-content-between align-items-start">
+                        </div>
+                        <div class="table-responsive  mt-1">
+                          <table id="myTable"  class="table table-select table-hover">                  
+                            <thead class="table-info">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Crop</th>
+                                    <th>Quantity</th>
+                                    <th>Beneficiary</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for harvest in pending_harvests %}
+                                <tr>
+                                    <td>{{ harvest.date }}</td>
+                                    <td>{{ harvest.crop.name }}</td>
+                                    <td>{{ harvest.quantity }}</td>
+                                    <td>{{ harvest.beneficiary.full_name }}</td>
+                                    <td>
+                                        <a href="{% url 'edo_approve_harvest' harvest.pk %}" class="btn btn-success btn-sm">Approve</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </div>
+        </div>
+   
+     
+
+{% endblock %}

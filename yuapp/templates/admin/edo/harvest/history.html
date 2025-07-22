@@ -1,0 +1,76 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Beneficiary Harvest History
+                {% comment %} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'edo_create_beneficiary' %}" class="pull-right btn btn-outline-primary btn-sm">
+                 <i class="fa fa-plus-circle"></i> Add Beneficiary
+              </a>       {% endcomment %}
+              </h4>
+              <hr/>
+              <div class="table-responsive">
+                {% if beneficiaries %}
+                <table id="myTable" class="table table-hover">
+                  <thead class="table-info">
+                    <tr>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Ghana Card</th>
+                        <th>Enterprise Name</th>
+                        <th>Supervisor</th>
+                        <th>Assigned Tunnel</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   
+                        {% for ben in beneficiaries %}
+                        <tr>
+                            <td>{{ ben.full_name }}</td>
+                            <td>{{ ben.gender }}</td>
+                            <td>{{ ben.nationalId }}</td>
+                            <td>{{ ben.enterprise_name }}</td>
+                            <td>
+                                <i class="fa fa-user-circle text-primary fa-lg" 
+                                   data-toggle="tooltip" 
+                                   data-placement="top" 
+                                   title="{{ ben.assigned_edo.user.get_full_name }}">
+                                </i>
+                            </td>
+                            <td>
+                                <i class="fa fa-building text-info fa-lg" 
+                                   data-toggle="tooltip" 
+                                   data-placement="top" 
+                                   title="{{ ben.assigned_tunnel.room_name }}">
+                                </i>
+                            </td>
+                
+                            <td>
+                                <a href="{% url 'edo_beneficiary_harvest' ben.pk %}" data-toggle="tooltip" data-placement="top" title="View Beneficiary Harvest Record">
+                                    <i class="fa fa-wpexplorer text-success fa-lg"></i>
+                                </a> &nbsp;&nbsp; 
+                            </td> 
+                        </tr>
+                        {% endfor %}  
+                    </tbody>                 
+                </table>
+                {% else %}
+                      <span class="text-muted">No record Found</span>
+                 {% endif %}
+                
+              </div>
+            </div>
+          </div>
+          
+          {% comment %} <div class="card col-md-3" style="border: 2px solid blue"></div> {% endcomment %}
+
+        </div>
+   {% endblock %}

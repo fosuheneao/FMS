@@ -1,0 +1,37 @@
+{% extends "base_auth_dash.html" %}
+{% block content %}
+<div class="col-lg-8">
+  <div class="card shadow-lg border-0 rounded-4">
+      <div class="card-body">
+          <h2 class="fw-bold text-primary">
+              <i class="fa fa-user-circle me-2"></i> {{ buyer.client_name }}
+          </h2>
+          <hr>
+
+          <div class="mb-2">
+              <i class="fa fa-map-marker-alt text-muted me-2"></i> <strong>Location:</strong> {{ buyer.location }}
+          </div>
+          <div class="mb-2">
+              <i class="fa fa-user text-muted me-2"></i> <strong>Contact Person:</strong> {{ buyer.contact_person }}
+          </div>
+          <div class="mb-2">
+              <i class="fa fa-phone text-muted me-2"></i> <strong>Phone:</strong> {{ buyer.phone }}
+          </div>
+          <div class="mb-2">
+              <i class="fa fa-envelope text-muted me-2"></i> <strong>Email:</strong> {{ buyer.email }}
+          </div>
+          <div class="mb-3">
+              <i class="fa fa-truck text-muted me-2"></i> <strong>Shipping Address:</strong> {{ buyer.shipping_address }}
+          </div>
+
+          <a href="{% url 'buyer_index' %}" class="btn btn-outline-primary d-flex align-items-center">
+              <i class="fa fa-arrow-left me-1"></i> Back
+          </a>
+      </div>
+  </div>
+</div>
+
+{% endblock content  %}
+
+
+

@@ -1,0 +1,25 @@
+{% extends "base_auth_dash.html" %}
+{% block content %}
+<div class="col-lg-8">
+
+    <div class="card">
+      <div class="card-body">
+                <h2>{{ coworker.full_name }}</h2>
+                <p>{{ coworker.gender }}</p>
+                <p>{{ coworker.role }}</p>
+                <p>{{ coworker.age }}</p>
+                <p>{{ coworker.email }}</p>
+                <p>{{ coworker.phone_number }}</p>
+                <p>{{ coworker.nationalId }}</p>
+                <p>{{ coworker.from_date }}</p>
+                <p>{{ coworker.to_date }}</p>
+                <a href="{% url 'edo_coworker_update' pk=coworker.pk %}"><i class="bi bi-pencil-square"></i> Edit Coworker</a> |               
+                <a href="{% url 'edo_beneficiary_coworker_index' %}"><i class="bi bi-arrow-left"></i> Back to Coworker</a>|
+                <a href="{% url 'edo_coworker_delete' pk=coworker.pk %}"><i class="bi bi-trash-fill"></i> Delete Coworker</a>
+    </div>
+    </div>
+</div>
+{% endblock content  %}
+
+
+

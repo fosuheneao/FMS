@@ -1,0 +1,82 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Price Table: <span class="text-danger">List</span>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'create_price' %}" class="pull-right btn btn-primary btn-lg text-white mb-0 me-0">
+                  <i class="fa fa-money"></i> New Price
+              </a> 
+              </h4>
+              <hr/>
+                <div class="row flex-grow">
+                  <div class="col-12 grid-margin stretch-card">
+                    <div class="card card-rounded">
+                      <div class="card-body">
+                        <div class="d-sm-flex justify-content-between align-items-start">
+                        </div>
+                        <div class="table-responsive  mt-1">
+                          <table class="table table-hover table-striped">
+                            <thead>
+                              <tr>
+                                <th>Market Center</th>
+                                <th>Crop</th>
+                                <th>Grade</th>
+                                <th>Unit</th>
+                                <th>Price (GHS)</th>
+                                <th>From</th>
+                                <th>To</th>                                
+                                <th>Status</th>
+                                <th>Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for price in prices %}
+                              <tr {% if price.to_date and price.to_date < now %} class="disabled-row" {% endif %}>                               
+                                <td>{{ price.market_center.name }}</td>
+                                <td>{{ price.crop.name }}</td>
+                                <td>{{ price.grade.name }}</td>
+                                <td>{{ price.unit.expression }}</td>
+                                <td>{{ price.price }}</td>
+                                <td>{{ price.from_date | date:"l, d, F, Y" }}</td>
+                                <td>{{ price.to_date | date:"l, d, F, Y" }}</td>
+                                <td>
+                                  {% if price.active %}
+                                  <div class="badge badge-opacity-primary" style="background:#0F6CBD!important; color:##0F6CBD; color:#fff;">Active</div>
+                                  {% else %}
+                                  <div class="badge badge-opacity-danger">Inactive</div>
+                                  {% endif %}
+                                </td>
+                                <td>
+                                  <a href="{% url 'price_update' price.id %}" class="badge badge-opacity-primary" data-toggle="tooltip" title="Update Record" style="color:#fff">
+                                    <i class="fa fa-pencil"></i>Update
+                                </a>
+                                <a href="{% url 'price_detail' price.id %}" class="badge badge-opacity-secondary" data-toggle="tooltip" title="Create new price">
+                                  <i class="fa fa-eye"></i>View
+                              </a>
+                               </td>
+                              </tr>
+                              {% empty %}
+                              <li>No data found.</li>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+            </div>
+          </div>
+        </div>
+   
+     
+
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="col-lg-8">
+
+    <div class="card">
+      <div class="card-body">
+                
+        <h1 style="font-size:1.2em!important; font-weight:600">Create Todo 
+          <a href="{% url 'aic_todo_list' %}" class="backIcon" style="font-size:0.85em!important"><i class="fa fa-mail-reply-all"></i> Back to Orders</a>
+        </h1>
+     <hr/>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+          
+            <button type="submit" class="btn btn-primary btn-sm text-white">
+                <i class="fa fa-plus-circle text-white"></i> Add
+             </button>
+        </form>
+    </div>
+</div>
+</div>
+{% endblock %}

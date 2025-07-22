@@ -1,0 +1,52 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Sale Agent Attendance Tracker</h4> 
+              
+              <hr/>
+              <div class="table-responsive">
+
+                <table id="myTable"  class="table table-hover">                  
+                  <thead class="table-info">
+        <tr>
+            <th>Supervisor</th>
+            <th>Market Centre</th>
+            <th>Login Time</th>
+            <th>Valid Attendance</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if attendance_records %}
+        {% for record in attendance_records %}
+            <tr>
+                <td>{{ record.supervisor.fullname }}</td>
+                <td>{{ record.marketingcentre.name }}</td>
+                <td>{{ record.login_time|date:"d-m-Y H:i" }}</td>
+                <td>{{ record.is_valid|yesno:"Yes,No" }}</td>
+            </tr>
+        {% endfor %}        
+        {% else %}
+        No Attendance Record Found for this EDO
+        {% endif %}
+    </tbody>
+</table>
+
+</div>
+</div>
+</div>
+
+{% comment %} <div class="card col-md-3" style="border: 2px solid blue"></div> {% endcomment %}
+
+</div>
+
+
+
+{% endblock %}

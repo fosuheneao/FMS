@@ -1,0 +1,67 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="row">
+
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title"><i class="fa fa-address-card"></i> <span class="text-danger">Maintenance Costing</span> 
+            <a href="{% url 'aic_maintenance_cost_create' %}" class="pull-right btn btn-outline-primary btn-sm">Add Costing Item</a>
+        </h4>
+        <hr/>
+          <div class="row flex-grow">
+            <div class="col-12 grid-margin stretch-card">
+              <div class="card card-rounded">
+                <div class="card-body">
+                  <div class="d-sm-flex justify-content-between align-items-start">
+                  </div>
+                  <div class="table-responsive  mt-1">
+
+                    <table id="myTable"   class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Greenhouse</th>
+                                <th>Beneficiary</th>
+                                <th>Total Cost</th>
+                                <th>Date Effected</th>
+                                <th>Valid Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                          {% if maintenance_costs %}
+                              {% for item in maintenance_costs %}
+                              <tr>
+                                  <td>{{ item.cost_item.name }}</td>
+                                  <td>{{ item.count }}</td>
+                                  <td>{{ item.start_date| date:"d-m-Y"}}</td>
+                                  <td>{{ item.cost.end_validity_date|date:"d-m-Y"}}</td>
+                                  {% comment %} <td>{{ item.total_cost|currency}}</td>
+                                  <td>{{ item.date_incurred|date:"d-m-Y"}}</td>
+                                  <td>{{ item.date_validTo|date:"d-m-Y"}}</td> {% endcomment %}
+                                  <td>
+                                      <a href="{% url 'aic_maintenance_cost_update' item.id %}" class="btn btn-warning btn-sm"><i class="fa fa-pencil"></i> Edit </a>
+                                      {% comment %} <a href="{% url 'delete_maintenance_costs' item.id %}" class="btn btn-danger btn-sm">Delete</a> {% endcomment %}
+                                  </td>
+                              </tr>
+                              {% endfor %}            
+                            {% else %}
+                                No maintenance cost items found.
+                            {% endif %}
+                        </tbody>
+                    </table>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+      </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+{% block content %}
+
+{% if cart %}
+    <h5>Shopping Cart For : <span class="text-danger">{{ buyer }}</span>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <span class="btn btn-outline-primary" style="font-size:0.90em!important">
+       <a href="{% url 'aic_buyer_shop' buyer.user.id %}" class="backIcon"><i class="fa fa-mail-reply-all"></i> Go Back</a> 
+    </span>
+   </h5>
+    <table id="myTable" class="table table-striped table-hover table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Crop Name</th>
+                <th>Grade</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                {% comment %} <th>Available Stock</th> {% endcomment %}
+                <th>Total Price</th>
+                <th>Location</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for harvest_id, item in cart.items %}
+                <tr>
+                    <td>{{ item.crop_name }}</td>
+                    <td>{{ item.grade_name }}</td>
+                    <td>{{ item.total_price|floatformat:2 }}</td>
+                    <td>{{ item.quantity|floatformat:0 }}</td>
+                    {% comment %} <td>{{ item.available_stock|floatformat:2 }}</td> {% endcomment %}
+                    <td>{{ item.total_item_cost|floatformat:2 }}</td>  <!-- Displaying total item cost -->
+                    <td> {{ item.avlocation }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <hr>
+    
+    <span class="pull-right" style="font-size:0.95em!important; border:2px solid #010954; background:#05118E; color:white; padding:0.5%">
+        Total Cart Cost: {{ total_cost|floatformat:2 }}
+        &nbsp;&nbsp;&nbsp;&nbsp;
+         <a href="{% url 'aic_checkout' buyer.user.id %}" class="btn btn-warning" >
+            <i class="fa fa-plus-square-o text-white"></i> Confirm Order</a>  <!-- Displaying total cart cost -->
+    </span>
+{% else %}
+    <p>Your cart is empty.</p>
+{% endif %}
+
+{% endblock content  %}

@@ -1,0 +1,69 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid py-4">
+  <div class="row">
+    <!-- Left Section -->
+    <div class="col-lg-8 d-flex flex-column">
+      <div class="card shadow-sm border-0 rounded-lg p-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <a href="{% url 'aic_sale_agent_index' %}" class="text-primary" style="font-size: 0.9em;">
+            <i class="fa fa-arrow-left"></i> Back
+          </a>
+        </div>
+        <h3 class="fw-bold text-primary mt-3">{{ saleagent.fullname }}</h3>
+        <h5 class="text-muted">{{ saleagent.email }}</h5>
+        <p class="badge bg-light text-dark p-2">{{ saleagent.gender }}</p>
+        <hr />
+        <p class="text-muted">{{ saleagent.description }}</p>
+
+        <!-- Assigned Cities -->
+        <h4 class="mt-4 text-primary">Assigned Cities</h4>
+        <ul class="list-group list-group-flush">
+          {% for city in saleagent_cities %}
+          <li class="list-group-item">{{ city.name }}</li>
+          {% empty %}
+          <li class="list-group-item text-muted">No cities assigned.</li>
+          {% endfor %}
+        </ul>
+        <!-- Assigned Greenhouses -->
+        <h4 class="mt-4 text-primary">Assigned Market Centre</h4>
+        <ul class="list-group list-group-flush">
+          {% comment %} {% for greenhouse in supervisor_greenhouses %} {% endcomment %}
+          <li class="list-group-item">{{ saleagent.marketingcentre }}</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Right Section -->
+    <div class="col-lg-4">
+      <div class="card bg-primary text-white text-center rounded-lg p-4">
+        <h4 class="fw-bold">Photograph</h4>
+        {% if saleagent.photo.url %}
+        <img class="img-fluid rounded-circle mt-3 border border-light" src="{{ saleagent.photo.url }}" alt="{{ saleagent.fullname }}" style="width: 150px; height: 150px;">
+        {% else %}
+        <img class="img-fluid rounded-circle mt-3 border border-light" src="{% static 'admin/assets/images/faces/user-no-image.png' %}" alt="No Image" style="width: 100px; height: 100px;">
+        {% endif %}
+      </div>
+
+      <div class="card shadow-sm border-0 rounded-lg p-4 mt-4">
+        <h5 class="fw-bold text-primary">{{ saleagent.fullname }} - {{ saleagent.nationalId }}</h5>
+        <hr />
+        <div class="row text-center">
+          <div class="col-6">
+            <h6 class="text-muted">Male(s) Engaged</h6>
+            <h4 class="fw-bold text-primary">{{ saleagent.gender }}</h4>
+          </div>
+          <div class="col-6">
+            <h6 class="text-muted">Female(s) Engaged</h6>
+            <h4 class="fw-bold text-primary">{{ saleagent.gre }}</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}

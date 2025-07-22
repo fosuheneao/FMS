@@ -1,0 +1,37 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+{% block content %}
+<h2>Place an Order</h2>
+<form method="post" action="{% url 'place_order' %}">
+    {% csrf_token %}
+    
+    <!-- Order Form -->
+    <fieldset>
+        <legend>Order Details</legend>
+        {{ order_form.as_p }}
+    </fieldset>
+
+    <!-- Order Items FormSet -->
+    <fieldset>
+        <legend>Select Harvest Items</legend>
+        {{ order_item_formset.management_form }}
+        {% for form in order_item_formset %}
+            <div class="order-item">
+                {{ form.as_p }}
+            </div>
+        {% endfor %}
+        <button type="button" onclick="addOrderItem()">Add another item</button>
+    </fieldset>
+
+    <button type="submit">Place Order</button>
+</form>
+
+<script>
+// Optional JavaScript to dynamically add more order items
+function addOrderItem() {
+    // Logic to dynamically add more forms, if needed
+}
+</script>
+
+{% endblock content  %}

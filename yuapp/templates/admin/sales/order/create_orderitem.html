@@ -1,0 +1,45 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+{% block content %}
+<div class="col-lg-12">
+<style>
+  .backIcon:hover{
+      color:white!important;
+  }
+</style>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">
+          Add Order Item : <span class="text-primary"> {{ crop.name }}</span>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <span class="btn btn-outline-primary">
+                 <a href="{% url 'orders' %}" class="backIcon"><i class="fa fa-mail-reply-all"></i> Go Back</a> 
+          </span>
+        </h5>  
+        
+        <h3>Order ID: {{ order.id }} ({{ order.buyer.username }})</h3>
+        <p>Order Date: {{ order.order_date }}</p>
+        <p>Total Items: {{ order.total_items }}</p>
+        <p>Total Amount: {{ order.total_amount }}</p>
+        
+        <h4>Add New Item</h4>
+        <form method="POST">
+            {% csrf_token %}
+            {{ item_form.as_p }}
+        <button type="submit" class="btn btn-warning"> <i class="fa fa-check-square-o"></i> Add Item</button>
+    </form>
+
+    <h4>Items in this Order</h4>
+    <ul>
+        {% for item in order_items %}
+            <li>{{ item.harvest_record.name }} - {{ item.quantity_ordered }} @ {{ item.harvest_record.price }}</li>
+        {% empty %}
+            <li>No items added yet.</li>
+        {% endfor %}
+    </ul>
+    
+</div>
+</div>
+</div>
+{% endblock content  %}

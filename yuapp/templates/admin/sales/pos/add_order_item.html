@@ -1,0 +1,33 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+
+<form method="post">{% csrf_token %}
+    {{ formset.management_form }}
+    <table class="table table-bordered table-sm">
+        <thead>
+            <tr>
+                <th>Harvest Stock</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Delete?</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for form in formset %}
+            <tr>
+                <td>{{ form.harveststock }}</td>
+                <td>{{ form.quantity }}</td>
+                <td>{{ form.unit_price }}</td>
+                <td>{{ form.DELETE }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary btn-sm">Save Items</button>
+</form>
+<a href="{% url 'sa_create_order' %}" class="btn btn-secondary btn-sm mt-2">Create New Order</a>
+{% endblock %}

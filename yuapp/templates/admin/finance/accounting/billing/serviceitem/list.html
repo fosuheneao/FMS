@@ -1,0 +1,75 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="row">
+  <div class="col-12">
+      <div class="card shadow-lg border-0 rounded-4">
+          <div class="card-body">
+              <h4 class="card-title d-flex justify-content-between align-items-center">
+                  <span class="text-primary fw-bold">
+                      <i class="fa fa-address-card me-2"></i> Service Items
+                  </span>
+                  <a href="{% url 'aic_create_service_item' %}" class="btn btn-primary btn-sm">
+                      <i class="fa fa-plus-circle"></i> Add New Service Item
+                  </a>
+              </h4>
+              <hr class="mb-4"/>
+              <div class="table-responsive mt-2">
+                  <table id="myTable" class="table table-hover table-striped">
+                      <thead class="bg-light text-dark">
+                          <tr>
+                              <th>Service Item</th>
+                              <th>Farming Cycle</th>
+                              <th>Cost</th>
+                              <th>Note</th>
+                              <th>Actions</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          {% if serviceitems %}
+                              {% for item in serviceitems %}
+                                  <tr>
+                                      <td class="fw-semibold">{{ item.service_name }}</td>
+                                      <td>{{ item.farmseason.name }}</td>
+                                      <td class="text-success fw-bold">{{ item.cost|floatformat:2 }}</td>
+                                      <td>
+                                          <i class="fa fa-info-circle text-info" data-bs-toggle="tooltip" 
+                                             data-bs-placement="top" title="{{ item.description }}"></i>
+                                      </td>
+                                      <td>
+                                          <a href="{% url 'aic_update_service_item' item.id %}" 
+                                             class="btn btn-outline-primary btn-sm">
+                                              <i class="fa fa-pencil-square"></i> Edit
+                                          </a>
+                                      </td>
+                                  </tr>
+                              {% endfor %}
+                          {% else %}
+                              <tr>
+                                  <td colspan="5" class="text-center text-muted py-4">
+                                      <i class="fa fa-exclamation-circle"></i> No Service Items Found.
+                                  </td>
+                              </tr>
+                          {% endif %}
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Activate Bootstrap 5 Tooltips -->
+{% comment %} <script>
+  document.addEventListener("DOMContentLoaded", function() {
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl);
+      });
+  });
+</script> {% endcomment %}
+
+{% endblock %}

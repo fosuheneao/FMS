@@ -1,0 +1,66 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Buyers List
+                {% comment %} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'coworker_create' %}" class="pull-right btn btn-outline-primary btn-sm">
+                 <i class="fa fa-plus-circle"></i> Add Coworker
+              </a> {% endcomment %}
+      
+              </h4>
+              {% comment %} <p class="card-description"> Add class <code>.table-hover</code>
+              </p> {% endcomment %}
+              <hr/>
+              <div class="table-responsive">
+
+                <table id="myTable"  class="table table-hover">                  
+                  <thead class="table-info">
+                    <tr>
+                      <th>Name</th>
+                      <th>Location</th>
+                      <th>Contact</th>
+                      <th>Phone</th>
+                      <th>Email</th>
+                      <th>Address</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% if buyers %}
+                    {% for act in buyers %}
+                     <tr>
+                      <td>{{ act.client_name }}</td>
+                      <td>{{ act.location }}</td>
+                      <td>{{ act.contact_person }}</td>
+                      <td>{{ act.phone }}</td>
+                      <td>{{ act.email }}</td>
+                      <td>{{ act.shipping_address }}</td>
+                      <td>
+                        <a href="{% url 'buyer_detail' pk=act.pk %}"><i class="fa fa-wpexplorer"></i></a>
+                    </td>
+                    </tr>
+                    {% endfor %}            
+                    {% else %}
+                      No record Found
+                    {% endif %}
+                  </tbody>
+                </table>
+
+              </div>
+            </div>
+          </div>
+          
+          {% comment %} <div class="card col-md-3" style="border: 2px solid blue"></div> {% endcomment %}
+
+        </div>
+   
+     
+
+{% endblock %}

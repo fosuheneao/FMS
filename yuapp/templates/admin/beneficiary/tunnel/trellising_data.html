@@ -1,0 +1,84 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="fa fa-address-card"></i> Trellising Records
+                </h4>
+                <a href="{% url 'create_trellising_data' %}" class="btn btn-light btn-sm shadow-sm">
+                    <i class="fa fa-plus-circle"></i> Add Trellising Data
+                </a>
+            </div>
+            <div class="card-body">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <div class="table-responsive">
+                    <table id="trellisingTable" class="table table-striped table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Date Trellised</th>
+                                <th>Crop</th>
+                                <th>Greenhouse</th>
+                                <th>Method</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if trellising_records %}
+                                {% for record in trellising_records %}
+                                    <tr>
+                                        <td>{{ record.date_trellised|date:"d-m-Y" }}</td>
+                                        <td>{{ record.crop.name }}</td>
+                                        <td>
+                                            <i class="fa fa-info-circle text-primary fa-lg" 
+                                               data-toggle="tooltip" 
+                                               data-placement="top" 
+                                               title="{{ record.greenhouse.name }} - {{ record.greenhouse_room.room_name }}">
+                                            </i>
+                                        </td>
+                                        <td>{{ record.method }}</td>
+                                        <td>{{ record.description }}</td>
+                                        <td>
+                                            <span class="badge {% if record.status == 'Completed' %}badge-success{% else %}badge-warning{% endif %}">
+                                                {{ record.status }}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="#" data-toggle="tooltip" data-placement="top" title="View Record">
+                                                <i class="fa fa-wpexplorer text-success fa-lg"></i>
+                                            </a>&nbsp;&nbsp;
+                                            <a href="{% url 'update_trellising_data' record.id %}" data-toggle="tooltip" data-placement="top" title="Update Record">
+                                                <i class="fa fa-pencil-square text-primary fa-lg"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                No records found
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

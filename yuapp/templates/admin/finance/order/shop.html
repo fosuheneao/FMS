@@ -1,0 +1,79 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% block content %}
+
+  
+      <div class="row">
+          <div class="card">
+            <div class="card-body">
+                <h4 class="card-title" style="font-size:0.90em!important">
+                    <i class="fa fa-shopping-cart"></i> Shopping Harvest Products for : <span class="text-danger"> {{ buyer.client_name }} </span>
+                    <button class="btn btn-primary btn-sm pull-right">
+                        <a href="{% url 'aic_view_cart' buyer.user.id %}" class="text-decoration-none text-white">
+                            View Cart
+                            <span class="badge badge-warning">{{ cart_item_count }}</span>
+                        </a>
+                    </button>
+                </h4>
+              <hr/>
+                <div class="row flex-grow">
+                  <div class="col-12 grid-margin stretch-card">
+                    <div class="card card-rounded">
+                      <div class="card-body">
+                        <div class="d-sm-flex justify-content-between align-items-start"></div>
+
+                        <div class="container bootstrap snippets bootdey">
+                            <div class="row">
+                                {% if assigned_harvest_records %}
+                                    {% for harvest in assigned_harvest_records %}
+                                        <div class="col-sm-4">
+                                            <div class="widget single-news">
+                                                <div class="image">
+                                                    <img src="{{ harvest.crop.photo.url }}" alt="{{ harvest.crop.name }}" class="img-responsive img-thumbnail" style="width:300px;height:250px;">
+                                                    <span class="gradient"></span>
+                                                </div><hr/>
+                                                <div class="details">
+                                                    <span style="font-size:1.2em">
+                                                        <strong class="text-success">{{ harvest.crop.name }}</strong>:  
+                                                        <span class="text-primary">{{ harvest.grade.name }}</span> 
+                                                    </span><hr/>
+                                                    <span><strong class="text-primary">Price:</strong> {{ harvest.price_record.selling_price }} per kilogram</span><br/>
+                                                    <span><strong class="text-primary">Harvested on:</strong> {{ harvest.date|date:"D, M j, Y" }}</span><br/>
+                                                    <span><strong class="text-primary">Available stock:</strong> {{ harvest.quantity|floatformat:0 }}</span><br/>
+                                                    <span><strong class="text-primary">Location:</strong> {{ harvest.greenhouse.city.name }}</span>
+                                                    <hr/>
+                                                    
+                                                    <!-- Add to Cart Form -->
+                                                    <form action="{% url 'aic_buyer_shop' buyer.user.id %}" method="post">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="harvest_id" value="{{ harvest.id }}">
+                                                        <input type="hidden" name="buyer_id" id="buyer_id" value="{{ buyer.buyer.user.id }}">
+                                                        <label for="quantity_{{ harvest.id }}">Quantity:</label>                                                        
+                                                        <input type="number" name="quantity" id="quantity_{{ harvest.id }}" min="1" max="{{ harvest.quantity|floatformat:0 }}" value="1">
+                                                        <button type="submit" class="btn btn-danger btn-sm text-white">
+                                                           <i class="fa fa-cart-plus text-white"></i> Add to Cart
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <p>No production for today, please check later.</p>
+                                {% endif %}
+
+                        </div>
+                        
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>                
+            </div>
+          </div>
+        </div>
+   
+     
+
+{% endblock %}

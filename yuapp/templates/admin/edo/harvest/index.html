@@ -1,0 +1,72 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Beneficiary List
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'aic_create_beneficiary' %}" class="pull-right btn btn-outline-primary btn-sm">
+                 <i class="fa fa-plus-circle"></i> Add Beneficiary
+              </a>      
+              </h4>
+              {% comment %} <p class="card-description"> Add class <code>.table-hover</code>
+              </p> {% endcomment %}
+              <hr/>
+              <div class="table-responsive">
+
+                <table id="myTable" class="table table-hover">
+                  <thead class="table-info">
+                    <tr>
+                      <th>Name</th>
+                      <th>Gender</th>
+                      <th>Ghana Card</th>
+                      <th>From</th>
+                      <th>To</th>
+                      <th>Age</th>
+                      <th>Role</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% if beneficiaries %}
+                    {% for ben in beneficiaries %}
+                     <tr>
+                      <td>{{ ben.full_name }}</td>
+                      <td>{{ ben.gender }}</td>
+                      <td>{{ ben.nationalId }}</td>
+                      <td>{{ ben.from_date|date:"D, M j, Y" }}</td>
+                      <td>{{ ben.to_date|date:"D, M j, Y" }}</td>
+                      <td class="text-danger"> {{ ben.age }} <i class="ti-arrow-down"></i></td>
+                      <td><label class="badge badge-danger">{{ ben.role.name }}</label></td>
+                      <td>
+                        <a href="{% url 'coworker_detail' pk=ben.pk %}" data-toggle="tooltip" data-placement="top" title="View Record">
+                          <i class="fa  fa-wpexplorer text-success fa-lg"></i>
+                        </a> &nbsp;&nbsp;
+                        <a href="{% url 'coworker_update' pk=ben.pk %}" data-toggle="tooltip" data-placement="top" title="Update Beneficiary Record">
+                          <i class="fa  fa-cubes text-primary fa-lg"></i>
+                        </a> &nbsp;&nbsp;
+                        <a href="{% url 'create_contract' ben.id %}" data-toggle="tooltip" data-placement="top" title="View Beneficiary Harvest">
+                          <i class="fa  fa-plus-square text-danger fa-lg"></i>
+                      </a> &nbsp;&nbsp;
+                    </td>
+                    </tr>
+                    {% endfor %}            
+                    {% else %}
+                      No record Found
+                    {% endif %}
+                  </tbody>
+                </table>
+
+              </div>
+            </div>
+          </div>
+          
+          {% comment %} <div class="card col-md-3" style="border: 2px solid blue"></div> {% endcomment %}
+
+        </div>
+   {% endblock %}

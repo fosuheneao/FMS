@@ -1,0 +1,66 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> My Assigned EDO         
+              </h4>
+              {% comment %} <p class="card-description"> Add class <code>.table-hover</code>
+              </p> {% endcomment %}
+              <hr/>
+              <div class="table-responsive">
+
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>User</th>
+                      <th>Product</th>
+                      <th>Sale</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% if edo %}
+                     <tr>
+                      <td>{{ edo.fullname }}</td>
+                      <td>{{ edo.email }}</td>
+                      <td>{{ edo.phone_number }}</td>
+                      <td>{{ edo.nationalId }}</td>
+                      <td>{{ edo.description }}</td>
+                      <td class="text-danger"> {{ edo.nationalId }} <i class="ti-arrow-down"></i></td>
+                      <td><label class="badge badge-danger">{{ edo.role }}</label></td>
+                      <td>
+                        <a href="{% url 'edo_detail' edo.id %}" data-toggle="tooltip" data-placement="top" title="View Record">
+                          <i class="fa  fa-wpexplorer text-success fa-lg"></i>
+                        </a> &nbsp;&nbsp;
+                        {% comment %} <a href="{% url 'coworker_update' pk=act.pk %}" data-toggle="tooltip" data-placement="top" title="Update Record">
+                          <i class="fa  fa-cubes text-primary fa-lg"></i>
+                        </a> &nbsp;&nbsp;
+                        <a href="{% url 'coworker_delete' pk=act.pk %}" data-toggle="tooltip" data-placement="top" title="Delete Record">
+                          <i class="fa  fa-trash text-danger fa-lg"></i>
+                      </a> &nbsp;&nbsp; {% endcomment %}
+                    </td>
+                    </tr>           
+                    {% else %}
+                      No assigned EDO Found
+                    {% endif %}
+                  </tbody>
+                </table>
+
+              </div>
+            </div>
+          </div>
+          
+          {% comment %} <div class="card col-md-3" style="border: 2px solid blue"></div> {% endcomment %}
+
+        </div>
+   
+     
+
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load static humanize currency_filters %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="col-lg-12">
+<style>
+  .backIcon:hover{
+      color:white!important;
+  }
+</style>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">
+          Sale Order Payment: Order #{{ order.id }}
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <span class="btn btn-outline-primary">
+                 <a href="{% url 'sa_order_list' %}" class="backIcon"><i class="fa fa-mail-reply-all"></i> Go Back</a> 
+          </span>
+        </h5>
+            {% if form.errors %}
+            <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <strong>Errors:</strong>
+                <ul>
+                    {% for field in form %}
+                        {% if field.errors %}
+                            <li><strong>{{ field.label }}:</strong>
+                                <ul>
+                                    {% for error in field.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <div class="alert alert-info small">
+                <strong>Buyer:</strong> {{ order.buyer.client_name }} &nbsp;&nbsp;
+                <strong>Sale Type:</strong> {{ order.get_sale_order_type_display }} &nbsp;&nbsp;
+                <strong>Remaining Due:</strong> <span class="text-danger">{{ order.amount_due }}</span>
+            </div>
+
+            <form method="post" action="{% url 'sa_process_payment' %}"  enctype="multipart/form-data" class="w-100">
+                {% csrf_token %}
+                <input type="text" name="order" value={{ order.id }}>
+                <div class="mb-3">
+                {{ form.payment_method.label_tag }}
+                {{ form.payment_method|add_class:"form-select form-select-sm" }}
+                </div>
+
+                <div class="mb-3" id="mobileProviderGroup" style="display:none;">
+                {{ form.payment_method_mobile.label_tag }}
+                {{ form.payment_method_mobile|add_class:"form-control form-control-sm" }}
+                </div>
+
+                <div class="mb-3" id="bankProviderGroup" style="display:none;">
+                {{ form.payment_method_bank.label_tag }}
+                {{ form.payment_method_bank|add_class:"form-control form-control-sm" }}
+                </div>
+
+                <div class="mb-3" id="referenceNumberGroup" style="display:none;">
+                {{ form.reference_number.label_tag }}
+                {{ form.reference_number|add_class:"form-control form-control-sm" }}
+                </div>
+
+                <div class="mb-3" id="transactionCodeGroup" style="display:none;">
+                {{ form.transaction_code.label_tag }}
+                {{ form.transaction_code|add_class:"form-control form-control-sm" }}
+                </div>
+
+                <div class="mb-3">
+                {{ form.amount_paid.label_tag }}
+                {{ form.amount_paid|add_class:"form-control form-control-sm" }}
+                </div>
+
+                <div class="mb-3">
+                {{ form.payin_slip.label_tag }}
+                {{ form.payin_slip|add_class:"form-control form-control-sm" }}
+                </div>
+
+                <div class="mb-3">
+                {{ form.notes.label_tag }}
+                {{ form.notes|add_class:"form-control form-control-sm" }}
+                </div>
+
+                <div class="modal-footer p-0 mt-3">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+                    <i class="fa fa-times"></i> Cancel
+                </button>
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="fa fa-money"></i> Submit Payment
+                </button>
+                </div>
+            </form>
+
+   
+</div>
+</div>
+</div>
+ 
+
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const methodSelect = document.getElementById("id_payment_method");
+
+  function toggleGroups() {
+    const method = methodSelect.value;
+    document.getElementById("mobileProviderGroup").style.display = method === "mobile" ? "block" : "none";
+    document.getElementById("bankProviderGroup").style.display = method === "bank" ? "block" : "none";
+    document.getElementById("referenceNumberGroup").style.display = (method === "mobile" || method === "bank") ? "block" : "none";
+    document.getElementById("transactionCodeGroup").style.display = (method === "mobile" || method === "bank") ? "block" : "none";
+  }
+
+  methodSelect.addEventListener("change", toggleGroups);
+    toggleGroups();  // run on load
+    });
+</script>
+
+{% endblock %}

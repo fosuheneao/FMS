@@ -1,0 +1,66 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+<div class="row">
+  <div class="col-12">
+      <div class="card">
+          <div class="card-body">
+              <h4 class="card-title">
+                  <i class="fa fa-address-card"></i> Input Dealers
+                  <a href="{% url 'aic_create_inputdealer' %}" class="btn btn-outline-primary btn-sm pull-right">
+                      <i class="fa fa-plus-circle"></i> Add Input Dealer
+                  </a>
+              </h4>
+              <hr/>
+              <div class="table-responsive">
+                
+                {% if inputdealers %}
+                  <table id="myTable" class="table table-hover">
+                      <thead class="table-info">
+                          <tr>
+                              <th>Name</th>
+                              <th>Email</th>
+                              <th>Address</th>
+                              <th>Contact Person</th>
+                              <th>Telephone</th>
+                              <th>Website</th>
+                              <th>Notes</th>
+                              <th>Actions</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                              {% for act in inputdealers %}
+                                  <tr>
+                                      <td>{{ act.name }}</td>
+                                      <td>{{ act.email }}</td>
+                                      <td>{{ act.address }}</td>
+                                      <td>{{ act.contactperson }}</td>
+                                      <td>{{ act.telephone }}</td>
+                                      <td class="text-danger">
+                                          <a href="{{ act.website }}" target="_blank">{{ act.website }}</a>
+                                      </td>
+                                      <td>{{ act.notes }}</td>
+                                      <td>
+                                          <a href="#" data-toggle="tooltip" data-placement="top" title="View Record">
+                                              <i class="fa fa-eye text-success fa-lg"></i>
+                                          </a>
+                                          &nbsp;&nbsp;
+                                          <a href="{% url 'aic_update_input_category' inputcategory_id=act.id %}" data-toggle="tooltip" data-placement="top" title="Update Record">
+                                              <i class="fa fa-pencil text-primary fa-lg"></i>
+                                          </a>
+                                      </td>
+                                  </tr>
+                              {% endfor %}                        
+                      </tbody>
+                  </table>
+                  {% else %}
+                  <span class="text-center text-danger">No records found</span>
+              {% endif %}
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+{% endblock %}

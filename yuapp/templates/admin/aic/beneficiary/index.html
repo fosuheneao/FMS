@@ -1,0 +1,102 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Beneficiary List
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'aic_create_beneficiary' %}" class="pull-right btn btn-outline-primary btn-sm">
+                 <i class="fa fa-plus-circle"></i> Add Beneficiary
+              </a>      
+              </h4>
+              <hr/>
+              <div class="table-responsive">
+
+                <table id="myTable" class="table table-hover">
+                  <thead class="table-info">
+                    <tr>
+                        <th>Name</th>
+                        {% comment %} <th>Gender</th> {% endcomment %}
+                        <th>Ghana Card</th>
+                        {% comment %} <th>Username</th> {% endcomment %}
+                        <th>Enterprise Name</th>
+                        {% comment %} <th>Age</th> {% endcomment %}
+                        <th>Crops</th>
+                        <th>Supervisor</th>
+                        <th>Cluster</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if beneficiaries %}
+                        {% for ben in beneficiaries %}
+                        <tr>
+                            <td>{{ ben.full_name }}</td>
+                            {% comment %} <td>{{ ben.gender }}</td> {% endcomment %}
+                            <td>{{ ben.nationalId }}</td>
+                            {% comment %} <td>{{ ben.user.username }}</td> {% endcomment %}
+                            <td>{{ ben.enterprise_name }}</td>
+                            {% comment %} <td class="text-danger">{{ ben.age }} <i class="ti-arrow-down"></i></td> {% endcomment %}
+                
+                            <!-- Iterate through assigned crops and display them in a tooltip -->
+                            <td>
+                                <i class="fa fa-lemon-o text-primary fa-lg" 
+                                   data-toggle="tooltip" 
+                                   data-placement="top" 
+                                   title="{% for crop in ben.crops.all %}{{ crop.name }}{% if not forloop.last %}, {% endif %}{% endfor %}">
+                                </i>
+                            </td>
+                
+                            <!-- Display supervisor in a tooltip -->
+                            <td>
+                                <i class="fa fa-user-circle text-primary fa-lg" 
+                                   data-toggle="tooltip" 
+                                   data-placement="top" 
+                                   title="{{ ben.assigned_edo.user.get_full_name }}">
+                                </i>
+                            </td>
+                
+                            <!-- Display assigned tunnel in a tooltip -->
+                            <td>
+                                <i class="fa fa-building text-info fa-lg" 
+                                   data-toggle="tooltip" 
+                                   data-placement="top" 
+                                   title="{{ ben.assigned_tunnel.room_name }}">
+                                </i>
+                            </td>
+                
+                            <td>
+                                <a href="{% url 'aic_beneficiary_detail' ben.pk %}" data-toggle="tooltip" data-placement="top" title="View Record">
+                                    <i class="fa fa-wpexplorer text-success fa-lg"></i>
+                                </a> &nbsp;&nbsp;
+                                <a href="{% url 'aic_update_beneficiary' ben.pk %}" data-toggle="tooltip" data-placement="top" title="Update Beneficiary Record">
+                                    <i class="fa fa-cubes text-primary fa-lg"></i>
+                                </a> &nbsp;&nbsp;
+                                <a href="{% url 'aic_beneficiary_harvest' ben.id %}" data-toggle="tooltip" data-placement="top" title="View Beneficiary Harvest Record">
+                                    <i class="fa fa-binoculars text-default fa-lg"></i>
+                                </a> &nbsp;&nbsp;
+                            </td>
+                        </tr>
+                        {% endfor %}            
+                    {% else %}
+                        <tr>
+                            <td colspan="10">No record Found</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+                
+                </table>
+
+              </div>
+            </div>
+          </div>
+          
+          {% comment %} <div class="card col-md-3" style="border: 2px solid blue"></div> {% endcomment %}
+
+        </div>
+   {% endblock %}

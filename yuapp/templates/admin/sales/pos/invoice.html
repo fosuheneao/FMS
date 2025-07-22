@@ -1,0 +1,199 @@
+{% comment %} {% extends "base_auth_dash.html" %} {% endcomment %}
+{% load static humanize currency_filters %}
+{% load tz %}  {# Add this at the top if not already loaded #}
+{% block header %}
+    <!-- Empty header for invoice page or you can add custom header here -->
+{% endblock %}
+
+{% block sidebar %}
+    <!-- Remove the sidebar for the invoice page -->
+{% endblock %}
+
+{% block content %}
+<style>
+    /* Full page layout and no margins or restrictions */
+    @page {
+        size: A4;
+        margin: 5;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        color: #000;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Invoice container takes the full page */
+    .invoice-container {
+        width: 98%;
+        height: 100%;
+        padding: 20px;
+        border: none;
+        background-color: #fff;
+    }
+
+    .invoice-title {
+        text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .company-details, .buyer-details {
+        margin-bottom: 20px;
+    }
+
+    .company-details {
+        font-weight: bold;
+    }
+
+    .buyer-details {
+        font-size: 13px;
+    }
+
+    .buyer-details strong {
+        font-size: 14px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    table th, table td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: center;
+    }
+
+    table th {
+        background: #f7f7f7;
+        font-weight: bold;
+    }
+
+    .total {
+        text-align: right;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .signature-section {
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid #000;
+    }
+
+    .signature-line {
+        border-top: 1px solid #000;
+        width: 200px;
+        margin-top: 30px;
+    }
+
+    .signature-label {
+        font-size: 12px;
+        text-align: center;
+    }
+
+    .watermark {
+        width: 100%;
+        text-align: center;
+        font-size: 80px;
+        color: #ccc;
+        opacity: 0.1;
+        margin-bottom: 30px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+    }
+
+    /* Media query for responsive design */
+    @media (max-width: 768px) {
+        .invoice-container {
+            padding: 10px;
+        }
+
+        .invoice-title {
+            font-size: 20px;
+        }
+
+        table th, table td {
+            font-size: 10px;
+        }
+    }
+</style>
+
+<div class="invoice-container">
+    <!-- Watermark -->
+    <div class="watermark">INVOICE</div>
+
+    <div class="invoice-title">Sales Invoice</div>
+
+    <div class="company-details">
+        <strong>Synergy FMS</strong><br>
+        One Airport Square<br>
+        Accra, GH<br>
+        Email: info@synergyfms.net<br>
+        Tel: +233 205 530 654
+    </div>
+
+    <div class="buyer-details">
+        <strong>Bill To:</strong><br>
+        {{ order.buyer.client_name }}<br>
+        {% if order.buyer.phone %} Phone: {{ order.buyer.phone }}<br>{% endif %}
+        {% if order.buyer.location %} Address: {{ order.buyer.location }}{% endif %}
+    </div>
+    <p><strong>Order No:</strong> {{ order.id }}<br>
+       <strong>Date:</strong> {{ order.order_date|date:"d M Y" }}</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Commodity</th>
+                <th>Variety</th>
+                <th>Grade</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.order_items.all %}
+            <tr>
+                <td>{{ item.harveststock.crop.name }}</td>
+                <td>{{ item.harveststock.cropvariety.name }}</td>
+                <td>{{ item.harveststock.grade.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.harveststock.unit_price.selling_price|currency }}</td>
+                <td>{{ item.get_total_cost|currency }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="5" class="total">Total</td>
+                <td>{{ order.total_cost_sum|currency }}</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="signature-section">
+        <div style="float: left; text-align: center;">
+            <div class="signature-line"></div>
+            <div class="signature-label">Issued By: {{ order.created_by }}</div>
+        </div>
+
+        <div style="float: right; text-align: center;">
+            <div class="signature-line"></div>
+            <div class="signature-label">Buyer’s Signature</div>
+        </div>
+        <div style="clear: both;"></div>
+    </div>
+
+    <p style="margin-top: 50px; font-style: italic; font-size: 12px;">Generated on {% now "d M Y H:i" %}</p>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow-sm border-0 rounded-3">
+      <div class="card-body p-4">
+          <h5 class="fw-semibold text-primary d-flex align-items-center">
+              <i class="fa fa-plus-circle me-2"></i> Add Order Item: <span class="ms-2">{{ crop.name }}</span>
+          </h5>
+          <div class="d-flex justify-content-between align-items-center mt-3">
+              <span class="badge bg-secondary p-2">Order ID: {{ order.id }} ({{ order.buyer.username }})</span>
+              <a href="{% url 'orders' %}" class="btn btn-outline-primary d-flex align-items-center">
+                  <i class="fa fa-mail-reply-all me-2"></i> Go Back
+              </a>
+          </div>
+          <hr>
+          <div class="row">
+              <div class="col-md-6">
+                  <p><strong>Order Date:</strong> {{ order.order_date }}</p>
+                  <p><strong>Total Items:</strong> {{ order.total_items }}</p>
+                  <p><strong>Total Amount:</strong> {{ order.total_amount|currency }}</p>
+              </div>
+          </div>
+          
+          <h4 class="mt-4">Add New Item</h4>
+          <form method="POST" class="mt-3">
+              {% csrf_token %}
+              <div class="mb-3">{{ item_form.as_p }}</div>
+              <button type="submit" class="btn btn-primary d-flex align-items-center">
+                  <i class="fa fa-check-square-o me-2"></i> Add Item
+              </button>
+          </form>
+          
+          <h4 class="mt-5">Items in this Order</h4>
+          <ul class="list-group mt-3">
+              {% for item in order_items %}
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                      {{ item.harvest_record.name }} - {{ item.quantity_ordered }} @ {{ item.harvest_record.price }}
+                  </li>
+              {% empty %}
+                  <li class="list-group-item text-muted">No items added yet.</li>
+              {% endfor %}
+          </ul>
+      </div>
+  </div>
+</div>
+{% endblock content  %}

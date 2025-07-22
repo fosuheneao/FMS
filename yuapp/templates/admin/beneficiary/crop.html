@@ -1,0 +1,73 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="fa fa-address-card"></i> Crop List
+                </h4><br/><br/>
+            </div>
+
+            <div class="card-body">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                    <div class="table-responsive mt-2">
+                        <table id="myTable" class="table table-hover table-bordered align-middle">
+                          <thead class="table-primary text-dark fw-bold">
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th class="text-left">Photo</th>
+                                <th class="text-left">Assigned</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if all_crops %}
+                                {% for crop in all_crops %}
+                                    <tr>
+                                        <td>{{ crop.name }}</td>
+                                        <td>{{ crop.description }}</td>
+                                        <td>
+                                            {% if crop.photo %}
+                                                <img src="{{ crop.photo.url }}" alt="{{ crop.name }}" 
+                                                     class="rounded shadow-sm" 
+                                                     style="width:35px; height:35px; object-fit:cover; border:1px solid #ddd;">
+                                            {% else %}
+                                                <span class="text-muted">No photo</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if crop in assigned_crops %}
+                                                <span class="badge bg-success"><i class="mdi mdi-check-circle"></i> Assigned</span>
+                                            {% else %}
+                                                <span class="badge bg-danger"><i class="mdi mdi-close-circle"></i> Not Assigned</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <span class="text-center text-muted">No records found</span>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+  
+{% endblock %}

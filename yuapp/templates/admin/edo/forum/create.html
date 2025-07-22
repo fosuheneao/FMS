@@ -1,0 +1,74 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+{% block content %}
+<div class="col-lg-12">
+<style>
+  .backIcon:hover{
+      color:white!important;
+  }
+</style>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">
+            Create Trend Knowledge
+          {% comment %} {% if form.instance.pk %} Edit {% else %} Create {% endif %} Coworker  
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <span class="btn btn-outline-primary">
+                 <a href="{% url 'beneficiary_coworker' %}" class="backIcon"><i class="bi bi-arrow-left-square"></i> Go Back</a> 
+          </span> {% endcomment %}
+        </h5>
+       
+    {% comment %} <form method="post" action="{% if form.instance.pk %}{% url 'fieldmate_update' pk=form.instance.pk %}{% else %}{% url 'fieldmate_create' %}{% endif %}" enctype="multipart/form-data">
+        {% endcomment %}
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            {{ form.title.label_tag }}
+            {{ form.title }}
+        </div>
+        <div class="mb-3">
+            {{ form.description.label_tag }}
+            {{ form.description }}
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                {{ form.latitude.label_tag }}
+                {{ form.latitude }}
+            </div>
+            <div class="col-md-6 mb-3">
+                {{ form.longitude.label_tag }}
+                {{ form.longitude }}
+            </div>
+        </div>
+        <div class="mb-3">
+                {% if fieldmate.photo %}
+                <img src="{{ fieldmate.photo.url }}" alt="Photo Preview" style="max-width: 150px; max-height: 150px; margin-top: 10px;">
+                {% endif %}
+                <hr/>
+                {{ form.photo.label_tag }}
+                {{ form.photo }}
+         </div>
+        <!-- Align from_date and to_date on the same line -->
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                {{ form.from_date.label_tag }}
+                {{ form.from_date }}
+            </div>
+            <div class="col-md-6 mb-3">
+                {{ form.to_date.label_tag }}
+                {{ form.to_date }}
+            </div>
+        </div>
+    
+       
+    
+        <button type="submit" class="btn btn-warning"> <i class="fa fa-check-square-o"></i> Submit</button>
+    </form>
+
+    
+</div>
+</div>
+</div>
+{% endblock content  %}

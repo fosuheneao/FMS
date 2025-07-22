@@ -1,0 +1,64 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load currency_filters %}
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Farm Input Distribution List
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'aic_create_distribute_input' %}" class="pull-right btn btn-outline-primary btn-sm">
+                 <i class="fa fa-plus-circle"></i> Create New Distribution
+              </a>      
+              </h4>
+              {% comment %} <p class="card-description"> Add class <code>.table-hover</code>
+              </p> {% endcomment %}
+              <hr/>
+              <div class="table-responsive">
+
+                <table id="myTable" class="table table-hover">
+                    <thead class="table-info">
+                            <tr>
+                                <th>EDO</th>
+                                <th>Cluster</th>
+                                <th>Farm Input</th>
+                                <th>Quantity</th>
+                                <th>Unit Cost</th>
+                                <th>Total Cost (GHS)</th>
+                                <th>Distributed By</th>
+                                <th>Distribution Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for distribution in distributions %}
+                                <tr>
+                                    <td>{{ distribution.supervisor.fullname  }}</td>
+                                    <td>
+                                      {% for greenhouse in distribution.supervisor.greenhouse.all %}
+                                          {{ greenhouse.name }}{% if not forloop.last %}, {% endif %}
+                                      {% empty %}
+                                          No greenhouse assigned
+                                      {% endfor %}
+                                  </td>
+                                    <td>{{ distribution.farm_input.inputcategory.name }}</td>
+                                    <td>{{ distribution.quantity |floatformat:0 }}</td>
+                                    <td>{{ distribution.farm_input.cost_per_unit |floatformat:0 }}</td>
+                                    <td>{{ distribution.total_cost  |currency }}</td>
+                                    <td>{{ distribution.distributed_by.user.first_name }} {{ distribution.distributed_by.user.last_name }}</td>
+                                    <td>{{ distribution.distribution_date | date:"d-m-Y" }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+              </div>
+            </div>
+          </div>
+          
+          {% comment %} <div class="card col-md-3" style="border: 2px solid blue"></div> {% endcomment %}
+
+        </div>
+   {% endblock %}

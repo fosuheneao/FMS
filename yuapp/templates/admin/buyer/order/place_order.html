@@ -1,0 +1,67 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load currency_filters %}
+{% block content %}
+
+<div class="card shadow-sm p-4">
+    <h2 class="card-title text-primary"><i class="fa fa-shopping-cart"></i> Place an Order</h2>
+    <form method="post" action="{% url 'place_order' %}">
+        {% csrf_token %}
+        
+        <!-- Order Form -->
+        <fieldset class="border p-3 rounded mb-4">
+            <legend class="text-secondary">Order Details</legend>
+            {{ order_form.as_p }}
+        </fieldset>
+
+        <!-- Order Items FormSet -->
+        <fieldset class="border p-3 rounded mb-4">
+            <legend class="text-secondary">Select Harvest Items</legend>
+            {{ order_item_formset.management_form }}
+            <div id="order-items-container">
+                {% for form in order_item_formset %}
+                    <div class="order-item border p-2 rounded mb-2 bg-light">
+                        {{ form.as_p }}
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-outline-primary" onclick="addOrderItem()">
+                <i class="fa fa-plus"></i> Add Another Item
+            </button>
+        </fieldset>
+
+        <button type="submit" class="btn btn-primary btn-lg w-100">
+            <i class="fa fa-paper-plane"></i> Place Order
+        </button>
+    </form>
+</div>
+
+<script>
+    function addOrderItem() {
+        let container = document.getElementById("order-items-container");
+        let totalForms = document.getElementById("id_orderitem_set-TOTAL_FORMS");
+        let newFormIndex = totalForms.value;
+        let newFormHtml = "";
+
+        {% for form in order_item_formset.empty_form %}
+            newFormHtml = `{{ form.as_p|escapejs }}`;
+        {% endfor %}
+
+        newFormHtml = newFormHtml.replace(/__prefix__/g, newFormIndex);
+        let newFormDiv = document.createElement("div");
+        newFormDiv.classList.add("order-item", "border", "p-2", "rounded", "mb-2", "bg-light");
+        newFormDiv.innerHTML = newFormHtml;
+        container.appendChild(newFormDiv);
+        totalForms.value = parseInt(newFormIndex) + 1;
+    }
+</script>
+
+
+{% comment %} <script>
+// Optional JavaScript to dynamically add more order items
+function addOrderItem() {
+    // Logic to dynamically add more forms, if needed
+}
+</script> {% endcomment %}
+
+{% endblock content  %}

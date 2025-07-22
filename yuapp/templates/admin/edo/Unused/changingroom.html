@@ -1,0 +1,56 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Assigned Changeroom
+               
+              </a>
+      
+              </h4>
+              <hr/>
+              <div class="table-responsive">
+                <table class="table table-hovered">
+                    <thead>
+                        <tr>
+                            <th>Changing Room Name</th>
+                            <th>Notes</th>
+                            <th>Assigned At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if assigned_changing_rooms %}
+                            {% for assignment in assigned_changing_rooms %}
+                                <tr>
+                                    <td>{{ assignment.changing_room.name }}</td>
+                                    <td>{{ assignment.notes|default:"No notes available" }}</td>
+                                    <td>{{ assignment.assigned_at }}</td>
+                                    <td>
+                                        <a href="{% url 'changingroom_detail' assignment.pk %}" data-bs-toggle="tooltip" data-bs-title="Default tooltip"><i class="fa fa-eye"></i></a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="3">No changing rooms assigned to this beneficiary.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+
+              </div>
+            </div>
+          </div>
+        
+        </div>
+   
+     
+
+{% endblock %}

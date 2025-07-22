@@ -1,0 +1,120 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="col-lg-12">
+    <style>
+        .backIcon:hover {
+            color: white !important;
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-outline-primary a {
+            text-decoration: none;
+            color: #0078D4;
+        }
+
+        .btn-outline-primary a:hover {
+            color: white;
+        }
+
+        .form-control {
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        .form-control:focus {
+            border-color: #0078D4;
+            box-shadow: 0 0 5px rgba(0, 120, 212, 0.5);
+        }
+    </style>
+    
+    <div class="card shadow-sm rounded-4">
+        <div class="card-body">
+            <h5 class="card-title d-flex justify-content-between align-items-center">
+                <span>
+                    <i class="fa fa-plus-circle text-primary"></i>
+                    {% if form.instance.pk %} Edit {% else %} Create {% endif %} Billable Item
+                </span>
+                <span class="btn btn-outline-primary rounded-pill">
+                    <a href="{% url 'aic_billable_item_index' %}" class="backIcon">
+                        <i class="fa fa-arrow-left"></i> Go Back
+                    </a>
+                </span>
+            </h5>
+            <hr>
+
+            {% if form.errors %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Errors:</strong>
+                <ul>
+                    {% for field in form %}
+                        {% if field.errors %}
+                            <li><strong>{{ field.label }}:</strong>
+                                <ul>
+                                    {% for error in field.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endif %}
+
+            <form method="post" class="mt-3" action="{% if form.instance.pk %}{% url 'aic_update_billable_item' billable_item_id=form.instance.pk %}{% else %}{% url 'aic_create_billable_item' %}{% endif %}">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label class="fw-bold">{{ form.name.label }}</label>
+                    {{ form.name }}
+                </div>
+                
+                <div class="mb-3">
+                    <label class="fw-bold">{{ form.farmseason.label }}</label>
+                    {{ form.farmseason }}
+                </div>
+                
+                <div class="mb-3">
+                    <label class="fw-bold">{{ form.greenhouse.label }}</label>
+                    {{ form.greenhouse }}
+                </div>
+                
+                <div class="mb-3">
+                    <label class="fw-bold">{{ form.is_public.label }}</label>
+                    {{ form.is_public }}
+                </div>
+                
+                <div class="mb-3">
+                    <label class="fw-bold">{{ form.description.label }}</label>
+                    {{ form.description }}
+                </div>
+                
+                <div class="text-end">
+                    {% if form.instance.pk %}
+                        <button type="submit" class="btn btn-success rounded-pill px-4">
+                            <i class="fa fa-check"></i> Update
+                        </button>
+                    {% else %}
+                        <button type="submit" class="btn btn-primary rounded-pill px-4">
+                            <i class="fa fa-plus"></i> Create
+                        </button>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content  %}

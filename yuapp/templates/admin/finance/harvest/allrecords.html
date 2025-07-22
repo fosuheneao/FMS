@@ -1,0 +1,79 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load currency_filters %}
+
+{% block content %}  
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h1 style="font-size:1.2em!important; font-weight:600">
+                    <i class="fa fa-address-card"></i> All Time Harvest Records
+                    <a href="{% url 'aic_beneficiary_index' %}" class="btn btn-outline-primary btn-sm float-right">
+                        <i class="fa fa-mail-reply-all"></i> Go Back
+                    </a>
+                </h1>
+                <hr/>
+                <div class="table-responsive mt-2">
+                    {% if assigned_harvest_records %}
+                    <table id="myTable" class="table table-striped table-hover">
+                        <thead class="table-info">
+                            <tr>
+                                <th>Date</th>
+                                <th>Crop</th>
+                                <th>Grade</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Total Price</th>
+                                <th>Unit</th>
+                                <th>Confirmation</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                           
+                                {% for harvest in assigned_harvest_records %}
+                                    <tr>
+                                        <td>{{ harvest.date|date:"d-m-Y" }}</td>
+                                        <td>{{ harvest.crop.name }}</td>
+                                        <td>{{ harvest.grade.name }}</td>
+                                        <td>{{ harvest.quantity|floatformat:0 }}</td>
+                                        <td>{{ harvest.price_record.price }}</td>
+                                        <td>{{ harvest.total_price|floatformat:2 }}</td>
+                                        <td>{{ harvest.unit.expression }}</td>
+                                        <td>{{ harvest.confirmation }}</td>
+                                        <td>
+                                            <i class="fa fa-info-circle text-primary fa-lg" 
+                                               data-toggle="tooltip" 
+                                               data-placement="top" 
+                                               title="{{ harvest.description }}"></i>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'aic_view_harvest' harvest.id %}" title="View Harvest Record">
+                                                <i class="fa fa-eye text-primary fa-lg"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3"><strong>Total</strong></td>
+                                <td class="text-danger font-weight-bold">{{ total_quantity|floatformat:0 }}</td>
+                                <td></td>
+                                <td class="text-danger font-weight-bold">GHS {{ total_price|currency }}</td>
+                                <td colspan="4"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    
+                    {% else %}
+                    <span class="text-center text-muted">No record found</span>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

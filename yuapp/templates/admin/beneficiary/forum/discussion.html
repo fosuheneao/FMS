@@ -1,0 +1,135 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-primary">{{ trend_knowledge_bank.title }}</h2>
+
+    <div class="card shadow-sm p-3 mb-4 bg-white rounded">
+        <div class="card-body">
+            <p><strong>Description:</strong> {{ trend_knowledge_bank.description }}</p>
+            <p><strong>Location:</strong> Latitude: {{ trend_knowledge_bank.latitude }}, Longitude: {{ trend_knowledge_bank.longitude }}</p>
+
+            {% if trend_knowledge_bank.photo %}
+                <div class="text-center">
+                    <img src="{{ trend_knowledge_bank.photo.url }}" alt="{{ trend_knowledge_bank.title }}" class="img-fluid rounded shadow">
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <h3 class="text-secondary">Related Trends</h3>
+    <table class="table table-hover table-bordered">
+        <thead class="thead-light">
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+                <th>Photo</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if trs %}
+                {% for act in trs %}
+                <tr>
+                    <td>{{ act.title }}</td>
+                    <td>{{ act.description }}</td>
+                    <td>{{ act.latitude }}</td>
+                    <td>{{ act.longitude }}</td>
+                    <td>
+                        {% if act.photo %}
+                            <img src="{{ act.photo.url }}" alt="Photo Preview" class="img-thumbnail" style="max-width: 120px;">
+                        {% else %}
+                            No Image
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'discussion_trend_knowledge' act.pk %}" class="btn btn-outline-primary btn-sm">
+                            Join Discussion
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted">No records found</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h3 class="text-success">Discussion on "{{ trend_knowledge_bank.title }}"</h3>
+    <div class="card shadow-sm p-3 mb-4 bg-white rounded">
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+
+                <div class="form-group">
+                    {{ form.discussion.label_tag }}
+                    {{ form.discussion }}
+                </div>
+
+                <div class="form-group">
+                    {{ form.photo.label_tag }}
+                    {{ form.photo }}
+                </div>
+
+                <div class="form-group">
+                    <label for="tagged_beneficiaries">Tag Beneficiaries:</label>
+                    <select name="tagged_beneficiaries" id="tagged_beneficiaries" multiple class="form-control">
+                        {% for beneficiary in form.tagged_beneficiaries.field.queryset %}
+                            <option value="{{ beneficiary.id }}" {% if beneficiary in form.tagged_beneficiaries.value %}selected{% endif %}>
+                                {{ beneficiary.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <small class="form-text text-muted">Hold Ctrl (Windows) or Cmd (Mac) to select multiple beneficiaries.</small>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-comment-alt"></i> Submit Discussion
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <hr>
+
+    <h4 class="text-info">Existing Discussions</h4>
+    {% if discussions %}
+        <ul class="list-group">
+            {% for discussion in discussions %}
+                <li class="list-group-item">
+                    <p><strong>{{ discussion.created_by.username }}</strong> on {{ discussion.created_at }}</p>
+                    <p>{{ discussion.discussion }}</p>
+                    
+                    {% if discussion.photo %}
+                        <div>
+                            <img src="{{ discussion.photo.url }}" alt="Discussion Photo" class="img-thumbnail" style="max-width: 150px;">
+                        </div>
+                    {% endif %}
+
+                    {% if discussion.tagged_beneficiaries.all %}
+                        <p><strong>Tagged Beneficiaries:</strong></p>
+                        <ul>
+                            {% for beneficiary in discussion.tagged_beneficiaries.all %}
+                                <li>{{ beneficiary.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">No beneficiaries tagged.</p>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-muted">No discussions yet. Be the first to comment!</p>
+    {% endif %}
+</div>
+
+{% endblock %}

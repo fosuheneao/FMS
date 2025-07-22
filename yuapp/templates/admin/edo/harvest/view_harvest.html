@@ -1,0 +1,78 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title" style="font-size:0.90em!important"><i class="fa fa-address-card"></i> Harvest Record For: <span class="text-danger"></span>
+                  
+                    {{ harvest.beneficiary.full_name }} - {{ harvest.crop.name }} <span class="text-danger"> - {{ harvest.date|date:"l, d-m-Y" }}</span>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="btn btn-outline-primary" style="font-size:0.90em!important">
+                           <a href="{% url 'edo_beneficiary_harvest' harvest.beneficiary_id %}" class="backIcon"><i class="fa fa-mail-reply-all"></i> Go Back</a> 
+                    </span>
+                  </h4>
+                 
+              <hr/>
+                <div class="row flex-grow">
+                  <div class="col-12 grid-margin stretch-card">
+                    <div class="card card-rounded">
+                      <div class="card-body">
+                        <div class="d-sm-flex justify-content-between align-items-start">
+                        </div>
+                        <div class="table-responsive  mt-1">
+                        <table class="table table-hover">
+                            <tr>
+                              <th>Date</th>
+                              <td>{{ harvest.date|date:"l, d-m-Y" }} </td>
+                          </tr>
+                                <tr>
+                                    <th>Crop Name</th>
+                                    <td>{{ harvest.crop.name }}</td>
+                                </tr>
+                                <tr>
+                                  <th>Grade</th>
+                                  <td>{{ harvest.grade.name }}</td>
+                              </tr>
+                              <tr>
+                                <th>Unit</th>
+                                <td>{{ harvest.unit.name }}</td>
+                               </tr>
+                                <tr>
+                                    <th>Quantity</th>
+                                    <td>{{ harvest.quantity }}</td>
+                                </tr> 
+                                <tr>
+                                  <th>Unit Price</th>
+                                  <td>{{ price_table.price }}</td>
+                              </tr> 
+                                <tr>
+                                    <th>Total Price</th>
+                                    <td>{{ harvest.total_price }}</td>
+                                </tr>
+                                
+                                <tr>
+                                    <th>Description</th>
+                                    <td>{{ harvest.description }}</td>
+                                </tr>
+                            </table><br/>
+                            <a href="{% url 'edo_beneficiary_harvest' harvest.beneficiary_id %}" class="btn btn-primary">
+                              <i class="fa fa-mail-reply-all"></i> Back to Harvest List
+                            </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>                
+            </div>
+          </div>
+        </div>
+   
+     
+
+{% endblock %}

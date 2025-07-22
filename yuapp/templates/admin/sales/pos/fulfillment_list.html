@@ -1,0 +1,48 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+
+<div class="card shadow-lg border-0">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h4 class="mb-0"><i class="fa fa-address-card"></i> Stock Fulfillment List
+        {% comment %} &nbsp;&nbsp;&nbsp;&nbsp;
+        <span class="btn btn-outline-primary" style="font-size:0.90em!important">
+              <a href="{% url 'edo_harvest_history' %}" class="backIcon"><i class="fa fa-mail-reply-all"></i> Go Back</a> 
+        </span> {% endcomment %}
+      </h4>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table id="myTable" class="table table-hover table-bordered">
+          <thead class="table-info">
+            <tr>
+                <th>Order</th>
+                <th>Delivered Quantity</th>
+                <th>Delivery Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fulfillment in fulfillments %}
+            <tr>
+                <td>{{ fulfillment.order.id }}</td>
+                <td>{{ fulfillment.delivered_quantity }}</td>
+                <td>{{ fulfillment.delivery_date }}</td>
+                <td>{% if fulfillment.is_fulfilled %}Completed{% else %}Pending{% endif %}</td>
+                <td>
+                    <a href="{% url 'sa_fulfillment_detail' fulfillment.id %}" class="btn btn-primary btn-sm">View</a>
+                </td>
+            </tr>
+            {% empty %}
+                No fulfillments found.
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12 mx-auto">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-body">
+                <!-- Header Section -->
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="card-title d-flex align-items-center">
+                        <i class="fa fa-address-card me-2 text-primary"></i> Loan <span class="text-danger">Payment History</span>
+                    </h4>
+                    <a href="{% url 'finance_index' %}" class="btn btn-light border rounded-pill shadow-sm">
+                        <i class="fa fa-arrow-left"></i> Go Back
+                    </a>
+                </div>
+                <hr class="my-3" />
+                
+                <!-- Cash Assigned Details -->
+                <h5 class="fw-bold text-primary">Cash Assigned Details</h5>
+                <div class="table-responsive mt-3">
+                    <table class="table table-hover table-striped align-middle shadow-sm border rounded-3">
+                        <thead class="table-info text-dark">
+                            <tr>
+                                <th>Amount</th>
+                                <th>Repayment Period From</th>
+                                <th>Repayment Period To</th>
+                                <th>Created By</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ cash_assigned.amount }}</td>
+                                <td>{{ cash_assigned.repayment_period_from |date:"d-m-Y"}}</td>
+                                <td>{{ cash_assigned.repayment_period_to |date:"d-m-Y"}}</td>
+                                <td>{{ cash_assigned.created_by }}</td>
+                                <td><span class="badge bg-primary bg-gradient shadow-sm rounded-pill px-3 py-2">{{ cash_assigned.status }}</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <hr class="my-4" />
+                
+                <!-- Repayment History -->
+                <h5 class="fw-bold text-primary">Repayment History</h5>
+                <div class="table-responsive mt-3">
+                    {% if repayment_history %}
+                    <table class="table table-hover table-striped align-middle shadow-sm border rounded-3">
+                        <thead class="table-warning text-dark">
+                            <tr>
+                                <th>Date Paid</th>
+                                <th>Amount Paid</th>
+                                <th>Balance</th>
+                                <th>Notes</th>
+                                <th>Evidence</th>
+                            </tr>
+                        </thead>
+                        <tbody>                          
+                                {% for repayment in repayment_history %}
+                                <tr>
+                                    <td>{{ repayment.date_paid|date:"D, M j, Y" }}</td>
+                                    <td>{{ repayment.amount_paid }}</td>
+                                    <td>{{ repayment.bal_amount }}</td>
+                                    <td>{{ repayment.notes }}</td>
+                                    <td>
+                                        {% if repayment.photo %}
+                                            <a href="#" data-bs-toggle="modal" data-bs-target="#evidenceModal{{ repayment.id }}">View Evidence</a>
+                                            <!-- Evidence Modal -->
+                                            <div class="modal fade" id="evidenceModal{{ repayment.id }}" tabindex="-1" aria-labelledby="evidenceModalLabel{{ repayment.id }}" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="evidenceModalLabel{{ repayment.id }}">Evidence for Repayment on {{ repayment.date_paid }}</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body text-center">
+                                                            <img src="{{ repayment.photo.url }}" class="img-thumbnail img-responsive" alt="Repayment Evidence" style="width:450px; height:auto;" />
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-primary text-white" data-bs-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            No Evidence
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}                           
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <span class="text-center">No repayments made yet.</span>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

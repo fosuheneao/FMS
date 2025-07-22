@@ -1,0 +1,92 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+{% load filename %}
+
+{% block content %}
+<div class="row">
+  <div class="card shadow-lg rounded border-0">
+      <div class="card-body">
+          <h4 class="card-title d-flex justify-content-between align-items-center">
+              <span><i class="fa fa-file-invoice"></i> <span class="text-primary">My Reported Spoilages</span></span>
+              <a href="{% url 'create_spoilage' %}" class="btn btn-sm btn-outline-primary shadow-sm">
+                  <i class="fa fa-plus-circle"></i> Report Spoilage
+              </a>
+          </h4>
+          <hr/>
+          <div class="table-responsive mt-3">
+            {% if spoilages %}
+              <table id="myTable" class="table table-hover table-bordered">
+                  <thead class="table-light">
+                      <tr>
+                          <th>Order Item</th>
+                          <th>Variety</th>
+                          <th>Quantity Spoiled</th>
+                          <th>Status</th>
+                          <th>Reported At</th>
+                          <th>Photo Evidence</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% for spoil in spoilages %}
+                          <tr>
+                              <td>{{ spoil.orderitem }}</td>
+                              <td>{{ spoil.orderitem.harveststock.cropvariety.name }}</td>
+                              <td>{{ spoil.quantity_spoiled|floatformat:2 }}</td>
+                              <td>
+                                {% if spoil.status == 'Pending' %}
+                                  <span class="badge bg-warning text-dark">{{ spoil.status }}</span>
+                                {% else %}
+                                  <span class="badge bg-success">{{ spoil.status }}</span>
+                                {% endif %}
+                              </td>
+                              <td>{{ spoil.reported_at|naturaltime }}</td>
+                              <td>
+                                {% if spoil.photo_evidence %}
+                                    <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#photoModal{{ spoil.id }}">
+                                        View
+                                    </button>
+
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="photoModal{{ spoil.id }}" tabindex="-1" aria-labelledby="photoModalLabel{{ spoil.id }}" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-primary text-white">
+                                                    <h5 class="modal-title" id="photoModalLabel{{ spoil.id }}">Evidence</h5>
+                                                    <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <img src="{{ spoil.photo_evidence.url }}" alt="Spoilage Photo" class="img-responsive img-thumbnail mb-3" style="height:250px; width:250px">
+                                                    <ul class="list-group text-start">
+                                                        {% comment %} <li class="list-group-item"><strong>File Name:</strong> {{ spoil.photo_evidence.name|basename }}</li>
+                                                        <li class="list-group-item"><strong>File Size:</strong> {{ spoil.photo_evidence.size|filesizeformat }}</li>
+                                                        <li class="list-group-item"><strong>URL:</strong> <a href="{{ spoil.photo_evidence.url }}" target="_blank">View Full</a></li>
+                                                        {% if spoil.photo_evidence.width and spoil.photo_evidence.height %}
+                                                        <li class="list-group-item"><strong>Dimensions:</strong> {{ spoil.photo_evidence.width }} x {{ spoil.photo_evidence.height }} px</li>
+                                                        {% endif %} {% endcomment %}
+                                                        <li class="list-group-item"><strong>Notes:</strong> {{ spoil.notes|linebreaks }}</li>
+                                                        {% if spoil.confirmation_note %}
+                                                        <li class="list-group-item"><strong>Confirmation Note:</strong> {{ spoil.confirmation_note|linebreaks }}</li>
+                                                        {% endif %}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <span class="text-muted">N/A</span>
+                                {% endif %}
+                              </td>
+                          </tr>
+                      {% endfor %}
+                  </tbody>
+              </table>
+            {% else %}
+              <div class="text-center text-muted">No spoilage record found.</div>
+            {% endif %}
+          </div>
+      </div>
+  </div>
+</div>
+{% endblock %}

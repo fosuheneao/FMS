@@ -1,0 +1,53 @@
+/* Change the background color of the admin interface */
+body {
+    background-color: #f0f0f0;
+}
+
+/* Change header background and text color */
+#header {
+    background-color: #0E365A;
+    color: white;
+}
+
+/* Change the color of the submit button */
+input[type="submit"] {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Customize the look of the admin sidebar */
+#nav-sidebar {
+    background-color: #0E365A;
+}
+
+#nav-sidebar a {
+    color: #0E365A;
+}
+
+#nav-sidebar a:hover {
+    color: #007bff;
+}
+
+/* #result_list .thead tr{
+    background-color: #0E365A!important;
+    color:#fff
+} */
+
+table {
+    background: red!important;
+}
+
+
+/* Add styles for collapsible headers */
+.model-section-header {
+    font-weight: bold;
+    cursor: pointer;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Hide the sections by default */
+.model-section-items {
+    display: none;
+}

@@ -1,0 +1,111 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+{% block content %}
+<div class="col-lg-12">
+<style>
+  .backIcon:hover{
+      color:white!important;
+  }
+</style>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">
+          {% if form.instance.pk %} Edit {% else %} Create {% endif %} Coworker for :
+          <strong class="text-primary">{{ beneficiary.full_name }}</strong>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <span class="btn btn-outline-primary">
+                 <a href="{% url 'edo_beneficiary_coworker_index' beneficiary.id %}" class="backIcon"><i class="fa fa-mail-reply-all"></i> Go Back</a> 
+          </span>
+        </h5>
+    {% comment %} <form method="post" action="{% if form.instance.pk %}{% url 'coworker_update' pk=form.instance.pk %}{% else %}{% url 'coworker_create' %}{% endif %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary"><i class="bi bi-plus-circle-dotted"></i> Save</button>
+    </form> {% endcomment %}
+    
+    <form method="post" action="{% if form.instance.pk %}{% url 'edo_coworker_update' pk=form.instance.pk %}{% else %}{% url 'edo_coworker_create' beneficiary.id  %}{% endif %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            {{ form.full_name.label_tag }}
+            {{ form.full_name }}
+        </div>
+    
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <label>Gender</label><br>
+                {% for radio in form.gender %}
+                    <div class="form-check form-check-inline">
+                        {{ radio.tag }} {{ radio.choice_label }}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="col-md-3 mb-3">
+                {{ form.age.label_tag }}
+                {{ form.age }}
+            </div>
+            <div class="col-md-6 mb-3">
+                {{ form.role.label_tag }}
+                {{ form.role }}
+            </div>
+        </div>
+    
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                {{ form.phone_number.label_tag }}
+                {{ form.phone_number }}
+            </div>
+
+            <div class="col-md-6 mb-3">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                {% if coworker.photo %}
+                <img src="{{ coworker.photo.url }}" alt="Photo Preview" style="max-width: 150px; max-height: 150px; margin-top: 10px;">
+                {% endif %}
+                <hr/>
+                {{ form.photo.label_tag }}
+                {{ form.photo }}
+
+            </div>
+        
+            <div class="col-md-6 mb-3">
+                {{ form.cardphoto.label_tag }}
+                {{ form.cardphoto }} 
+                {% if coworker.cardphoto %}
+                     <img src="{{ coworker.cardphoto.url }}" alt="Card Photo Preview" style="max-width: 150px; max-height: 150px; margin-top: 10px;">
+                {% endif %}
+                <hr/>
+                {{ form.nationalId.label_tag }}
+                {{ form.nationalId }}
+            </div>
+         </div>
+        <!-- Align from_date and to_date on the same line -->
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                {{ form.from_date.label_tag }}
+                {{ form.from_date }}
+            </div>
+            <div class="col-md-6 mb-3">
+                {{ form.to_date.label_tag }}
+                {{ form.to_date }}
+            </div>
+        </div>
+    
+        <div class="mb-3">
+            {{ form.description.label_tag }}
+            {{ form.description }}
+        </div>
+    
+        <button type="submit" class="btn btn-warning"> <i class="fa fa-check-square-o"></i> Submit</button>
+    </form>
+
+    
+</div>
+</div>
+</div>
+{% endblock content  %}

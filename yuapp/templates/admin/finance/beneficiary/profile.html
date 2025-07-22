@@ -1,0 +1,361 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+<div class="row">  
+<div class="row">
+    <div class="col-lg-10 d-flex flex-column">
+      <div class="row flex-grow">
+
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="home-tab">
+              <div class="d-sm-flex align-items-center justify-content-between border-bottom">
+                <ul class="nav nav-tabs" id="beneficiaryTabs" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link active" id="bio-tab" data-toggle="tab" href="#bio" role="tab" aria-controls="bio" aria-selected="true">Bio Info</a>
+                </li>
+                  <li class="nav-item">
+                    <a class="nav-link" id="harvest-tab" data-toggle="tab" href="#harvest" role="tab" aria-controls="harvest" aria-selected="true">Harvest</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="coworker-tab" data-toggle="tab" href="#coworker" role="tab" aria-controls="coworker" aria-selected="false">Coworkers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="contract-tab" data-toggle="tab" href="#contract" role="tab" aria-controls="contract" aria-selected="false">Contract</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="tunnel-tab" data-toggle="tab" href="#financials" role="tab" aria-controls="financials" aria-selected="false">Financials</a>
+                </li>
+               
+                  <span class="btn btn-outline-primary" style="font-size:0.90em!important">
+                    <a href="{% url 'aic_beneficiary_index' %}" class="backIcon"><i class="fa fa-mail-reply-all"></i> Go Back</a> 
+                 </span>
+                
+                </ul>
+                <div>
+                  <div class="btn-wrapper">
+                    <a href="#" class="btn btn-otline-dark"><i class="icon-printer"></i> Print</a>
+                    <a href="#" class="btn btn-primary text-white me-0"><i class="icon-download"></i> Export</a>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-content tab-content-basic" id="beneficiaryTabsContent">
+
+                <div class="tab-pane fade show active" id="bio" role="tabpanel" aria-labelledby="bio-tab">
+                  <div class="col-12 col-lg-4 col-lg-12 grid-margin stretch-card">
+                    <div class="card card-rounded">
+                      <div class="card-body">
+                        <div class="d-sm-flex justify-content-between align-items-start">
+                          <div>
+                            <h4 class="card-title card-title-dash"><strong>{{ beneficiary.full_name }}</strong></h4>
+                            <span class="text-danger" style="font-size:0.8em!important">{{ beneficiary.gender }}</span>
+                            <h5 class="card-subtitle card-subtitle-dash"><p>{{ beneficiary.email }}</p></h5><br/>
+                            
+                          </div>
+                          
+                        </div>
+          
+                        <div class="chartjs-wrapper mt-4">
+                          Brief Description<hr/>
+                          <p>{{ beneficiary.description }}</p>
+                        </div>
+          
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="tab-pane fade show" id="harvest" role="tabpanel" aria-labelledby="harvest-tab">
+                    {% if harvests %}
+                          <table id="myTable" class="table table-hover">
+                            <thead class="table-info">
+                                <tr>                                        
+                                    <th>Date</th>
+                                    <th>Crop</th>
+                                    <th>Grade</th>
+                                    <th>Quantity</th>
+                                    <th>UnitPrice</th>
+                                    <th>Total</th>
+                                    <th>Unit</th>
+                                    <th>Status</th>
+                                    <th>Info</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for harvest in harvests %}
+                                <tr>
+                                    <td>{{ harvest.date|date:"D, M j, Y" }}</td>
+                                    <td>{{ harvest.crop.name }}</td>
+                                    <td>{{ harvest.grade.name }}</td>
+                                    <td>{{ harvest.quantity }}</td>
+                                    <td>{{ harvest.price_record.price }}</td>
+                                    <td>{{ harvest.total_price }}</td>
+                                    <td>{{ harvest.unit.expression }}</td>                                         
+                                    <td>{{ harvest.confirmation }}</td>
+                                    <td>
+                                      <i class="fa fa-info-circle text-primary fa-lg" data-toggle="tooltip" data-placement="top" title="{{ harvest.description }}"></i>
+                                  </td>
+                                    <td>
+                                    <a href="{% url 'aic_view_harvest' harvest.id %}" data-toggle="tooltip" data-placement="top" title="View Harvest Record">
+                                      <i class="fa  fa-eye text-primary fa-lg"></i>
+                                   </a>
+                                    
+                                   </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot class="table table-danger">
+                              <tr>
+                                  
+                                  <td><strong>Total Sales Record:</strong></td>
+                                  <td></td><td></td>
+                                  <td class="text-right"><strong>{{ total_quantity|floatformat:0 }}</strong></td><td></td>
+                                  <td colspan="6" class="text-right"><strong>GHS {{ total_sum|floatformat:2|intcomma }}</strong></td>
+                              </tr>
+                          </tfoot>
+                        </table>
+                        {% else %}
+                        <span class="text-muted">No harvest records available.</span>
+                        {% endif %}
+                </div>
+
+                <div class="tab-pane fade show" id="coworker" role="tabpanel" aria-labelledby="coworker-tab">
+                  {% if coworkers %}
+                          <table id="myTableWorker" class="table table-hover">
+                            <thead class="table-info">
+                              <tr>
+                                <th>Cowork</th>
+                                <th>Gender</th>
+                                {% comment %} <th>Ghana Card</th> {% endcomment %}
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Age</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>                            
+                              {% for act in coworkers %}
+                               <tr>
+                                <td>{{ act.full_name }}</td>
+                                <td>{{ act.gender }}</td>
+                                {% comment %} <td>{{ act.nationalId }}</td> {% endcomment %}
+                                <td>{{ act.from_date|date:"F j, Y" }}</td>
+                                <td>{{ act.to_date|date:"F j, Y" }}</td>
+                                <td class="text-danger"> {{ act.age }} <i class="ti-arrow-down"></i></td>
+                                <td><label class="badge badge-danger">{{ act.role.name }}</label></td>
+                                <td>
+                                  <a href="{% url 'coworker_detail' pk=act.pk %}" data-toggle="tooltip" data-placement="top" title="View Record">
+                                    <i class="fa  fa-wpexplorer text-success fa-lg"></i>
+                                  </a> &nbsp;&nbsp;
+                                  <a href="{% url 'coworker_update' pk=act.pk %}" data-toggle="tooltip" data-placement="top" title="Update Co-Worker Record">
+                                    <i class="fa  fa-cubes text-primary fa-lg"></i>
+                                  </a>
+                              </td>
+                              </tr>
+                              {% endfor %}            
+                             
+                            </tbody>
+                          </table>
+                          {% else %}
+                          No record Found
+                        {% endif %}
+              </div>
+
+                <div class="tab-pane fade show" id="contract" role="tabpanel" aria-labelledby="contract-tab">
+                  {% if contracts %}
+                  <table id="myTableContracts"  class="table table-hover">                  
+                    <thead class="table-info">
+                      <tr>
+                        <th>Worker</th>
+                        {% comment %} <th>Beneficiary</th> {% endcomment %}
+                        <th>Contract Type</th>
+                        <th>From Date</th>
+                        <th>To Date</th>
+                        <th>Charge Fee</th>
+                        <th>Terms</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                     
+                      {% for contract in contracts %}
+                       <tr>
+                        <td>{{ contract.worker.full_name }}</td>
+                        {% comment %} <td>{{ contract.beneficiary.full_name }}</td> {% endcomment %}
+                        <td>
+                          {% if contract.contract_type == 'Temporary' %}
+                              <label class="text-danger">{{ contract.contract_type }}</label>
+                          {% elif contract.contract_type == 'Casual' %}
+                              <label class="text-primary">{{ contract.contract_type }}</label>
+                          {% else %}
+                              <label class="text-success">{{ contract.contract_type }}</label>
+                          {% endif %}
+                      </td>
+                        <td>{{ contract.from_date|date:"Y-m-d" }}</td>
+                        <td>{{ contract.to_date|date:"Y-m-d" }}</td>
+                        <td>{{ contract.charge_per_day }}</td>
+                        <td>{{ contract.payment_mode_type }}</td>
+                        <td>
+                          {% if contract.status == 'Active' %}
+                          <label class="badge badge-success">{{ contract.status }}</label>
+                          {% else %}
+                          <label class="badge badge-danger">{{ contract.status }}</label>
+                          {% endif %}
+                        </td>
+                        <td>
+                          <a href="#" data-toggle="tooltip" data-placement="top" title="View Record">
+                            <i class="fa  fa-wpexplorer text-success fa-lg"></i>
+                          </a> &nbsp;&nbsp;
+                          <a href="{% url 'update_contract' contract.id %}" data-toggle="tooltip" data-placement="top" title="Update Record">
+                            <i class="fa  fa-cubes text-primary fa-lg"></i>
+                          </a> &nbsp;&nbsp;
+                         
+                      </td>
+                      </tr>
+                      {% endfor %}            
+                      
+                    </tbody>
+                  </table>
+                  {% else %}
+                  No record Found
+                {% endif %}
+                </div>
+
+                <div class="tab-pane fade show" id="financials" role="tabpanel" aria-labelledby="financials-tab">
+                  {% if cashloans %}
+                  <table id="myTableContracts"  class="table table-hover">                  
+                    <thead class="table-info">
+                      <tr>
+                        <th>Beneficiary</th>
+                        <th>Status</th>
+                        <th>Repayment From Date</th>
+                        <th>Repayment To Date</th>
+                        <th>Amount</th>
+                        <th>Notes</th>
+                        {% comment %} <th>Status</th> {% endcomment %}
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>                     
+                      {% for cashloan in cashloans %}
+                       <tr>
+                        <td>{{ cashloan.beneficiary.full_name }}</td>
+                        <td>
+                          {% if cashloan.status == 'Pending' %}
+                              <label class="text-danger">{{ cashloan.status }}</label>
+                          {% elif cashloan.status == 'Approved' %}
+                              <label class="text-primary">{{ cashloan.status }}</label>
+                          {% else %}
+                              <label class="text-success">{{ cashloan.status }}</label>
+                          {% endif %}
+                      </td>
+                        <td>{{ cashloan.repayment_period_from|date:"Y-m-d" }}</td>
+                        <td>{{ cashloan.repayment_period_to|date:"Y-m-d" }}</td>
+                        <td>{{ cashloan.amount }}</td>
+                        <td><i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="{{ cashloan.notes }}"></i></td>
+                         <td>
+                          <a href="{% url 'aic_cashloan_detail' cashloan.id %}" data-toggle="tooltip" data-placement="top" title="View Record">
+                            <i class="fa  fa-wpexplorer text-success fa-lg"></i>
+                          </a> &nbsp;&nbsp;
+                                                  
+                      </td>
+                      </tr>
+                      {% endfor %}            
+                     
+                    </tbody>
+                  </table>
+                  {% else %}
+                  No record Found
+                {% endif %}
+                </div>
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+       
+      </div>
+    </div>
+    <div class="col-lg-2 d-flex flex-column">
+      <div class="row flex-grow">
+        <div class="col-md-6 col-lg-12 grid-margin stretch-card">
+          <div class="card bg-primary card-rounded">
+            <div class="card-body pb-0 text-center"> <!-- Added 'text-center' class to center the image -->
+              <h4 class="card-title card-title-dash text-white mb-4" style="font-size:0.8em!important">Photograph: {{ beneficiary.full_name }}</h4>
+              <img class="img-md rounded-circle" src="{{ beneficiary.photo.url }}" alt="{{ beneficiary.full_name }}" style="width:130px!important; height:130px!important; border:2px solid #fff">
+            </div>
+          </div>
+        </div>
+       <div class="col-md-6 col-lg-12 grid-margin stretch-card">
+          <div class="card card-rounded">
+            <div class="card-body">
+              <div class="row" style="font-size:0.8em!important"> 
+                <span>Enterprise Name: <strong class="text-primary">{{ beneficiary.enterprise_name }}</strong></span><hr/>
+               
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                <h4 class="card-title" style="font-size:0.8em!important">Coworkers Engaged by Gender</h4><br/>                          
+                          <canvas class="card" id="genderPieChart"></canvas><hr/>
+                    <span class="text-danger">Greenhouse:</span><span style="font-size:0.9em!important">
+                            {{ tunnel.greenhouse.name }}
+                    </span><hr/>
+                    <span class="text-danger">Tunnel:</span><span style="font-size:0.9em!important">
+                      {{ tunnel.room_name }}
+                    </span><hr/>
+                    <span class="text-danger">EDO:</span> <span style="font-size:0.9em!important">
+                            {{ edo.fullname }}
+                    </span>
+                </div>
+            </div>
+          </div>
+        </div> 
+      </div>
+    </div>
+  </div>
+  
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Get data from Django context variables
+        const genderLabels = {{ gender_labels|safe }};
+        const genderTotals = {{ gender_totals|safe }};
+
+        // Create the pie chart
+        const ctx = document.getElementById('genderPieChart').getContext('2d');
+        const genderPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: genderLabels,
+                datasets: [{
+                    data: genderTotals,
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.6)', // Blue
+                        'rgba(255, 99, 132, 0.6)', // Red
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)', // Blue
+                        'rgba(255, 99, 132, 1)', // Red
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

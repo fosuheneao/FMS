@@ -1,0 +1,68 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="row"> 
+  <div class="col-lg-12">
+    <div class="card shadow-lg border-0">
+      <div class="card-body">
+        <h4 class="card-title d-flex align-items-center">
+          <i class="fa fa-history me-2 text-primary"></i> Order: <span class="text-danger">History</span>
+        </h4>
+        <hr/>
+        {% if orders %}
+        <div class="table-responsive">
+          <table id="myTable" class="table table-hover table-bordered">
+            <thead class="table-info">
+              <tr>
+                <th>Date</th>
+                <th>Buyer</th>
+                <th>Quantity</th>
+                <th>Amount (GHS)</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in orders %}
+              <tr>                                
+                <td>{{ order.order_date |date:"d-m-Y" }}</td>
+                <td>{{ order.buyer.client_name }}</td>
+                <td>{{ order.total_items }}</td>
+                <td>{{ order.total_amount|currency }}</td>
+                <td>
+                  {% if order.status == 'pending' %}
+                    <span class="badge bg-danger text-white" data-bs-toggle="tooltip" title="New Order, create fulfillment">{{ order.status }}</span>
+                  {% elif order.status == 'in_progress' %}
+                     <span class="badge bg-primary text-white" data-bs-toggle="tooltip" title="Order fulfilled waiting on buyer confirmation">{{ order.status }}</span>
+                  {% else %}
+                    <span class="badge bg-success text-white" data-bs-toggle="tooltip" title="Order cycle complete!">{{ order.status }}</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <a class="btn btn-light btn-sm shadow-sm" href="{% url 'aic_order_detail' order.id %}" data-bs-toggle="tooltip" title="View Order Record">
+                    <i class="fa fa-eye text-primary"></i> View
+                  </a>
+                  {% comment %} {% if order.status == 'pending' %}
+                    <a class="btn btn-primary btn-sm text-white shadow-sm" href="{% url 'aic_fulfill_order' order.id %}" data-bs-toggle="tooltip" title="Fulfill Order for {{ order.buyer.user.first_name }}">
+                      <i class="fa fa-check-circle text-white"></i> Confirm Order
+                    </a>
+                  {% endif %} {% endcomment %}
+                </td>
+              </tr>                              
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="text-center my-4">
+          <i class="fa fa-box-open fa-3x text-muted"></i>
+          <p class="mt-2 text-muted">No orders found.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Crop Commodities List
+               
+              </a>
+      
+              </h4>
+              <hr/>
+              <div class="table-responsive">
+                <!-- Display all crops, with a different icon or style for assigned crops -->
+                <h4>All Crops</h4>
+                <table class="table table-hovered">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Photo</th>
+                            <th>Assigned</th>
+                            {% comment %} <th>Actions</th> {% endcomment %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for crop in all_crops %}
+                            <tr>
+                                <td>{{ crop.name }}</td>
+                                <td>{{ crop.description }}</td>
+                                <td>
+                                    {% if crop.photo %}
+                                        <img src="{{ crop.photo.url }}" alt="{{ crop.name }}" style="width:50px;height:50px;">
+                                    {% else %}
+                                        No photo
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if crop in assigned_crops %}
+                                        <!-- Icon for assigned crops (using a green checkmark or another icon) -->
+                                        <i class="mdi mdi-check-circle text-success" data-toggle="tooltip" data-placement="top" title="Crop is currently in production"></i> Assigned
+                                    {% else %}
+                                        <!-- Icon for unassigned crops (using a grey circle or another icon) -->
+                                        <i class="mdi mdi-close-circle text-danger" data-toggle="tooltip" data-placement="top" title="Crop is Not currently assigned to any beneficiary"></i> Not Assigned
+                                    {% endif %}
+                                </td>
+                                {% comment %} <td>
+                                    <a href="#" data-toggle="tooltip" data-placement="top" title="Update Crop">
+                                        <i class="fa fa-wpexplorer text-success fa-lg"></i>
+                                    </a> &nbsp;&nbsp;
+                                </td> {% endcomment %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+              </div>
+            </div>
+          </div>
+        
+        </div>
+   
+     
+
+{% endblock %}

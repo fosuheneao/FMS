@@ -1,0 +1,41 @@
+{% extends "base_auth_dash.html" %}
+{% block content %}
+<div class="col-lg-8">
+  <div class="card">
+      <div class="card-body">
+          <h4 class="card-title text-primary">
+              <i class="bi bi-person-circle"></i> {{ coworker.full_name }}
+          </h4>
+
+          <ul class="list-group list-group-flush mb-3">
+              <li class="list-group-item"><strong>Gender:</strong> {{ coworker.gender }}</li>
+              <li class="list-group-item"><strong>Role:</strong> {{ coworker.role }}</li>
+              <li class="list-group-item"><strong>Age:</strong> {{ coworker.age }}</li>
+              <li class="list-group-item"><strong>Email:</strong> {{ coworker.email }}</li>
+              <li class="list-group-item"><strong>Phone:</strong> {{ coworker.phone_number }}</li>
+              <li class="list-group-item"><strong>National ID:</strong> {{ coworker.nationalId }}</li>
+              <li class="list-group-item"><strong>Start Date:</strong> {{ coworker.from_date }}</li>
+              <li class="list-group-item"><strong>End Date:</strong> {{ coworker.to_date }}</li>
+          </ul>
+
+          <div class="d-flex justify-content-between">
+              <a href="{% url 'coworker_update' pk=coworker.pk %}" class="btn btn-warning">
+                  <i class="bi bi-pencil-square"></i> Edit
+              </a>
+              
+              <a href="{% url 'beneficiary_coworker' %}" class="btn btn-secondary">
+                  <i class="bi bi-arrow-left"></i> Back
+              </a>
+
+              <a href="{% url 'coworker_delete' pk=coworker.pk %}" class="btn btn-danger">
+                  <i class="bi bi-trash-fill"></i> Delete
+              </a>
+          </div>
+      </div>
+  </div>
+</div>
+
+{% endblock content  %}
+
+
+

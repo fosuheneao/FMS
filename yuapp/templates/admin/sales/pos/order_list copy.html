@@ -1,0 +1,352 @@
+{% extends "base_auth_dash.html" %}
+{% load static humanize currency_filters %}
+
+{% block content %}
+<div class="row">
+
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title"><i class="fa fa-cart-plus"></i> <span class="text-danger">Sale Order</span> 
+            <a href="{% url 'sa_create_order' %}" class="pull-right btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> Create Sale Order</a>
+        </h4>
+        <hr/>
+          <div class="row flex-grow">
+            <div class="col-12 grid-margin stretch-card">
+              <div class="card card-rounded">
+                <div class="card-body">
+                  <div class="d-sm-flex justify-content-between align-items-start">
+                  </div>
+                  <div class="table-responsive  mt-1">
+                    {% if orders %}
+                    <table class="table table-hover">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Date</th>
+                                <th>Buyer</th>
+                                <th>Total Items</th>
+                                <th>Total Amount</th>
+                                <th>Order Type</th>
+                                <th>Delivery</th>
+                                <th>Paid</th>
+                                <th>Note</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                      <tbody>
+                        
+                              {% for item in orders %}
+                              <tr>
+                                <td>{{ item.order_date|date:"d-m-Y" }}</td>
+                                <td>{{ item.buyer.client_name }}</td>
+                                <td>{{ item.total_items }}</td>
+                                <td>{{ item.total_cost_sum|currency }}</td>
+                                 <td>{{ item.sale_order_type }}</td>
+                                <td>
+                                    {% if item.status == 'completed' %}
+                                            <i class="fa fa-check-circle text-success fa-xs" data-toggle="tooltip" title="{{ item.status|capfirst }}"></i>
+                                            {{ item.status|capfirst }}
+                                    {% elif item.status == 'pending' %}
+                                         <i class="fa fa-check-circle text-warning text-black fa-xs" data-toggle="tooltip" title="{{ item.status|capfirst }}"></i>
+                                         {{ item.status|capfirst }}
+                                    {% else %}
+                                         <i class="fa fa-check-circle text-danger fa-xs" data-toggle="tooltip" title="{{ item.status|capfirst }}"></i>
+                                         {{ item.status|capfirst }}
+                                    {% endif %}
+                                </td>
+                                 <td>
+                                    {% if item.is_paid == 1 %}
+                                          <i class="fa fa-money text-success fa-xs" data-toggle="tooltip" title="Paid"></i>
+                                   {% else %}
+                                         <i class="fa fa-money text-danger fa-xs" data-toggle="tooltip" title="Unpaid"></i>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if item.notes %}
+                                    <i class="fa fa-info-circle text-info" data-toggle="tooltip" title="{{ item.notes }}"></i>
+                                    {% else %}
+                                    <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                  <div class="d-flex justify-content-center gap-3">
+                                
+                                    {% if item.status != "completed" %}
+                                      <a href="{% url 'sa_update_order' item.id %}" data-toggle="tooltip" title="Update Order">
+                                        <i class="fa fa-pencil-square text-primary fs-6"></i>
+                                      </a>
+                                    {% endif %}
+                                
+                                    <a href="{% url 'generate_invoice_pdf' item.id %}" target="_blank" data-toggle="tooltip" title="Download PDF Invoice">
+                                      <i class="fa fa-file-pdf-o text-primary fs-6"></i>
+                                    </a>
+                                
+                                    <a href="#" data-bs-toggle="collapse" data-bs-target="#details{{ item.id }}" title="View Order Details">
+                                      <i class="fa fa-eye text-primary fs-6"></i>
+                                    </a>
+                                    <a href="#" class="record-payment-btn" data-url="{% url 'sa_record_payment' item.id %}" data-toggle="tooltip" title="Record Payment">
+                                      <i class="fa fa-credit-card text-primary fs-6"></i>
+                                    </a>
+                                  </div>
+                                </td>
+                                
+                                                                
+                            </tr>
+        
+                            <!-- Order Details Section -->
+                            <tr id="details{{ item.id }}" class="collapse">
+                                <td colspan="7">
+                                    <div class="card" style="background:#F3F3F3">
+                                        <div class="card-header"><strong>Order Details</strong></div>
+                                        <div class="card-body">
+                                            <p><strong>Buyer:</strong> {{ item.buyer.client_name }}</p>
+                                            <p><strong>Date:</strong> {{ item.order_date|date:"d-m-Y" }}</p>
+                                            <p><strong>Note:</strong> {{ item.notes|default:"No notes provided." }}</p>
+                                            <hr>
+
+                                            {% if item.payments.all %}
+                                            <h6><strong>Payments Made</strong></h6>
+                                            <ul>
+                                                {% for payment in item.payments.all %}
+                                                <li>{{ payment.amount_paid|currency }} on {{ payment.payment_date|date:"d-m-Y" }} 
+                                                    {% if payment.payin_slip %}
+                                                        - <a href="{{ payment.payin_slip.url }}" target="_blank">View Slip</a>
+                                                    {% endif %}
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                            {% endif %}
+                                            <hr/>
+
+
+                                            <h6><strong>Requested Items</strong></h6>
+                                            {% if item.order_items.all %}
+                                            <table class="table table-sm table-bordered">
+                                                <thead class="thead-light">
+                                                    <tr>
+                                                        <th>Commodity</th>
+                                                        <th>Variety</th>
+                                                        <th>Grade</th>
+                                                        <th>Qty</th>
+                                                        <th>Unit</th>
+                                                        <th>Unit Price</th>
+                                                        <th>Total</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for order_item in item.order_items.all %}
+                                                    <tr>
+                                                        <td>{{ order_item.harveststock.crop.name }}</td>
+                                                        <td>{{ order_item.harveststock.cropvariety.name }}</td>
+                                                        <td>{{ order_item.harveststock.grade.name }}</td>
+                                                        <td>{{ order_item.quantity }}</td>
+                                                        <td>{{ order_item.harveststock.unit.name }}</td>
+                                                        <td>{{ order_item.harveststock.unit_price.selling_price|currency }}</td>
+                                                        <td>{{ order_item.get_total_cost|currency }}</td>
+                                                        <td>
+                                                        {% if order_item.id %}
+                                                           {% if item.is_paid == 1 %}
+                                                           <i class="fa fa-card"></i>
+                                                             {% else %}
+                                                             <i class="fa fa-pencil-square-o edit-order-item" data-toggle="tooltip" title="Edit Order Item"
+                                                             data-url="{% url 'sa_edit_order_item' order_item.id %}"
+                                                             data-id="{{ order_item.id }}"></i>
+                                                             {% endif %}
+                                                        {% else %}
+                                                            <span class="text-muted">Not editable</span>
+                                                        {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <th colspan="6" class="text-right">Total:</th>
+                                                        <th>{{ item.total_cost_sum|currency }}</th>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+
+                                            {% else %}
+                                             <p class="text-muted">No items in this order.</p>
+                                            {% comment %} <a href="#" class="btn btn-outline-primary btn-sm add-order-item"
+                                               data-url="{% url 'sa_add_order_item' item.id %}">
+                                               <i class="fa fa-plus"></i> Add Order Item
+                                            </a> {% endcomment %}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <span class="alert alert-info">No orders found.</span>
+                    {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+      </div>
+    </div>
+</div>
+
+
+<!-- Order Edit Item Modal Container -->
+<div class="modal fade" id="orderItemModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content" id="orderItemModalContent">
+      <!-- AJAX form loads here -->
+    </div>
+  </div>
+</div>
+
+<!-- Order Add Item Modal Container -->
+<div class="modal fade" id="orderItemAddModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content" id="orderItemAddModalContent">
+      <!-- AJAX form loads here -->
+    </div>
+  </div>
+</div>
+
+<!-- Order Payment Modal Container -->
+<div class="modal fade" id="orderPaymentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content" id="orderPaymentModalContent">
+        <!-- Content loaded via AJAX -->
+      </div>
+    </div>
+  </div>
+
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    // Toggle visibility of payment method fields
+    function togglePaymentFields() {
+        const method = $('#id_payment_method').val();
+        $('#mobileProviderGroup, #bankProviderGroup, #referenceNumberGroup, #transactionCodeGroup').hide();
+
+        if (method === 'mobile_money') {
+            $('#mobileProviderGroup, #referenceNumberGroup, #transactionCodeGroup').show();
+        } else if (method === 'bank_transfer') {
+            $('#bankProviderGroup, #referenceNumberGroup, #transactionCodeGroup').show();
+        }
+    }
+
+    // Get CSRF token from cookies
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (const cookie of cookies) {
+                const trimmed = cookie.trim();
+                if (trimmed.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(trimmed.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Include CSRF token in all non-GET AJAX requests
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!/^GET|HEAD|OPTIONS|TRACE$/i.test(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    $(document).ready(function () {
+        // Open edit item modal and load content
+        $(".edit-order-item").on("click", function () {
+            let url = $(this).data("url");
+            $("#orderItemModal").modal("show");
+            $.get(url, function (data) {
+                $("#orderItemModalContent").html(data);
+            });
+        });
+
+        // Open add item modal and load content
+        $(".add-order-item").on("click", function () {
+            let url = $(this).data("url");
+            $("#orderItemAddModal").modal("show");
+            $.get(url, function (data) {
+                $("#orderItemAddModalContent").html(data);
+            });
+        });
+
+        // Open record payment modal
+        $(document).on('click', '.record-payment-btn', function () {
+            let url = $(this).data('url');
+            $("#orderPaymentModal").modal("show");
+            $.get(url, function (data) {
+                $("#orderPaymentModalContent").html(data);
+            });
+        });
+
+        // Update fields visibility when modal is shown or method changes
+        $(document).on('shown.bs.modal', '#orderPaymentModal', togglePaymentFields);
+        $(document).on('change', '#id_payment_method', togglePaymentFields);
+
+        // Submit Edit Order Item form
+        $(document).on("submit", "#editorderItemForm", function (e) {
+            e.preventDefault();
+            let form = $(this);
+            $.post(form.attr("action"), form.serialize(), function (data) {
+                if (data.success) {
+                    $("#orderItemModal").modal("hide");
+
+                    // Update table values
+                    let itemId = form.find("[name='order_item_id']").val();
+                    let row = $("button[data-id='" + itemId + "']").closest("tr");
+                    row.find("td:nth-child(4)").text(data.quantity);
+                    row.find("td:nth-child(5)").text(data.unit_price);
+                    row.find("td:nth-child(6)").text(data.total_cost);
+                } else {
+                    form.replaceWith(data.form_html);
+                }
+            });
+        });
+
+        // Submit payment form
+        $(document).on("submit", "#orderPaymentForm", function (e) {
+          e.preventDefault();
+
+          const form = $(this)[0];
+          const formData = new FormData(form);
+
+          const csrftoken = getCookie('csrftoken');  // Make sure this function is available globally
+
+          $.ajax({
+              url: form.action,
+              type: 'POST',
+              headers: { "X-CSRFToken": csrftoken }, // ✅ Include CSRF token in header
+              data: formData,
+              processData: false,
+              contentType: false,
+              success: function (data) {
+                  if (data.success) {
+                      $("#orderPaymentModal").modal("hide");
+                      alert("Payment recorded successfully.");
+                      location.reload();
+                  } else {
+                      $("#orderPaymentModalContent").html(data.form_html);
+                  }
+              },
+              error: function () {
+                  alert("An error occurred while submitting the payment.");
+              }
+          });
+      });
+
+    });
+</script>
+
+
+  
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load currency_filters %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card shadow-sm rounded-lg border-0">
+            <div class="card-body">
+                <h4 class="card-title d-flex justify-content-between align-items-center text-primary" style="font-size:1.1em; font-weight:600;">
+                    <i class="fa fa-shopping-cart"></i> Harvested Products
+                    <a href="{% url 'view_cart' %}" class="btn btn-primary btn-sm d-flex align-items-center">
+                        View Cart <span class="badge bg-warning ms-2">{{ cart_item_count }}</span>
+                    </a>
+                </h4>
+                <hr/>
+                <div class="row g-4">
+                    {% if assigned_harvest_records %}
+                        {% for harvest in assigned_harvest_records %}
+                            <div class="col-md-4">
+                                <div class="card shadow-lg border-0 rounded-lg">
+                                    <div class="position-relative">
+                                        <img src="{{ harvest.crop.photo.url }}" alt="{{ harvest.crop.name }}" class="img-fluid rounded-top" style="height: 220px; object-fit: cover;">
+                                        <div class="position-absolute top-0 end-0 p-2">
+                                            <span class="badge bg-success">{{ harvest.grade.name }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <h5 class="text-dark fw-bold">{{ harvest.crop.name }}</h5>
+                                        <p class="mb-1"><strong class="text-primary">Price:</strong> {{ harvest.price_record.selling_price }} per kg</p>
+                                        <p class="mb-1"><strong class="text-muted">Stock:</strong> {{ harvest.quantity|currency }} kg</p>
+                                        <p class="mb-1"><strong class="text-muted">Location:</strong> {{ harvest.greenhouse.city.name }}</p>
+                                        <small class="text-secondary">Harvested on: {{ harvest.date|date:"D, M j, Y" }}</small>
+                                        <hr/>
+                                        <!-- Add to Cart Form -->
+                                        <form action="{% url 'buyer_shop' %}" method="post" class="d-flex flex-column align-items-center">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="harvest_id" value="{{ harvest.id }}">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <label for="quantity_{{ harvest.id }}" class="form-label mb-0">Qty:</label>
+                                                <input type="number" name="quantity" id="quantity_{{ harvest.id }}" min="1" max="{{ harvest.quantity|floatformat:0 }}" value="1" class="form-control form-control-sm w-50">
+                                            </div>
+                                            <button type="submit" class="btn btn-danger btn-sm mt-2">
+                                                <i class="fa fa-cart-plus text-white"></i> Add to Cart
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-center text-muted">No production for today, please check later.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

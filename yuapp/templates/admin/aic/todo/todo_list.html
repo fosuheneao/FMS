@@ -1,0 +1,34 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="col-lg-8">
+
+    <div class="card">
+      <div class="card-body">
+<h5>Todo List <a href="{% url 'aic_create_todo' %}">Create New Todo</a></h5>
+<table id="myTable" class="table">
+    <thead>
+    <tr>
+        <th>Description</th>
+        <th>State</th>
+        <th>Actions</th>
+    </tr>
+</thead>
+<tbody>
+    {% for todo in todos %}
+
+    <tr>
+        <td>{{ todo.description }}</td>
+        <td>{{ todo.todostate }}</td>
+        <td>
+            <a href="{% url 'aic_update_todo_state' todo.pk 'Open' %}">Mark as Open</a> |
+            <a href="{% url 'aic_update_todo_state' todo.pk 'Completed' %}">Mark as Completed</a> |
+            <a href="{% url 'aic_update_todo_state' todo.pk 'Cancel' %}">Cancel</a>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+{% endblock %}

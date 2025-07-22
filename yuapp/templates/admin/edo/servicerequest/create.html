@@ -1,0 +1,76 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+{% block content %}
+<div class="col-lg-12">
+<style>
+  .backIcon:hover{
+      color:white!important;
+  }
+</style>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">
+          {% if form.instance.pk %} Edit {% else %} Create {% endif %} Service Request 
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <span class="btn btn-outline-primary">
+                 <a href="{% url 'edo_service_request_index' %}" class="backIcon"><i class="fa fa-mail-reply-all"></i> Go Back</a> 
+          </span>
+        </h5>
+
+    {% if form.errors %}
+    <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <strong>Errors:</strong>
+        <ul>
+            {% for field in form %}
+                {% if field.errors %}
+                    <li><strong>{{ field.label }}:</strong>
+                        <ul>
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+<form method="post" action="{% if form.instance.pk %}{% url 'edo_update_service_request' servicerequest_id=form.instance.pk %}{% else %}{% url 'edo_create_service_request' %}{% endif %}">
+    {% csrf_token %}
+    {% comment %} {{ form.as_p }} {% endcomment %}
+    <div class="row">
+        <div class="mb-3 col-md-10">
+            {{ form.beneficiary.label_tag }}
+            {{ form.beneficiary }}
+        </div>
+        <div class="mb-3 mt-4 col-md-2">
+            {% if form.beneficiary.help_text %}
+            <i class="fa fa-exclamation-circle text-primary fa-lg" data-toggle="tooltip" data-placement="top" title="{{ form.beneficiary.help_text }}"></i> 
+             {% endif %}
+        </div>
+    </div>
+        <div class="mb-3">
+            {{ form.description.label_tag }}
+            {{ form.description }}
+        </div>
+        
+    {% if form.instance.pk %}
+        <button type="submit" class="btn btn-primary text-white"><i class="fa fa-check-square-o"></i> Update</button>
+    {% else %}
+        <button type="submit" class="btn btn-primary text-white"><i class="fa fa-plus-square-o"></i> Create</button>
+    {% endif %}
+</form>
+    
+</div>
+</div>
+</div>
+ 
+    
+
+{% endblock content  %}

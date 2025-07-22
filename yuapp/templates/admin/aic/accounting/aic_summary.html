@@ -1,0 +1,107 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-12 mx-auto">
+      <div class="card shadow-lg border-0 rounded-4">
+          <div class="card-body p-4">
+              <h3 class="fw-bold text-primary">
+                  <i class="fa fa-balance-scale"></i> Balance Sheet
+              </h3>
+              <hr class="border-primary">
+              <div class="table-responsive mt-3">
+                  <table class="table table-hover table-striped border rounded-3">
+                      <thead class="bg-primary text-white">
+                          <tr>
+                              <th class="py-3 px-4">Category</th>
+                              <th class="py-3 px-4 text-end">Amount</th>
+                          </tr>
+                      </thead>
+                      <tbody class="bg-light">
+                          <tr>
+                              <td>
+                                  <a href="{% url 'aic_accounting_detail_no_id' 'farm_inputs' %}" class="text-decoration-none text-dark">
+                                      <i class="fa fa-leaf text-success"></i> Total Farm Input Costs
+                                  </a>
+                              </td>
+                              <td class="text-end fw-bold">{{ farm_inputs_total_amount|currency }}</td>
+                          </tr>
+                          <tr>
+                              <td>
+                                  <a href="{% url 'aic_accounting_detail_no_id' 'cash_loans' %}" class="text-decoration-none text-dark">
+                                      <i class="fa fa-money-bill text-warning"></i> Total Cash Loans Assigned
+                                  </a>
+                              </td>
+                              <td class="text-end fw-bold">{{ cash_loans|currency }}</td>
+                          </tr>
+                          <tr>
+                              <td>
+                                  <a href="{% url 'aic_accounting_detail_no_id' 'total_repayments' %}" class="text-decoration-none text-dark">
+                                      <i class="fa fa-hand-holding-usd text-success"></i> Total Loan Repayments Received
+                                  </a>
+                              </td>
+                              <td class="text-end fw-bold">{{ total_repayments|currency }}</td>
+                          </tr>
+                          <tr>
+                              <td>
+                                  <a href="{% url 'aic_accounting_detail_no_id' 'maintenance_costs' %}" class="text-decoration-none text-dark">
+                                      <i class="fa fa-tools text-danger"></i> Total Maintenance Costs
+                                  </a>
+                              </td>
+                              <td class="text-end fw-bold">{{ total_maintenance|currency }}</td>
+                          </tr>
+                          <tr>
+                              <td>
+                                  <a href="{% url 'aic_accounting_detail_no_id' 'total_harvest_sales' %}" class="text-decoration-none text-dark">
+                                      <i class="fa fa-shopping-cart text-primary"></i> Total Harvest Sales (Revenue)
+                                  </a>
+                              </td>
+                              <td class="text-end fw-bold">{{ total_harvest_sales|currency }}</td>
+                          </tr>
+                          <tr class="table-warning">
+                              <td><i class="fa fa-minus-circle text-danger"></i> Total Deductions</td>
+                              <td class="text-end fw-bold">{{ total_deductions|currency }}</td>
+                          </tr>
+                          <tr class="table-info">
+                              <td><i class="fa fa-chart-line"></i> Net Revenue</td>
+                              <td class="text-end fw-bold">
+                                  <span class="fs-5" style="color: {% if net_revenue < 0 %}red{% else %}green{% endif %};">
+                                      {{ net_revenue|currency }}
+                                  </span>
+                              </td>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              {% comment %} <div class="d-flex justify-content-end mt-3">
+                  <a href="{% url 'aic_accounting_dashboard' %}" class="btn btn-outline-primary">
+                      <i class="fa fa-arrow-left"></i> Back to Dashboard
+                  </a>
+              </div> {% endcomment %}
+          </div>
+      </div>
+  </div>
+</div>
+
+
+<script>
+    $(document).ready(function() {
+        function updateSummary() {
+            $.ajax({
+                url: "/aic/accounting-summary/",
+                method: "GET",
+                success: function(data) {
+                    $("#total-harvest-sales").text("GHs" + data.total_harvest_sales);
+                    $("#total-deductions").text("GHs" + data.total_deductions);
+                    $("#net-revenue").text("GHs" + data.net_revenue);
+                }
+            });
+        }
+    
+        setInterval(updateSummary, 10000); // Update every 10 seconds
+    });
+</script>
+{% endblock %}

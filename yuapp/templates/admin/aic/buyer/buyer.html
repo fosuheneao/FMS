@@ -1,0 +1,87 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+<div class="row"> 
+  <div class="col-lg-12">
+    <div class="card shadow-lg border-0">
+      <div class="card-body">
+        <h4 class="card-title d-flex align-items-center">
+          <i class="fa fa-address-card me-2 text-primary"></i> Buyer List
+          <a href="{% url 'aic_create_buyer' %}" class="btn btn-outline-primary btn-sm ms-auto">
+            <i class="fa fa-plus-circle"></i> Add Buyer
+          </a>      
+        </h4>
+        <hr/>
+
+        {% if buyers %}
+        <div class="table-responsive">
+          <table id="myTable" class="table table-hover table-bordered">
+            <thead class="table-info">
+              <tr>
+                <th>Enterprise</th>
+                <th>Location</th>
+                <th>Contact Person</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for buyer in buyers %}
+              <tr>
+                <td>{{ buyer.client_name }}</td>
+                <td>{{ buyer.location }}</td>
+                <td>{{ buyer.contact_person }}</td>
+                <td>{{ buyer.phone }}</td>
+                <td>{{ buyer.email }}</td>
+                <td>{{ buyer.shipping_address }}</td>
+                <td class="text-center">
+                  <a href="{% url 'aic_buyer_detail' pk=buyer.pk %}" data-bs-toggle="tooltip" title="View Record">
+                    <i class="fa fa-eye text-success fa-lg"></i>
+                  </a> &nbsp;
+                  <a href="{% url 'aic_update_buyer' buyer_id=buyer.id %}" data-bs-toggle="tooltip" title="Update Record">
+                    <i class="fa fa-pencil-alt text-primary fa-lg"></i>
+                  </a> &nbsp;
+                  {% if buyer.user and buyer.user.id %}
+                    <a href="{% url 'aic_buyer_shop' buyer.user.id %}" data-bs-toggle="tooltip" title="Create Order for Buyer">
+                      <i class="fa fa-shopping-cart text-primary fa-lg"></i>
+                    </a>
+                  {% else %}
+                    <span class="text-danger" title="User account not created for buyer">
+                      <i class="fa fa-exclamation-circle fa-lg"></i>
+                    </span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="text-center my-4">
+          <i class="fa fa-users fa-3x text-muted"></i>
+          <p class="mt-2 text-muted">No buyers found.</p>
+          <a href="{% url 'aic_create_buyer' %}" class="btn btn-outline-primary">
+            <i class="fa fa-plus-circle"></i> Add First Buyer
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% comment %} <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+  });
+</script> {% endcomment %}
+
+{% endblock %}

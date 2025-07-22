@@ -1,0 +1,90 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="row">
+
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title"><i class="fa fa-address-card"></i> <span class="text-danger">{{ title }} Details </span> 
+            {% comment %} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <span class="btn btn-outline-primary">
+                   <a href="{% url 'beneficiary_accounting_summary' %}" class="backIcon"><i class="fa fa-mail-reply-all"></i> Go Back</a> 
+            </span> {% endcomment %}
+        </h4>
+        <hr/>
+          <div class="row flex-grow">
+            <div class="col-12 grid-margin stretch-card">
+              <div class="card card-rounded">
+                <div class="card-body">
+                  <div class="d-sm-flex justify-content-between align-items-start">
+                  </div>
+                  <div class="table-responsive  mt-1">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in queryset %}
+                            <tr>
+                                <td>{{ item.id }}</td>
+                                <td>
+                                    {% if item.description %} 
+                                        {{ item.description }} 
+                                    {% elif item.notes %} 
+                                        {{ item.notes }}                                         
+                                    {% elif item.crop %}
+                                        {{ item.crop.name }} Harvest
+                                    {% else %}
+                                        No description
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if item.total_cost %} 
+                                        {{ item.total_cost|currency }} 
+                                    {% elif item.total_amount %} 
+                                        {{ item.total_amount|currency }}
+                                    {% elif item.amount %} 
+                                        {{ item.amount|currency }} 
+                                    {% elif item.amount_paid %} 
+                                        {{ item.amount_paid|currency }} 
+                                    {% elif item.total_price %} 
+                                        {{ item.total_price|currency }} 
+                                    {% else %} 
+                                        Not available 
+                                    {% endif %}
+                                </td>
+                                <td>{{ item.created_at |date:"d-m-Y"}}</td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="4" class="text-center">No records found.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="2" class="text-end">Total Amount:</th>
+                                <th>{{ total_amount|currency }}</th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    
+
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+      </div>
+    </div>
+</div>
+{% endblock %}

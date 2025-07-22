@@ -1,0 +1,82 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load currency_filters %}
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Price Table
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'aic_create_pricetable' %}" class="pull-right btn btn-outline-primary btn-sm">
+                 <i class="fa fa-plus-circle"></i> Add Price
+              </a>      
+              </h4>
+              <hr/>
+              <div class="table-responsive">
+
+                <table id="myTable" class="table table-hover">
+                  <thead class="table-info">
+                    <tr>
+                        <th>Market Center</th>
+                        <th>Crop</th>
+                        <th>Grade</th>
+                        <th>Buying Price</th>
+                        <th>Selling Price</th>
+                        <th>Valid From</th>
+                        <th>Valid To</th>
+                        <th>Notes</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if prices %}
+                        {% for ben in prices %}
+                        <tr>
+                            <td>{{ ben.market_center.name }}</td>
+                            <td>{{ ben.crop.name }}</td>
+                            <td>{{ ben.grade.name }}</td>
+                            <td>{{ ben.price |currency }}</td>
+                            <td>{{ ben.selling_price |currency }}</td>
+                            <td>{{ ben.from_date|date:"D, d M Y" }}</td>
+                            <td>{{ ben.to_date|date:"D, d M Y" }}</td>                          
+                             <td>
+                                <i class="fa fa-building text-info fa-lg" 
+                                   data-toggle="tooltip" 
+                                   data-placement="top" 
+                                   title="{{ ben.notes }}">
+                                </i>
+                            </td>
+                
+                            <td>
+                                <a href="#" data-toggle="tooltip" data-placement="top" title="View Record">
+                                    <i class="fa fa-wpexplorer text-success fa-lg"></i>
+                                </a> &nbsp;&nbsp;
+                                <a href="{% url 'aic_update_price_table' ben.pk %}" data-toggle="tooltip" data-placement="top" title="Update Price Table Record">
+                                    <i class="fa fa-cubes text-primary fa-lg"></i>
+                                </a> &nbsp;&nbsp;
+                                {% comment %} <a href="{% url 'create_contract' ben.id %}" data-toggle="tooltip" data-placement="top" title="View Beneficiary Harvest">
+                                    <i class="fa fa-plus-square text-danger fa-lg"></i>
+                                </a> &nbsp;&nbsp; {% endcomment %}
+                            </td>
+                        </tr>
+                        {% endfor %}            
+                    {% else %}
+                        <tr>
+                            <td colspan="10">No record Found</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+                
+                </table>
+
+              </div>
+            </div>
+          </div>
+          
+          {% comment %} <div class="card col-md-3" style="border: 2px solid blue"></div> {% endcomment %}
+
+        </div>
+   {% endblock %}

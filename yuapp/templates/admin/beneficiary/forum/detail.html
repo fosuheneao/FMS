@@ -1,0 +1,59 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<!-- Trend Knowledge Bank Details -->
+<div class="card shadow-sm p-4 mb-4 rounded border-0">
+    <h2 class="text-primary fw-bold">{{ trend_knowledge_bank.title }}</h2>
+    <p class="text-muted">Created by <strong>{{ trend_knowledge_bank.created_by.username }}</strong> on {{ trend_knowledge_bank.created_at }}</p>
+    
+    <p><strong>Description:</strong> {{ trend_knowledge_bank.description }}</p>
+    <p><strong>Location:</strong> Latitude: {{ trend_knowledge_bank.latitude }}, Longitude: {{ trend_knowledge_bank.longitude }}</p>
+    
+    {% if trend_knowledge_bank.photo %}
+        <div class="text-center">
+            <img src="{{ trend_knowledge_bank.photo.url }}" alt="{{ trend_knowledge_bank.title }}" class="img-fluid rounded shadow-sm" style="max-width: 400px;">
+        </div>
+    {% endif %}
+</div>
+
+<!-- Discussions Section -->
+<div class="card shadow-sm p-4 mb-4 rounded border-0">
+    <h3 class="text-secondary fw-bold">Discussions</h3>
+    {% if discussions %}
+        <ul class="list-group list-group-flush">
+            {% for discussion in discussions %}
+            <li class="list-group-item border-0 pb-3">
+                <p class="fw-semibold text-primary">{{ discussion.created_by.username }} <span class="text-muted">on {{ discussion.created_at }}</span></p>
+                <p class="text-dark">{{ discussion.discussion }}</p>
+                {% if discussion.photo %}
+                    <img src="{{ discussion.photo.url }}" alt="Discussion Photo" class="img-fluid rounded shadow-sm" style="max-width: 300px;">
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-muted">No discussions yet. Be the first to comment!</p>
+    {% endif %}
+</div>
+
+<!-- Add Discussion Form -->
+<div class="card shadow-sm p-4 mb-4 rounded border-0">
+    <h4 class="text-primary fw-bold">Add Your Observation</h4>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            {{ discussion_form.discussion.label_tag }}
+            {{ discussion_form.discussion|add_class:"form-control" }}
+        </div>
+        
+        <div class="mb-3">
+            {{ discussion_form.photo.label_tag }}
+            {{ discussion_form.photo|add_class:"form-control" }}
+        </div>
+        
+        <button type="submit" class="btn btn-primary shadow-sm">Submit to Discussion Board</button>
+    </form>
+</div>
+{% endblock %}

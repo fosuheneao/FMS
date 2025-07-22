@@ -1,0 +1,231 @@
+{% extends "base_auth_dash.html" %}
+{% load static humanize currency_filters %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="row">
+  <div class="card w-100">
+    <div class="card-body">
+      <h4 class="card-title">
+        <i class="fa fa-cart-plus"></i> 
+        <span class="text-danger">Sale Orders</span>
+        <a href="{% url 'sa_create_order' %}" class="btn btn-sm btn-outline-primary float-end">
+          <i class="fa fa-plus-square"></i> Create Sale Order
+        </a>
+      </h4>
+      <hr>
+
+      <div class="table-responsive">
+        {% if orders %}
+        <table class="table table-hover align-middle">
+          <thead class="thead-light">
+            <tr>
+              <th>Date</th>
+              <th>Buyer</th>
+              <th>Total Items</th>
+              <th>Total Amount</th>
+              <th>Order Type</th>
+              <th>Status</th>
+              <th>Paid</th>
+              <th>Note</th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in orders %}
+            <tr>
+              <td>{{ item.order_date|date:"d-m-Y" }}</td>
+              <td>{{ item.buyer.client_name }}</td>
+              <td>{{ item.total_items }}</td>
+              <td>{{ item.total_cost_sum|currency }}</td>
+              <td>{{ item.sale_order_type }}</td>
+              <td>
+                {% with status=item.status %}
+                  <i class="fa fa-check-circle 
+                    {% if status == 'completed' %}text-success
+                    {% elif status == 'pending' %}text-warning
+                    {% else %}text-danger
+                    {% endif %}" 
+                    data-bs-toggle="tooltip" title="{{ status|capfirst }}">
+                  </i> {{ status|capfirst }}
+                {% endwith %}
+              </td>
+              <td>
+                <i class="fa fa-money {{ item.is_paid|yesno:'text-success,text-danger' }}" data-bs-toggle="tooltip" title="{{ item.is_paid|yesno:'Paid,Unpaid' }}"></i>
+              </td>
+              <td>
+                {% if item.notes %}
+                <i class="fa fa-info-circle text-info" data-bs-toggle="tooltip" title="{{ item.notes }}"></i>
+                {% else %}
+                <span class="text-muted">-</span>
+                {% endif %}
+              </td>
+              <td class="text-center">
+                <div class="d-flex justify-content-center gap-2">
+                  {% if item.status != 'completed' %}
+                  <a href="{% url 'sa_update_order' item.id %}" data-bs-toggle="tooltip" title="Update Order">
+                    <i class="fa fa-pencil-square text-primary"></i>
+                  </a>
+                  {% endif %}
+                  <a href="{% url 'generate_invoice_pdf' item.id %}" target="_blank" data-bs-toggle="tooltip" title="Download Invoice PDF">
+                    <i class="fa fa-file-pdf-o text-primary"></i>
+                  </a>
+                  <a href="#" data-bs-toggle="collapse" data-bs-target="#details{{ item.id }}" aria-expanded="false" aria-controls="details{{ item.id }}" title="View Details">
+                    <i class="fa fa-eye text-primary"></i>
+                  </a>
+                  <a href="#" class="record-payment-btn" data-order-id="{{ item.id }}" data-bs-toggle="tooltip" title="Record Payment">
+                    <i class="fa fa-credit-card text-primary"></i>
+                  </a>
+
+                </div>
+              </td>
+            </tr>
+
+            <!-- Collapsible Order Details -->
+            <tr class="collapse" id="details{{ item.id }}">
+              <td colspan="9">
+                <div class="card bg-light">
+                  <div class="card-header"><strong>Order Details</strong></div>
+                  <div class="card-body">
+                    <p><strong>Buyer:</strong> {{ item.buyer.client_name }}</p>
+                    <p><strong>Date:</strong> {{ item.order_date|date:"d-m-Y" }}</p>
+                    <p><strong>Note:</strong> {{ item.notes|default:"No notes provided." }}</p>
+
+                    {% if item.payments.all %}
+                    <hr>
+                    <h6><strong>Payments Made</strong></h6>
+                    <ul>
+                      {% for payment in item.payments.all %}
+                      <li>{{ payment.amount_paid|currency }} on {{ payment.payment_date|date:"d-m-Y" }}
+                        {% if payment.payin_slip %}
+                        – <a href="{{ payment.payin_slip.url }}" target="_blank">View Slip</a>
+                        {% endif %}
+                      </li>
+                      {% endfor %}
+                    </ul>
+                    {% endif %}
+
+                    <hr>
+                    <h6><strong>Ordered Items</strong></h6>
+                    {% if item.order_items.all %}
+                    <div class="table-responsive">
+                      <table class="table table-bordered table-sm">
+                        <thead>
+                          <tr>
+                            <th>Commodity</th>
+                            <th>Variety</th>
+                            <th>Grade</th>
+                            <th>Qty</th>
+                            <th>Unit</th>
+                            <th>Unit Price</th>
+                            <th>Total</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for order_item in item.order_items.all %}
+                          <tr>
+                            <td>{{ order_item.harveststock.crop.name }}</td>
+                            <td>{{ order_item.harveststock.cropvariety.name }}</td>
+                            <td>{{ order_item.harveststock.grade.name }}</td>
+                            <td>{{ order_item.quantity }}</td>
+                            <td>{{ order_item.harveststock.unit.name }}</td>
+                            <td>{{ order_item.harveststock.unit_price.selling_price|currency }}</td>
+                            <td>{{ order_item.get_total_cost|currency }}</td>
+                            <td>
+                              {% if order_item.id and not item.is_paid %}
+                              <i class="fa fa-pencil-square-o edit-order-item" data-bs-toggle="tooltip"
+                                title="Edit Item" data-url="{% url 'sa_edit_order_item' order_item.id %}"></i>
+                              {% else %}
+                              <span class="text-muted">{{ item.is_paid|yesno:"Locked,Not editable" }}</span>
+                              {% endif %}
+                            </td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                        <tfoot>
+                          <tr>
+                            <th colspan="6" class="text-end">Total:</th>
+                            <th>{{ item.total_cost_sum|currency }}</th>
+                            <th></th>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No items added to this order yet.</p>
+                    {% endif %}
+                  </div>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <div class="alert alert-info">No orders found.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- placeholder for dynamic modals -->
+<div class="modal-dialog modal-md" id="dynamic-modal-container"></div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Open modal and fetch form
+    /*$('.record-payment-btn').on('click', function (e) {
+      e.preventDefault();
+      const orderId = $(this).data('order-id');
+       //console.log('OrderId' + orderId);
+      $('#order-id-input').val(orderId);
+      $('.modal-title').text('Payment for Order #' + orderId);
+      $('#orderPaymentModal').modal('show');
+    });*/
+    
+    $('.record-payment-btn').on('click', function (e) {
+        e.preventDefault();
+        const orderId = $(this).data('order-id');
+        // Fetch modal content via AJAX
+        $.ajax({
+          url: `/orders/${orderId}/payment-modal/`,  // URL should match your Django route
+          method: 'GET',
+          success: function (data) {
+            $('#dynamic-modal-container').html(data);
+            $('#orderPaymentModal').modal('show');
+          },
+          error: function () {
+            alert('Failed to load payment modal.');
+          }
+        });
+      });
+
+    // Handle payment form submission
+    $('#orderPaymentForm').on('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        $.ajax({
+            url: "{% url 'sa_record_payment' %}",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.success) {
+                    $('#orderPaymentModal').modal('hide');
+                    location.reload(); // Refresh page or order list
+                } else {
+                    $('#orderPaymentModal .modal-body').html(response.form_html);
+                }
+            }
+        });
+    });
+});
+</script>
+
+{% endblock %}

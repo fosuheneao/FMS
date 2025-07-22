@@ -1,0 +1,19 @@
+<li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name in menu_urls %} active {% endif %}" 
+      data-bs-toggle="collapse" href="#{{ menu_id }}" 
+      aria-expanded="{% if request.resolver_match.url_name in menu_urls %}true{% else %}false{% endif %}" 
+      aria-controls="{{ menu_id }}">
+        <i class="menu-icon mdi {{ icon }}"></i>
+        <span class="menu-title">{{ menu_title }}</span>
+        <i class="menu-arrow"></i>
+    </a>
+    <div class="collapse {% if request.resolver_match.url_name in menu_urls %} show{% endif %}" id="{{ menu_id }}">
+        <ul class="nav flex-column sub-menu">
+            {% for item in sub_menus %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == item.url_name %} active {% endif %}" href="{% url item.url_name %}">{{ item.title }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</li>

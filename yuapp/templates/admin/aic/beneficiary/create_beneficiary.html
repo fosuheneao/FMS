@@ -1,0 +1,166 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title d-flex align-items-center">
+                {% if form.instance.pk %} Edit {% else %} Create {% endif %} Beneficiary
+                <a href="{% url 'aic_beneficiary_index' %}" class="btn btn-outline-primary ms-auto">
+                    <i class="fa fa-mail-reply-all"></i> Go Back
+                </a>
+            </h5>
+            
+            {% if form.errors %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Errors:</strong>
+                <ul>
+                    {% for field in form %}
+                        {% if field.errors %}
+                            <li><strong>{{ field.label }}:</strong>
+                                <ul>
+                                    {% for error in field.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endif %}
+
+            <form method="post" action="{% if form.instance.pk %}{% url 'aic_update_beneficiary' beneficiary_id=form.instance.pk %}{% else %}{% url 'aic_create_beneficiary' %}{% endif %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    {{ form.full_name.label_tag }}
+                    {{ form.full_name }}
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form.enterprise_name.label_tag }}
+                        {{ form.enterprise_name }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.email.label_tag }}
+                        {{ form.email }}
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label>Gender</label><br>
+                        {% for radio in form.gender %}
+                            <div class="form-check form-check-inline">
+                                {{ radio.tag }} {{ radio.choice_label }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        {{ form.age.label_tag }}
+                        {{ form.age }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        {{ form.phone_number.label_tag }}
+                        {{ form.phone_number }}
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        {{ form.assigned_edo.label_tag }}
+                        {{ form.assigned_edo }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        {{ form.assigned_tunnel.label_tag }}
+                        {{ form.assigned_tunnel }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        {{ form.crops.label_tag }}
+                        {{ form.crops }}
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        {% if beneficiary.photo %}
+                        <img src="{{ beneficiary.photo.url }}" alt="Photo Preview" class="img-thumbnail mb-2">
+                        {% endif %}
+                        {{ form.photo.label_tag }}
+                        {{ form.photo }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        {% if beneficiary.cardphoto %}
+                        <img src="{{ beneficiary.cardphoto.url }}" alt="Card Photo Preview" class="img-thumbnail mb-2">
+                        {% endif %}
+                        {{ form.cardphoto.label_tag }}
+                        {{ form.cardphoto }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        {{ form.nationalId.label_tag }}
+                        {{ form.nationalId }}
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    {{ form.description.label_tag }}
+                    {{ form.description }}
+                </div>
+                
+                <button type="submit" class="btn btn-warning">
+                    <i class="fa fa-check-square-o"></i> Save
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('id_assigned_edo').addEventListener('change', fetchGreenhouseRooms);
+
+    function fetchGreenhouseRooms() {
+        const edoId = document.getElementById('id_assigned_edo').value;  // Get the assigned EDO ID
+    
+        $.ajax({
+            url: '/get_greenhouse_rooms/' + edoId + '/',
+            method: 'GET',
+            success: function(data) {
+                const roomSelect = $('#id_assigned_tunnel');  // Change this to match your form field ID
+                roomSelect.empty(); // Clear previous options
+    
+                if (data.rooms.length > 0) {
+                    roomSelect.append($('<option>', {
+                        value: '',
+                        text: 'Select Greenhouse Tunnel'
+                    }));
+                    $.each(data.rooms, function(index, room) {
+                        roomSelect.append($('<option>', {
+                            value: room.id,
+                            text: room.name
+                        }));
+                    });
+                } else if (data.message) {
+                    // If there are no unassigned tunnels, display a message
+                    roomSelect.append($('<option>', {
+                        value: '',
+                        text: data.message,
+                        disabled: true
+                    }));
+                }
+            },
+            error: function() {
+                console.error('Error fetching greenhouse rooms');
+            }
+        });
+    }
+    </script> 
+    
+
+{% endblock content  %}

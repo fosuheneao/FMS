@@ -1,0 +1,40 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h2 class="mb-3">Transfer Stock</h2>
+    <form method="post" class="card p-4">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_from_market_centre" class="form-label">From Market Centre</label>
+            {{ form.from_market_centre }}
+        </div>
+        <div class="mb-3">
+            <label for="id_to_market_centre" class="form-label">To Market Centre</label>
+            {{ form.to_market_centre }}
+        </div>
+        <div class="mb-3">
+            <label for="id_crop" class="form-label">Crop</label>
+            {{ form.crop }}
+        </div>
+        <div class="mb-3">
+            <label for="id_grade" class="form-label">Grade</label>
+            {{ form.grade }}
+        </div>
+        <div class="mb-3">
+            <label for="id_unit" class="form-label">Unit</label>
+            {{ form.unit }}
+        </div>
+        <div class="mb-3">
+            <label for="id_quantity" class="form-label">Quantity</label>
+            {{ form.quantity }}
+        </div>
+        <button type="submit" class="btn btn-primary">Transfer Stock</button>
+        <a href="{% url 'sa_stock_movement_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

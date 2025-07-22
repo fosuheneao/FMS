@@ -1,0 +1,154 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+{% block content %}
+<div class="col-lg-12">
+<style>
+  .backIcon:hover{
+      color:white!important;
+  }
+</style>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">
+          {% if form.instance.pk %} Edit {% else %} Create {% endif %} EDO  
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <span class="btn btn-outline-primary">
+                 <a href="{% url 'aic_edo_index' %}" class="backIcon"><i class="fa fa-mail-reply-all"></i> Go Back</a> 
+          </span>
+        </h5>
+
+    {% if form.errors %}
+    <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <strong>Errors:</strong>
+        <ul>
+            {% for field in form %}
+                {% if field.errors %}
+                    <li><strong>{{ field.label }}:</strong>
+                        <ul>
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+{% comment %} <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Add Input Dealer</button>
+</form> {% endcomment %}
+
+ <form method="post" action="{% if form.instance.pk %}{% url 'aic_update_edo' edo_id=form.instance.pk %}{% else %}{% url 'aic_create_edo' %}{% endif %}" enctype="multipart/form-data">
+    
+    {% csrf_token %}
+        
+       
+            <div class="mb-3">
+                {{ form.fullname.label_tag }}
+                {{ form.fullname }}
+            </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label>Gender</label><br>
+                {% for radio in form.gender %}
+                    <div class="form-check form-check-inline">
+                        {{ radio.tag }} {{ radio.choice_label }}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="col-md-6 mb-3">
+                {{ form.age.label_tag }}
+                {{ form.age }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+            </div>
+            <div class="col-md-6 mb-3">
+                {{ form.phone_number.label_tag }}
+                {{ form.phone_number }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                {{ form.contact_person.label_tag }}
+                {{ form.contact_person }}
+            </div>
+            <div class="col-md-4 mb-3">
+                {{ form.phone.label_tag }}
+                {{ form.phone }}
+            </div>
+            <div class="col-md-4 mb-3">
+                {% comment %} {{ form.email.label_tag }}
+                {{ form.email }} {% endcomment %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                {{ form.city.label_tag }}
+                {{ form.city }}
+            </div>
+            <div class="col-md-6 mb-3">
+                {{ form.greenhouse.label_tag }}
+                {{ form.greenhouse }}
+            </div>
+        </div> 
+        
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                {{ form.photo.label_tag }}
+                {{ form.photo }}
+            </div>
+            <div class="col-md-6 mb-3">
+                {% if edo.photo %}
+                <img src="{{ edo.photo.url }}" class="img-thumbnail img-responsive" alt="Photo Preview" style="max-width: 150px; max-height: 150px; margin-top: 10px;">
+                {% endif %}
+            </div>            
+         </div> 
+         <div class="row">
+            <div class="col-md-4 mb-3">
+                {{ form.nationalId.label_tag }}
+                {{ form.nationalId }}
+            </div>
+            <div class="col-md-4 mb-3">
+                {{ form.cardphoto.label_tag }}
+                {{ form.cardphoto }}
+            </div>
+            <div class="col-md-4 mb-3">
+                {% if edo.cardphoto %}
+                <img src="{{ edo.cardphoto.url }}" class="img-thumbnail img-responsive" alt="Photo Preview" style="max-width: 150px; max-height: 150px; margin-top: 10px;">
+                {% endif %}
+            </div>            
+         </div>    
+        <div class="mb-3">
+            {{ form.description.label_tag }}
+            {{ form.description }}
+        </div>
+    
+        {% if form.instance.pk %}
+                 <button type="submit" class="btn btn-success"> <i class="fa fa-check-square-o"></i> Update</button>
+        {% else %}
+                <button type="submit" class="btn btn-primary"> <i class="fa fa-plus-square-o"></i> Create</button>
+        {% endif %}
+        <a href="{% url 'aic_edo_index' %}" class="btn btn-danger backIcon"><i class="fa fa-mail-reply-all"></i> Go Back</a>
+    </form>
+
+    
+</div>
+</div>
+</div>
+ 
+    
+
+{% endblock content  %}

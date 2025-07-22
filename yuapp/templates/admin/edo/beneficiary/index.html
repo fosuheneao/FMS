@@ -1,0 +1,73 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+<div class="card shadow-lg border-0">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h4 class="mb-0"><i class="fa fa-address-card"></i> My Beneficiary List</h4>
+      <a href="{% url 'edo_create_beneficiary' %}" class="btn btn-light btn-sm">
+        <i class="fa fa-plus-circle"></i> Add Beneficiary
+      </a>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table id="myTable" class="table table-hover table-bordered">
+          <thead class="table-info">
+            <tr>
+              <th>Name</th>
+              <th>Gender</th>
+              <th>Ghana Card</th>
+              <th>Enterprise Name</th>
+              <th>Crops</th>
+              <th>Supervisor</th>
+              <th>Assigned Tunnel</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if beneficiaries %}
+              {% for ben in beneficiaries %}
+                <tr>
+                  <td>{{ ben.full_name }}</td>
+                  <td>{{ ben.gender }}</td>
+                  <td>{{ ben.nationalId }}</td>
+                  <td>{{ ben.enterprise_name }}</td>
+                  <td>
+                    <i class="fa fa-lemon-o text-success fa-lg" data-toggle="tooltip" title="{% for crop in ben.crops.all %}{{ crop.name }}{% if not forloop.last %}, {% endif %}{% endfor %}"></i>
+                  </td>
+                  <td>
+                    <i class="fa fa-user-circle text-primary fa-lg" data-toggle="tooltip" title="{{ ben.assigned_edo.user.get_full_name }}"></i>
+                  </td>
+                  <td>
+                    <i class="fa fa-building text-info fa-lg" data-toggle="tooltip" title="{{ ben.assigned_tunnel.room_name }}"></i>
+                  </td>
+                  <td>
+                    <a href="{% url 'edo_beneficiary_detail' ben.pk %}" class="text-success me-2" data-toggle="tooltip" title="View Record">
+                      <i class="fa fa-eye"></i>
+                    </a>
+                    <a href="{% url 'edo_update_beneficiary' ben.pk %}" class="text-primary me-2" data-toggle="tooltip" title="Update Record">
+                      <i class="fa fa-edit"></i>
+                    </a>
+                    <a href="{% url 'edo_beneficiary_harvest' ben.pk %}" class="text-warning me-2" data-toggle="tooltip" title="View Harvest Record">
+                      <i class="fa fa-plus-circle"></i>
+                    </a>
+                    <a href="{% url 'edo_coworker_create' ben.id %}" class="text-secondary me-2" data-toggle="tooltip" title="Add Coworker">
+                      <i class="fa fa-user-plus"></i>
+                    </a>
+                    <a href="{% url 'edo_beneficiary_accounting_summary' ben.id %}" class="text-danger" data-toggle="tooltip" title="View Balance Sheet Summary">
+                      <i class="fa fa-balance-scale"></i>
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <span class="text-center text-danger fw-bold">No records found</span>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+{% endblock %}

@@ -1,0 +1,499 @@
+<nav class="sidebar sidebar-offcanvas" id="sidebar" style="background:#e8e9ea; border-right:1px solid #e8e9ea; margin-top:-2.7%;">
+  <ul class="nav">
+         {% if user.is_authenticated %}
+             {% if user.beneficiary %}
+                <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'beneficiary_dashboard' %} active {% endif %}" 
+                  href="{% url 'beneficiary_dashboard' %}">
+                  <i class="mdi mdi-grid-large menu-icon"></i>
+                  <span class="menu-title">Dashboard</span>
+              </a>
+                </li>          
+          {% elif user.supervisor %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'supervisor_dashboard' %} active {% endif %}" 
+              href="{% url 'supervisor_dashboard' %}">
+              <i class="mdi mdi-grid-large menu-icon"></i>
+              <span class="menu-title">Dashboard</span>
+            </a>
+          </li>
+          {% elif user.aic %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'aic_dashboard' %} active {% endif %}"
+             href="{% url 'aic_dashboard' %}">
+              <i class="mdi mdi-grid-large menu-icon"></i>
+              <span class="menu-title">Dashboard</span>
+            </a>
+          </li>
+          {% elif user.sale_agent %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'sale_dashboard' %} active {% endif %}" 
+            href="{% url 'sale_dashboard' %}">
+              <i class="mdi mdi-grid-large menu-icon"></i>
+              <span class="menu-title">Dashboard</span>
+            </a>
+          </li>
+          {% elif user.buyer_profile %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'buyer_dashboard' %} active {% endif %}" 
+             href="{% url 'buyer_dashboard' %}">
+              <i class="mdi mdi-grid-large menu-icon"></i>
+              <span class="menu-title">Dashboard</span>
+            </a>
+          </li>
+          {% endif %}
+      {% endif %}
+
+
+      {% if user.is_authenticated %}
+            {% if user.beneficiary %}
+      <li class="nav-item nav-category">Main Menu</li>
+          
+      <li class="nav-item">
+        {% with "beneficiary_coworker contracts" as active_urls %}
+        <a class="nav-link {% if request.resolver_match.url_name in active_urls.split %} active {% endif %}" 
+           data-bs-toggle="collapse" href="#ui-basic" 
+           aria-expanded="{% if request.resolver_match.url_name in active_urls.split %}true{% else %}false{% endif %}" 
+           aria-controls="ui-basic">
+            <i class="menu-icon mdi mdi-floor-plan"></i>
+            <span class="menu-title">Co-Workers</span>
+            <i class="menu-arrow"></i>
+        </a>
+        {% endwith %}
+    
+        <div class="collapse {% with 'beneficiary_coworker contracts' as active_urls %}{% if request.resolver_match.url_name in active_urls.split %} show{% endif %}{% endwith %}" id="ui-basic">
+            <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> 
+                    <a class="nav-link {% if request.resolver_match.url_name == 'beneficiary_coworker' %} active {% endif %}" href="{% url 'beneficiary_coworker' %}">List</a>
+                </li>
+                <li class="nav-item"> 
+                    <a class="nav-link {% if request.resolver_match.url_name == 'contracts' %} active {% endif %}" href="{% url 'contracts' %}">Contract History</a>
+                </li>
+            </ul>
+        </div>
+    </li>
+    
+    <li class="nav-item">
+      {% with "crop_index tunnel_index" as active_urls %}
+      <a class="nav-link {% if request.resolver_match.url_name in active_urls.split %} active {% endif %}" 
+         data-bs-toggle="collapse" href="#greenhouse" 
+         aria-expanded="{% if request.resolver_match.url_name in active_urls.split %}true{% else %}false{% endif %}" 
+         aria-controls="greenhouse">
+          <i class="menu-icon mdi mdi-card-text-outline"></i>
+          <span class="menu-title">Greenhouse Management</span>
+          <i class="menu-arrow"></i>
+      </a>
+      {% endwith %}
+  
+      <div class="collapse {% with 'crop_index tunnel_index' as active_urls %}{% if request.resolver_match.url_name in active_urls.split %} show{% endif %}{% endwith %}" id="greenhouse">
+          <ul class="nav flex-column sub-menu">
+              <li class="nav-item">
+                  <a class="nav-link {% if request.resolver_match.url_name == 'crop_index' %} active {% endif %}" href="{% url 'crop_index' %}">Crop</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link {% if request.resolver_match.url_name == 'tunnel_index' %} active {% endif %}" href="{% url 'tunnel_index' %}">Tunnel</a>
+              </li>
+          </ul>
+      </div>
+  </li>
+  
+  
+    
+  <li class="nav-item">
+    {% with "nursery_data_index height_data_index spraying_data_index irrigation_data_index trellising_data_index" as active_urls %}
+    <a class="nav-link {% if request.resolver_match.url_name in active_urls.split %} active {% endif %}" 
+       data-bs-toggle="collapse" href="#tunnel" 
+       aria-expanded="{% if request.resolver_match.url_name in active_urls.split %}true{% else %}false{% endif %}" 
+       aria-controls="tunnel">
+        <i class="menu-icon mdi mdi-card-text-outline"></i>
+        <span class="menu-title">Tunnel Management</span>
+        <i class="menu-arrow"></i>
+    </a>
+    {% endwith %}
+
+    <div class="collapse {% with 'nursery_data_index height_data_index spraying_data_index irrigation_data_index trellising_data_index' as active_urls %}{% if request.resolver_match.url_name in active_urls.split %} show{% endif %}{% endwith %}" id="tunnel">
+        <ul class="nav flex-column sub-menu">
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'nursery_data_index' %} active {% endif %}" href="{% url 'nursery_data_index' %}">Nursery</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'height_data_index' %} active {% endif %}" href="{% url 'height_data_index' %}">Plant Height</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'spraying_data_index' %} active {% endif %}" href="{% url 'spraying_data_index' %}">Crop Spraying</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'irrigation_data_index' %} active {% endif %}" href="{% url 'irrigation_data_index' %}">Crop Irrigation</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'trellising_data_index' %} active {% endif %}" href="{% url 'trellising_data_index' %}">Trellising</a>
+            </li>
+        </ul>
+    </div>
+</li>
+
+    
+      
+
+
+      {% elif user.supervisor %}
+      <li class="nav-item">
+        {% with "edo_beneficiary_index edo_cash_loaned_list" as active_urls %}
+        <a class="nav-link {% if request.resolver_match.url_name in active_urls.split %} active {% endif %}" 
+           data-bs-toggle="collapse" href="#beneficiaryManager" 
+           aria-expanded="{% if request.resolver_match.url_name in active_urls.split %}true{% else %}false{% endif %}" 
+           aria-controls="beneficiaryManager">
+            <i class="menu-icon mdi mdi-card-text-outline"></i>
+            <span class="menu-title">My Beneficiaries</span>
+            <i class="menu-arrow"></i>
+        </a>
+        {% endwith %}
+    
+        <div class="collapse {% with "edo_beneficiary_index edo_cash_loaned_list" as active_urls %}{% if request.resolver_match.url_name in active_urls.split %} show{% endif %}{% endwith %}" id="beneficiaryManager">
+            <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> 
+                    <a class="nav-link {% if request.resolver_match.url_name == 'edo_beneficiary_index' %} active {% endif %}" href="{% url 'edo_beneficiary_index' %}">Beneficiary</a>
+                </li>
+                <li class="nav-item"> 
+                    <a class="nav-link {% if request.resolver_match.url_name == 'edo_cash_loaned_list' %} active {% endif %}" href="{% url 'edo_cash_loaned_list' %}">Loans</a>
+                </li>
+            </ul>
+        </div>
+    </li>
+    
+    
+    <li class="nav-item">
+      {% with "edo_crop_index edo_tunnel_index" as active_urls %}
+      <a class="nav-link {% if request.resolver_match.url_name in active_urls.split %} active {% endif %}" 
+         data-bs-toggle="collapse" href="#edogreenhouse" 
+         aria-expanded="{% if request.resolver_match.url_name in active_urls.split %}true{% else %}false{% endif %}" 
+         aria-controls="edogreenhouse">
+          <i class="menu-icon mdi mdi-card-text-outline"></i>
+          <span class="menu-title">My Greenhouse</span>
+          <i class="menu-arrow"></i>
+      </a>
+      {% endwith %}
+  
+      <div class="collapse {% with 'edo_crop_index edo_tunnel_index' as active_urls %}{% if request.resolver_match.url_name in active_urls.split %} show{% endif %}{% endwith %}" id="edogreenhouse">
+          <ul class="nav flex-column sub-menu">
+              <li class="nav-item">
+                  <a class="nav-link {% if request.resolver_match.url_name == 'edo_crop_index' %} active {% endif %}" href="{% url 'edo_crop_index' %}">Crop</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link {% if request.resolver_match.url_name == 'edo_tunnel_index' %} active {% endif %}" href="{% url 'edo_tunnel_index' %}">Tunnel</a>
+              </li>
+          </ul>
+      </div>
+  </li>
+  
+    
+  <li class="nav-item">
+    {% with "edo_nursery_data_index edo_height_data_index edo_spraying_data_index edo_irrigation_data_index edo_trellising_data_index" as active_urls %}
+    <a class="nav-link {% if request.resolver_match.url_name in active_urls.split %} active {% endif %}" 
+       data-bs-toggle="collapse" href="#edotunnel" 
+       aria-expanded="{% if request.resolver_match.url_name in active_urls.split %}true{% else %}false{% endif %}" 
+       aria-controls="edotunnel">
+        <i class="menu-icon mdi mdi-card-text-outline"></i>
+        <span class="menu-title">Tunnels</span>
+        <i class="menu-arrow"></i>
+    </a>
+    {% endwith %}
+
+    <div class="collapse {% with "edo_nursery_data_index edo_height_data_index edo_spraying_data_index edo_irrigation_data_index edo_trellising_data_index" as active_urls %}{% if request.resolver_match.url_name in active_urls.split %} show{% endif %}{% endwith %}" id="edotunnel">
+        <ul class="nav flex-column sub-menu">
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'edo_nursery_data_index' %} active {% endif %}" href="{% url 'edo_nursery_data_index' %}">Nursery</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'edo_height_data_index' %} active {% endif %}" href="{% url 'edo_height_data_index' %}">Plant Height</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'edo_spraying_data_index' %} active {% endif %}" href="{% url 'edo_spraying_data_index' %}">Crop Spraying</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'edo_irrigation_data_index' %} active {% endif %}" href="{% url 'edo_irrigation_data_index' %}">Crop Irrigation</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'edo_trellising_data_index' %} active {% endif %}" href="{% url 'edo_trellising_data_index' %}">Trellising</a>
+            </li>
+        </ul>
+    </div>
+</li>
+
+    
+      {% elif user.aic %}
+      <li class="nav-item">
+        {% with "aic_beneficiary_index" as active_urls %}
+        <a class="nav-link {% if request.resolver_match.url_name in active_urls.split %} active {% endif %}" 
+           data-bs-toggle="collapse" href="#aicbene" 
+           aria-expanded="{% if request.resolver_match.url_name in active_urls.split %}true{% else %}false{% endif %}" 
+           aria-controls="aicbene">
+            <i class="menu-icon mdi mdi-account-group"></i>
+            <span class="menu-title">Beneficiaries</span>
+            <i class="menu-arrow"></i>
+        </a>
+        <div class="collapse {% if request.resolver_match.url_name in active_urls.split %} show{% endif %}" id="aicbene">
+            <ul class="nav flex-column sub-menu">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'aic_beneficiary_index' %} active {% endif %}" href="{% url 'aic_beneficiary_index' %}">Beneficiaries</a>
+                </li>
+            </ul>
+        </div>
+        {% endwith %}
+    </li>
+    
+    <li class="nav-item">
+        {% with "aic_greenhouse_index aic_harvest_history harvest_summary_view" as active_urls %}
+        <a class="nav-link {% if request.resolver_match.url_name in active_urls.split %} active {% endif %}" 
+           data-bs-toggle="collapse" href="#charts" 
+           aria-expanded="{% if request.resolver_match.url_name in active_urls.split %}true{% else %}false{% endif %}" 
+           aria-controls="charts">
+            <i class="menu-icon mdi mdi-pier-crane"></i>
+            <span class="menu-title">Production</span>
+            <i class="menu-arrow"></i>
+        </a>
+        <div class="collapse {% if request.resolver_match.url_name in active_urls.split %} show{% endif %}" id="charts">
+            <ul class="nav flex-column sub-menu">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'aic_greenhouse_index' %} active {% endif %}" href="{% url 'aic_greenhouse_index' %}">Greenhouse</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'aic_harvest_history' %} active {% endif %}" href="{% url 'aic_harvest_history' %}">Harvest Records</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'harvest_summary_view' %} active {% endif %}" href="{% url 'harvest_summary_view' %}">Harvest Summary</a>
+                </li>
+            </ul>
+        </div>
+        {% endwith %}
+    </li>
+    
+            
+    {% include "includes/menu_item.html" with menu_id="aicbene" menu_title="Beneficiaries" icon="mdi-account-group" menu_urls="aic_beneficiary_index" sub_menus=sub_menus_beneficiaries %}
+    {% include "includes/menu_item.html" with menu_id="charts" menu_title="Production" icon="mdi-pier-crane" menu_urls="aic_greenhouse_index aic_harvest_history harvest_summary_view" sub_menus=sub_menus_production %}
+    {% include "includes/menu_item.html" with menu_id="farmManag" menu_title="Farm Manager" icon="mdi-table" menu_urls="aic_input_dealer_list aic_input_category_list aic_farm_input_list aic_distribution_list" sub_menus=sub_menus_farm_manager %}
+    {% include "includes/menu_item.html" with menu_id="buyer" menu_title="Sales & Marketing" icon="mdi-cart" menu_urls="aic_sale_agent_index aic_buyer_index aic_all_orders aic_market_dashboard" sub_menus=sub_menus_sales %}
+    {% include "includes/menu_item.html" with menu_id="tables" menu_title="Finance" icon="mdi-finance" menu_urls="aic_pricetale_index aic_beneficiaries_cash_requests aic_cash_loaned_list aic_beneficiaries_repayments" sub_menus=sub_menus_finance %}
+    
+
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name in 'aic_accounting_summary' 'aic_farm_season_index' 'aic_billable_item_index' 'aic_item_cost_index' 'aic_service_item_index' 'aic_service_request_list' %} active {% endif %}" 
+            data-bs-toggle="collapse" href="#mAccount" 
+            aria-expanded="{% if request.resolver_match.url_name in 'aic_accounting_summary' 'aic_farm_season_index' 'aic_billable_item_index' 'aic_item_cost_index' 'aic_service_item_index' 'aic_service_request_list' %}true{% else %}false{% endif %}" 
+            aria-controls="mAccount">
+              <i class="menu-icon mdi mdi-bank"></i>
+              <span class="menu-title">Accounting</span>
+              <i class="menu-arrow"></i>
+          </a>
+          <div class="collapse {% if request.resolver_match.url_name in 'aic_accounting_summary' 'aic_farm_season_index' 'aic_billable_item_index' 'aic_item_cost_index' 'aic_service_item_index' 'aic_service_request_list' %} show{% endif %}" id="mAccount">
+              <ul class="nav flex-column sub-menu">
+                  <li class="nav-item">
+                      <a class="nav-link {% if request.resolver_match.url_name == 'aic_accounting_summary' %} active {% endif %}" href="{% url 'aic_accounting_summary' %}">Balance Sheet</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link {% if request.resolver_match.url_name == 'aic_farm_season_index' %} active {% endif %}" href="{% url 'aic_farm_season_index' %}">Farm Cycles</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link {% if request.resolver_match.url_name == 'aic_billable_item_index' %} active {% endif %}" href="{% url 'aic_billable_item_index' %}">Billables</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link {% if request.resolver_match.url_name == 'aic_item_cost_index' %} active {% endif %}" href="{% url 'aic_item_cost_index' %}">Billed Item Cost</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link {% if request.resolver_match.url_name == 'aic_service_item_index' %} active {% endif %}" href="{% url 'aic_service_item_index' %}">Service Item</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link {% if request.resolver_match.url_name == 'aic_service_request_list' %} active {% endif %}" href="{% url 'aic_service_request_list' %}">Service Requests</a>
+                  </li>
+              </ul>
+          </div>
+        </li>
+                        
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name in 'aic_attendance_list' 'aic_edo_index' %} active {% endif %}" 
+            data-bs-toggle="collapse" href="#icons" 
+            aria-expanded="{% if request.resolver_match.url_name in 'aic_attendance_list' 'aic_edo_index' %}true{% else %}false{% endif %}" 
+            aria-controls="icons">
+              <i class="menu-icon mdi mdi-layers-outline"></i>
+              <span class="menu-title">EDO</span>
+              <i class="menu-arrow"></i>
+          </a>
+          <div class="collapse {% if request.resolver_match.url_name in 'aic_attendance_list' 'aic_edo_index' %} show{% endif %}" id="icons">
+              <ul class="nav flex-column sub-menu">
+                  <li class="nav-item">
+                      <a class="nav-link {% if request.resolver_match.url_name == 'aic_attendance_list' %} active {% endif %}" href="{% url 'aic_attendance_list' %}">Attendance</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link {% if request.resolver_match.url_name == 'aic_edo_index' %} active {% endif %}" href="{% url 'aic_edo_index' %}">List</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="#">Request</a>
+                  </li>
+              </ul>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name in 'trend_knowledge_index' 'aic_trend_knowledge_board' %} active {% endif %}" 
+            data-bs-toggle="collapse" href="#auths" 
+            aria-expanded="{% if request.resolver_match.url_name in 'trend_knowledge_index' 'aic_trend_knowledge_board' %}true{% else %}false{% endif %}" 
+            aria-controls="auths">
+              <i class="menu-icon mdi mdi-account-circle-outline"></i>
+              <span class="menu-title">Knowledge Hub</span>
+              <i class="menu-arrow"></i>
+          </a>
+          <div class="collapse {% if request.resolver_match.url_name in 'trend_knowledge_index' 'aic_trend_knowledge_board' %} show{% endif %}" id="auths">
+              <ul class="nav flex-column sub-menu">
+                  <li class="nav-item">
+                      <a class="nav-link {% if request.resolver_match.url_name == 'trend_knowledge_index' %} active {% endif %}" href="{% url 'trend_knowledge_index' %}">My Reported Trends</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link {% if request.resolver_match.url_name == 'aic_trend_knowledge_board' %} active {% endif %}" href="{% url 'aic_trend_knowledge_board' %}">Discussion Forum</a>
+                  </li>
+              </ul>
+          </div>
+        </li>
+
+
+
+      {% elif user.buyer_profile %}
+            <li class="nav-item">
+              <a class="nav-link {% if request.resolver_match.url_name in 'orders' %} active {% endif %}" 
+                data-bs-toggle="collapse" href="#auths" 
+                aria-expanded="{% if request.resolver_match.url_name in 'orders' %}true{% else %}false{% endif %}" 
+                aria-controls="auths">
+                  <i class="menu-icon mdi mdi-account-circle-outline"></i>
+                  <span class="menu-title">Orders</span>
+                  <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse {% if request.resolver_match.url_name in 'orders' %} show{% endif %}" id="auths">
+                  <ul class="nav flex-column sub-menu">
+                      <li class="nav-item">
+                          <a class="nav-link {% if request.resolver_match.url_name == 'orders' %} active {% endif %}" href="{% url 'orders' %}">My Orders</a>
+                      </li>
+                  </ul>
+              </div>
+          </li>
+          
+          <li class="nav-item">
+              <a class="nav-link {% if request.resolver_match.url_name in 'buyer_shop' %} active {% endif %}" 
+                data-bs-toggle="collapse" href="#shop" 
+                aria-expanded="{% if request.resolver_match.url_name in 'buyer_shop' %}true{% else %}false{% endif %}" 
+                aria-controls="shop">
+                  <i class="fa fa-shopping-cart fa-lg"></i>
+                  <span class="menu-title">Shop</span>
+                  <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse {% if request.resolver_match.url_name in 'buyer_shop' %} show{% endif %}" id="shop">
+                  <ul class="nav flex-column sub-menu">
+                      <li class="nav-item">
+                          <a class="nav-link {% if request.resolver_match.url_name == 'buyer_shop' %} active {% endif %}" href="{% url 'buyer_shop' %}">Shop</a>
+                      </li>
+                  </ul>
+              </div>
+          </li>
+          
+          <li class="nav-item">
+              <a class="nav-link {% if request.resolver_match.url_name in 'buyer_market_dashboard' %} active {% endif %}" 
+                data-bs-toggle="collapse" href="#trans" 
+                aria-expanded="{% if request.resolver_match.url_name in 'buyer_market_dashboard' %}true{% else %}false{% endif %}" 
+                aria-controls="trans">
+                  <i class="fa fa-money fa-lg"></i>
+                  <span class="menu-title">Transaction</span>
+                  <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse {% if request.resolver_match.url_name in 'buyer_market_dashboard' %} show{% endif %}" id="trans">
+                  <ul class="nav flex-column sub-menu">
+                      <li class="nav-item">
+                          <a class="nav-link {% if request.resolver_match.url_name == 'buyer_market_dashboard' %} active {% endif %}" href="{% url 'buyer_market_dashboard' %}">Market</a>
+                      </li>
+                  </ul>
+              </div>
+          </li>
+    
+      {% elif user.sale_agent %}
+              <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name in 'sale_buyer_index' %} active {% endif %}" 
+                  data-bs-toggle="collapse" href="#buyers" 
+                  aria-expanded="{% if request.resolver_match.url_name in 'sale_buyer_index' %}true{% else %}false{% endif %}" 
+                  aria-controls="buyers">
+                    <i class="menu-icon mdi mdi-bucket-outline"></i>
+                    <span class="menu-title">Buyers</span>
+                    <i class="menu-arrow"></i>
+                </a>
+                <div class="collapse {% if request.resolver_match.url_name in 'sale_buyer_index' %} show{% endif %}" id="buyers">
+                    <ul class="nav flex-column sub-menu">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'sale_buyer_index' %} active {% endif %}" href="{% url 'sale_buyer_index' %}">Buyers</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name in 'sales_agent_stock' 'sa_stock_movement_list' 'sa_fulfillment_list' %} active {% endif %}" 
+                  data-bs-toggle="collapse" href="#stock" 
+                  aria-expanded="{% if request.resolver_match.url_name in 'sales_agent_stock' 'sa_stock_movement_list' 'sa_fulfillment_list' %}true{% else %}false{% endif %}" 
+                  aria-controls="stock">
+                    <i class="menu-icon mdi mdi-cart-arrow-right"></i>
+                    <span class="menu-title">Stock Level</span>
+                    <i class="menu-arrow"></i>
+                </a>
+                <div class="collapse {% if request.resolver_match.url_name in 'sales_agent_stock' 'sa_stock_movement_list' 'sa_fulfillment_list' %} show{% endif %}" id="stock">
+                    <ul class="nav flex-column sub-menu">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'sales_agent_stock' %} active {% endif %}" href="{% url 'sales_agent_stock' %}">My Stock</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'sa_stock_movement_list' %} active {% endif %}" href="{% url 'sa_stock_movement_list' %}">Stock Movement</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'sa_fulfillment_list' %} active {% endif %}" href="{% url 'sa_fulfillment_list' %}">Stock Fulfillments</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name in 'sa_order_list' 'sale_all_orders' %} active {% endif %}" 
+                  data-bs-toggle="collapse" href="#auths" 
+                  aria-expanded="{% if request.resolver_match.url_name in 'sa_order_list' 'sale_all_orders' %}true{% else %}false{% endif %}" 
+                  aria-controls="auths">
+                    <i class="menu-icon mdi mdi-stocking"></i>
+                    <span class="menu-title">Orders</span>
+                    <i class="menu-arrow"></i>
+                </a>
+                <div class="collapse {% if request.resolver_match.url_name in 'sa_order_list' 'sale_all_orders' %} show{% endif %}" id="auths">
+                    <ul class="nav flex-column sub-menu">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'sa_order_list' %} active {% endif %}" href="{% url 'sa_order_list' %}">Orders</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'sale_all_orders' %} active {% endif %}" href="{% url 'sale_all_orders' %}">Order History</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name in 'sa_payment_list' %} active {% endif %}" 
+                  data-bs-toggle="collapse" href="#apyment" 
+                  aria-expanded="{% if request.resolver_match.url_name in 'sa_payment_list' %}true{% else %}false{% endif %}" 
+                  aria-controls="apyment">
+                    <i class="menu-icon mdi mdi-cash-multiple"></i>
+                    <span class="menu-title">Payment</span>
+                    <i class="menu-arrow"></i>
+                </a>
+                <div class="collapse {% if request.resolver_match.url_name in 'sa_payment_list' %} show{% endif %}" id="apyment">
+                    <ul class="nav flex-column sub-menu">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'sa_payment_list' %} active {% endif %}" href="{% url 'sa_payment_list' %}">Payments</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            
+      {% endif %}      
+      {% endif %}
+    </ul>
+  </nav>

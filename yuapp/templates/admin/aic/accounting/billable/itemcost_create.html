@@ -1,0 +1,102 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="col-lg-12">
+    <style>
+        .backIcon:hover {
+            color: white !important;
+        }
+        .card {
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+        .form-control {
+            border-radius: 6px;
+            border: 1px solid #D2D2D2;
+        }
+        .form-control:focus {
+            border-color: #0078D4;
+            box-shadow: 0 0 5px rgba(0, 120, 212, 0.5);
+        }
+        .btn-primary {
+            background-color: #0078D4;
+            border-color: #0078D4;
+            border-radius: 6px;
+        }
+        .btn-primary:hover {
+            background-color: #005A9E;
+        }
+        .btn-outline-primary {
+            border-radius: 6px;
+        }
+    </style>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title fw-bold text-primary d-flex align-items-center justify-content-between">
+                {% if form.instance.pk %} Edit {% else %} Create {% endif %} Billable Item Cost
+                <a href="{% url 'aic_item_cost_index' %}" class="btn btn-outline-primary backIcon">
+                    <i class="fa fa-mail-reply-all"></i> Go Back
+                </a>
+            </h5>
+            
+            {% if form.errors %}
+            <div class="alert alert-danger alert-dismissible fade show">
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <strong>Errors:</strong>
+                <ul>
+                    {% for field in form %}
+                        {% if field.errors %}
+                            <li><strong>{{ field.label }}:</strong>
+                                <ul>
+                                    {% for error in field.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            
+            <form method="post" action="{% if form.instance.pk %}{% url 'aic_update_item_cost' item_cost_id=form.instance.pk %}{% else %}{% url 'aic_create_item_cost' %}{% endif %}">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label class="fw-bold text-secondary">{{ form.billable_item.label }}</label>
+                    {{ form.billable_item|add_class:"form-control" }}
+                </div>
+                
+                <div class="mb-3">
+                    <label class="fw-bold text-secondary">{{ form.greenhouse.label }}</label>
+                    {{ form.greenhouse|add_class:"form-control" }}
+                </div>
+                
+                <div class="mb-3">
+                    <label class="fw-bold text-secondary">{{ form.cost.label }}</label>
+                    {{ form.cost|add_class:"form-control" }}
+                </div>
+                
+                <div class="mb-3">
+                    <label class="fw-bold text-secondary">{{ form.description.label }}</label>
+                    {{ form.description|add_class:"form-control" }}
+                </div>
+                
+                <div class="d-flex justify-content-end">
+                    {% if form.instance.pk %}
+                        <button type="submit" class="btn btn-success"><i class="fa fa-check-square-o"></i> Update</button>
+                    {% else %}
+                        <button type="submit" class="btn btn-primary text-white"><i class="fa fa-plus-square-o"></i> Create</button>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content  %}

@@ -1,0 +1,124 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+{% load humanize %}
+{% load currency_filters %}
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+            <h4 class="card-title text-primary fw-bold">
+                <i class="fa fa-address-card"></i> Cash Bank: 
+                <span class="text-danger">Cash Loaned</span>
+            </h4>
+            <hr />
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-rounded border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="table-responsive mt-1">
+                                <table class="table table-hover align-middle">
+                                    <thead class="bg-light text-secondary fw-bold">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Beneficiary</th>
+                                            <th>Amount</th>
+                                            <th>Repayment Period</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for cash in cash_load_records %}
+                                        <tr class="border-bottom">
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ cash.beneficiary.full_name }}</td>
+                                            <td class="fw-semibold">${{ cash.amount }}</td>
+                                            <td>{{ cash.repayment_period_from }} - {{ cash.repayment_period_to }}</td>
+                                            <td>
+                                                <span class="badge 
+                                                    {% if cash.status == 'Approved' %}bg-success
+                                                    {% elif cash.status == 'Denied' %}bg-danger
+                                                    {% else %}bg-warning
+                                                    {% endif %}">
+                                                    {{ cash.status }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-outline-primary btn-sm fw-semibold" 
+                                                    data-bs-toggle="collapse" 
+                                                    data-bs-target="#repayment-{{ cash.id }}">
+                                                    View Repayments
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="6" class="p-0">
+                                                <div id="repayment-{{ cash.id }}" class="accordion-collapse collapse p-3">
+                                                    <div class="card shadow-sm border-0 rounded-3">
+                                                        <div class="card-body">
+                                                            <table class="table table-sm table-borderless">
+                                                                <thead class="table-light">
+                                                                    <tr>
+                                                                        <th>#</th>
+                                                                        <th>Amount Paid</th>
+                                                                        <th>Balance</th>
+                                                                        <th>Date Paid</th>
+                                                                        <th>Status</th>
+                                                                        <th>Evidence</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {% for repayment in cash.repayment_set.all %}
+                                                                    <tr>
+                                                                        <td>{{ forloop.counter }}</td>
+                                                                        <td class="fw-semibold text-success">${{ repayment.amount_paid }}</td>
+                                                                        <td class="fw-semibold text-danger">${{ repayment.bal_amount }}</td>
+                                                                        <td>{{ repayment.date_paid }}</td>
+                                                                        <td>
+                                                                            <span class="badge 
+                                                                                {% if repayment.status == 'Approved' %}bg-success
+                                                                                {% elif repayment.status == 'Denied' %}bg-danger
+                                                                                {% else %}bg-warning
+                                                                                {% endif %}">
+                                                                                {{ repayment.status }}
+                                                                            </span>
+                                                                        </td>
+                                                                        <td>
+                                                                            {% if repayment.photo %}
+                                                                                <a href="{{ repayment.photo.url }}" target="_blank">
+                                                                                    <img src="{{ repayment.photo.url }}" class="rounded" width="40" height="40">
+                                                                                </a>
+                                                                            {% else %}
+                                                                                <span class="text-muted">No Image</span>
+                                                                            {% endif %}
+                                                                        </td>
+                                                                    </tr>
+                                                                    {% empty %}
+                                                                    <tr>
+                                                                        <td colspan="6" class="text-center text-muted">No repayment records found.</td>
+                                                                    </tr>
+                                                                    {% endfor %}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="6" class="text-center text-muted">No records found.</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> 
+                    </div> 
+                </div> 
+            </div> 
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base_auth_dash.html" %}
+{% load static %}
+
+
+{% block content %}
+
+  
+      <div class="row">
+
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fa fa-address-card"></i> Farm Input Stock
+                {% comment %} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'edo_create_distribute_input' %}" class="pull-right btn btn-outline-primary btn-sm">
+                 <i class="fa fa-plus-circle"></i> Create New Distribution {% endcomment %}
+              </a>      
+              </h4>
+              {% comment %} <p class="card-description"> Add class <code>.table-hover</code>
+              </p> {% endcomment %}
+              <hr/>
+              <div class="table-responsive">
+
+                <table id="myTable" class="table table-hover">
+                    <thead class="table-info">
+                            <tr>
+                                {% comment %} <th>Beneficiary</th> {% endcomment %}
+                                <th>Farm Input</th>
+                                <th>Quantity</th>
+                                <th>Unit Cost</th>
+                                <th>Total Cost</th>
+                                <th>Distributed By</th>
+                                <th>Distribution Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stock in stocks %}
+                                <tr>
+                                    {% comment %} <td>{{ distribution.beneficiary.full_name }}</td> {% endcomment %}
+                                    {% comment %} <td>{{ stock.farm_input.name }}</td> {% endcomment %}
+                                    <td>{{ stock.farm_input.inputcategory.name }}</td>
+                                    <td>{{ stock.quantity |floatformat:0 }}</td>
+                                    <td>{{ stock.farm_input.cost_per_unit |floatformat:2 }}</td>
+                                    <td>{{ stock.total_cost }}</td>
+                                    <td>{{ stock.distributed_by.user.first_name }} {{ stock.distributed_by.user.last_name }}</td>
+                                    <td>{{ stock.distribution_date | date:"d-m-Y" }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+              </div>
+            </div>
+          </div>
+          
+          {% comment %} <div class="card col-md-3" style="border: 2px solid blue"></div> {% endcomment %}
+
+        </div>
+   {% endblock %}
