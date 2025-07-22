@@ -82,16 +82,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'yugep.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 #Local connection with all credentials
 DATABASES = {
     'default': {
@@ -159,22 +149,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Email Settings for Gmail
-# Email settings using SendGrid SMTP
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'apikey'  # literally use the word 'apikey' as username
-EMAIL_HOST_PASSWORD = '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'  # Replace with actual API key
-DEFAULT_FROM_EMAIL = 'noreply@yugep.agriimpactgroup.com'  # Your verified sender
-ADMIN_EMAILS = ['fosuheneandrews@gmail.com', 'ad17@aoholdings.net']
 
-
-DEFAULT_FROM_EMAIL = "noreply@yugep.agriimpactgroup.com"
-ADMINS = [("Admin", "admin@yugep.agriimpactgroup.com")]  # Optional
 
 # Twilio credentials
-TWILIO_ACCOUNT_SID = 'your_account_sid'
-TWILIO_AUTH_TOKEN = 'your_auth_token'
-TWILIO_PHONE_NUMBER = '+1234567890'  # Your Twilio number
-ADMIN_PHONE_NUMBERS = ['+233xxxxxxxxx', '+233yyyyyyyyy']  # Replace with actual admin numbers
